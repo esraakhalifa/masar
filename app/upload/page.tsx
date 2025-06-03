@@ -106,9 +106,7 @@ export default function CVUploadPage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (file.type === 'application/pdf' || 
-        file.type === 'application/msword' || 
-        file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+    if (file.type === 'application/pdf') {
       setIsParsing(true);
       setUploadStatus(null);
       setParsedData(null);
@@ -145,7 +143,7 @@ export default function CVUploadPage() {
         console.error('Parsing failed:', error);
         setUploadStatus({
           type: 'error',
-          message: 'Failed to parse CV. Ensure it\'s a text-based PDF/DOCX.'
+          message: 'Failed to parse CV. Ensure it\'s a text-based PDF.'
         });
       } finally {
         setIsParsing(false);
