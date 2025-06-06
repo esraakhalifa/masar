@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcrypt";
 import { PrismaClient } from "../../../generated/prisma";
+import GoogleProvider from "next-auth/providers/google";
 const prisma = new PrismaClient();
 
 const handler = NextAuth({
@@ -20,7 +21,21 @@ const handler = NextAuth({
         if (!user || !user.password) return null;
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) return null;
-        return { id: user.id, email: user.email, name: user.name };
+        return { id: user.id, email: user.email, firstName: user.firstName };
+      },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          email: profile.email,
+          firstName: profile.given_name || profile.name?.split(' ')[0] || '',
+          lastName: profile.family_name || profile.name?.split(' ')[1] || '',
+          image: profile.picture,
+          emailVerified: profile.email_verified ? new Date() : null,
+        };
       },
     }),
   ],

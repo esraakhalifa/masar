@@ -19,6 +19,7 @@ export default function Login() {
       email,
       password,
       redirect: false,
+      callbackUrl: "/",
     });
     if (res?.error) {
       setError(res.error === "CredentialsSignin" ? "Invalid email or password." : res.error);
@@ -66,6 +67,13 @@ export default function Login() {
               className="w-full bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-500 transition-all duration-300 transform hover:scale-105"
             >
               Login
+            </button>
+            <button
+              type="button"
+              onClick={() => signIn("google", { callbackUrl: "/" })}
+              className="w-full bg-red-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-400 transition-all duration-300 transform hover:scale-105 mt-4"
+            >
+              Sign in with Google
             </button>
             <p className="text-center text-sm text-gray-400 mt-4">
               Don&apos;t have an account?{' '}
