@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Header from "../components/Header";
+import Link from "next/link";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -79,6 +80,11 @@ export default function Login() {
               Don&apos;t have an account?{' '}
               <a href="/register" className="text-purple-400 hover:underline">Sign up</a>
             </p>
+            <p className="text-center mt-4">
+            <Link href="/forgot-password" className="text-purple-500 hover:underline">
+              Forgot Password?
+            </Link>
+          </p>
           </form>
         </div>
       </main>
