@@ -1,0 +1,357 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+'use client';
+
+import { useState, useRef, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import Layout from '../../components/Layout';
+import { Upload, FileText, CheckCircle, AlertCircle, ArrowRight, XCircle } from 'lucide-react';
+
+interface FormData {
+  jobRole: string;
+  additionalInfo?: string;
+}
+
+interface UploadStatus {
+  type: 'success' | 'error';
+  message: string;
+}
+
+interface ParsedData {
+  skills: string[];
+  rawData?: unknown; 
+}
+
+const MAX_WORDS = 100; // Maximum number of words allowed
+
+export default function CVUploadPage() {
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus | null>(null);
+  const [isParsing, setIsParsing] = useState<boolean>(false);
+  const [parsedData, setParsedData] = useState<ParsedData | null>(null);
+  const [showParsedData, setShowParsedData] = useState<boolean>(false);
+  const [wordCount, setWordCount] = useState<number>(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<FormData>();
+
+  const jobRoles: string[] = [
+    'Frontend Developer',
+    'Backend Developer',
+    'Full Stack Developer',
+    'Mobile App Developer',
+    'DevOps Engineer',
+    'Data Scientist',
+    'Machine Learning Engineer',
+    'UI/UX Designer',
+    'Product Manager',
+    'Software Architect',
+    'Quality Assurance Engineer',
+    'Cybersecurity Specialist',
+    'Cloud Engineer',
+    'Database Administrator',
+    'System Administrator'
+  ];
+
+  const selectedRole = watch('jobRole');
+
+  const additionalInfo = watch('additionalInfo', '');
+  
+  useEffect(() => {
+    const words = (additionalInfo || '').trim().split(/\s+/).filter(word => word.length > 0);
+    setWordCount(words.length);
+  }, [additionalInfo]);
+
+  const removeFile = () => {
+    setUploadedFile(null);
+    setParsedData(null);
+    setShowParsedData(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+
+  const onSubmit = async (data: FormData) => {
+    if (!uploadedFile) {
+      setUploadStatus({ type: 'error', message: 'Please upload your CV first' });
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadStatus(null);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      
+      setUploadStatus({ 
+        type: 'success', 
+        message: 'CV processed successfully! Moving to next steps.....' 
+      });
+      
+      setTimeout(() => {
+        window.location.href = '/test';
+      }, 2000);
+      
+    } catch (error) {
+      setUploadStatus({ 
+        type: 'error', 
+        message: 'Failed to process CV. Please try again.' 
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type === 'application/pdf') {
+      setIsParsing(true);
+      setUploadStatus(null);
+      setParsedData(null);
+      setShowParsedData(false);
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/parse-resume', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to parse resume');
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          setParsedData({
+            skills: result.data.skills || [],
+            rawData: result.data 
+          });
+
+          setUploadedFile(file);
+          setUploadStatus({ type: 'success', message: 'CV parsed successfully!' });
+          setShowParsedData(true);
+        } else {
+          throw new Error(result.error || 'Failed to parse resume');
+        }
+      } catch (error) {
+        console.error('Parsing failed:', error);
+        setUploadStatus({
+          type: 'error',
+          message: 'Failed to parse CV. Ensure it\'s a text-based PDF.'
+        });
+      } finally {
+        setIsParsing(false);
+      }
+    }
+  };
+
+  return (
+    <Layout>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Upload className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Your CV</h1>
+            <p className="text-gray-600">Let AI analyze your skills and create a personalized career roadmap</p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            {/* File Upload Section */}
+            <div className="border-2 border-dashed border-purple-300 rounded-xl p-8 text-center hover:border-purple-500 transition-colors">
+              <input
+                type="file"
+                id="cv-upload"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileUpload}
+                className="hidden"
+                ref={fileInputRef}
+                disabled={isParsing}
+
+              />
+              <label
+                htmlFor="cv-upload"
+                className={`cursor-pointer flex flex-col items-center space-y-4 ${isParsing ? 'opacity-70' : ''}`}
+              >
+                {isParsing ? (
+                  <div className="flex flex-col items-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
+                    <div className="text-gray-600">Analyzing your CV...</div>
+                  </div>
+                ) : uploadedFile ? (
+                  <div className="relative w-full">
+                    <div className="absolute top-0 right-0">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          removeFile();
+                          setUploadStatus(null);
+                        }}
+                        className="bg-red-100 rounded-full p-1 hover:bg-red-200 transition-colors"
+                      >
+                        <XCircle className="w-5 h-5 text-red-600" />
+                      </button>
+                    </div>
+                    <FileText className="w-12 h-12 text-green-500 mx-auto" />
+                    <div className="text-green-600 font-medium truncate max-w-xs mx-auto">
+                      {uploadedFile.name}
+                    </div>
+                    <div className="text-sm text-gray-500 mt-2">Click to change file</div>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="w-12 h-12 text-purple-500" />
+                    <div className="text-lg font-medium text-gray-700">
+                      Drop your CV here or click to browse
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Supports PDF, DOC, DOCX (Max 10MB)
+                    </div>
+                  </>
+                )}
+              </label>
+
+            </div>
+
+            {/* Parsed Data Preview */}
+            {showParsedData && parsedData && (
+              <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Extracted Information
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-md font-medium text-gray-700 mb-2 flex items-center">
+                      <span>Skills</span>
+                      <span className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                        {parsedData.skills.length} found
+                      </span>
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {parsedData.skills.map((skill, index) => (
+                        <span 
+                          key={index} 
+                          className="bg-purple-100 text-purple-800 text-sm px-3 py-1 rounded-full"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                </div>
+                
+                <button
+                  type="button"
+                  onClick={() => setShowParsedData(false)}
+                  className="mt-4 text-sm text-gray-500 hover:text-gray-700 flex items-center"
+                >
+                  Hide details
+                </button>
+              </div>
+            )}
+
+
+
+            {/* Job Role Selection */}
+            <div>
+              <label className="block text-lg font-medium text-gray-700 mb-3">
+                Select Your Target Job Role
+              </label>
+              <select
+                {...register('jobRole', { required: 'Please select a job role' })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900"
+              >
+                <option value="">Choose a role...</option>
+                {jobRoles.map((role) => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </select>
+              {errors.jobRole && (
+                <p className="mt-2 text-red-600 text-sm flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-1" />
+                  {errors.jobRole.message}
+                </p>
+              )}
+            </div>
+
+            {/* Additional Information */}
+            <div>
+              <label className="block text-lg font-medium text-gray-700 mb-3">
+                Additional Information (Optional)
+              </label>
+              <div className="relative">
+                <textarea
+                  {...register('additionalInfo', {
+                    validate: (value) => {
+                      const words = value?.trim().split(/\s+/).filter(word => word.length > 0) || [];
+                      return words.length <= MAX_WORDS || `Maximum ${MAX_WORDS} words allowed`;
+                    }
+                  })}
+                  rows={4}
+                  placeholder="Tell us about your career goals, preferred technologies, extra skills, or any specific requirements..."
+                  className={`w-full px-4 py-3 border ${
+                    wordCount > MAX_WORDS ? 'border-red-300' : 'border-gray-300'
+                  } rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none`}
+                />
+                <div className="absolute bottom-2 right-2 text-sm text-gray-500">
+                  {wordCount}/{MAX_WORDS} words
+                </div>
+              </div>
+              {errors.additionalInfo && (
+                <p className="mt-2 text-red-600 text-sm flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-1" />
+                  {errors.additionalInfo.message}
+                </p>
+              )}
+            </div>
+
+            {/* Status Messages */}
+            {uploadStatus && (
+              <div className={`flex items-center p-4 rounded-lg ${
+                uploadStatus.type === 'success' 
+                  ? 'bg-green-50 text-green-700 border border-green-200' 
+                  : 'bg-red-50 text-red-700 border border-red-200'
+              }`}>
+                {uploadStatus.type === 'success' ? (
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 mr-2" />
+                )}
+                {uploadStatus.message}
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isUploading || !uploadedFile || !selectedRole}
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white py-4 px-6 rounded-lg font-medium text-lg hover:from-purple-700 hover:to-purple-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200"
+            >
+              {isUploading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Processing CV...</span>
+                </>
+              ) : (
+                <>
+                  <span>Continue</span>
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
+    </Layout>
+  );
+}

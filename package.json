@@ -10,9 +10,14 @@
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
+    "@types/pdfjs-dist": "^2.10.377",
+    "lucide-react": "^0.511.0",
     "next": "15.3.3",
+    "pdfjs-dist": "^3.11.174",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.57.0",
+    "resume-parser": "^1.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
