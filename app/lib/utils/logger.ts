@@ -2,6 +2,15 @@ import morgan from 'morgan';
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 import path from 'path';
+import { Request, Response } from 'express';
+
+// Define log context type
+type LogContext = Record<string, unknown>;
+
+// Extend Express Response type to include body
+interface ResponseWithBody extends Response {
+  body?: unknown;
+}
 
 // Define log levels
 const levels = {
@@ -67,10 +76,10 @@ export const logger = winston.createLogger({
 });
 
 // Custom Morgan token for request body
-morgan.token('body', (req: any) => JSON.stringify(req.body));
+morgan.token('body', (req: Request) => JSON.stringify(req.body));
 
 // Custom Morgan token for response body
-morgan.token('response-body', (req: any, res: any) => {
+morgan.token('response-body', (req: Request, res: ResponseWithBody) => {
   if (res.body) {
     return JSON.stringify(res.body);
   }
@@ -78,7 +87,7 @@ morgan.token('response-body', (req: any, res: any) => {
 });
 
 // Custom Morgan token for request headers
-morgan.token('headers', (req: any) => {
+morgan.token('headers', (req: Request) => {
   const headers = { ...req.headers };
   // Remove sensitive information
   delete headers.authorization;
@@ -120,22 +129,22 @@ export const morganMiddleware = morgan(morganFormat, {
 });
 
 // Helper functions for logging
-export const logError = (error: Error, context?: any) => {
+export const logError = (error: Error, context?: LogContext) => {
   logger.error(`${error.message}\n${error.stack}`, { context });
 };
 
-export const logInfo = (message: string, context?: any) => {
+export const logInfo = (message: string, context?: LogContext) => {
   logger.info(message, { context });
 };
 
-export const logWarning = (message: string, context?: any) => {
+export const logWarning = (message: string, context?: LogContext) => {
   logger.warn(message, { context });
 };
 
-export const logDebug = (message: string, context?: any) => {
+export const logDebug = (message: string, context?: LogContext) => {
   logger.debug(message, { context });
 };
 
-export const logHttp = (message: string, context?: any) => {
+export const logHttp = (message: string, context?: LogContext) => {
   logger.http(message, { context });
 }; 
