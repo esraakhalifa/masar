@@ -15,6 +15,23 @@ const nextConfig = {
         source: '/api/:path*',
         destination: '/api/:path*',
       },
+      {
+        source: '/build-profile',
+        destination: '/pages/build-profile',
+      },
+      {
+        source: '/contact',
+        destination: '/pages/contact',
+      },
+      {
+        source: '/profile',
+        destination: '/pages/profile',
+      },
+      // Removed rewrite for auth/signin as authentication is being removed
+      // {
+      //   source: '/auth/signin',
+      //   destination: '/pages/auth/signin',
+      // },
     ];
   },
 };

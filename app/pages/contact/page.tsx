@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { validateContactForm, type ContactFormData } from '@/app/lib/utils/contactValidation';
-import { sanitizeObjectForSQL } from '@/app/lib/utils/sqlInjection';
-import { CSRF_HEADER, CSRF_COOKIE, generateCSRFToken } from '@/app/lib/utils/csrf';
+import { validateContactForm, type ContactFormData } from '@/app/lib/validation/contactValidation';
+import { sanitizeObjectForSQL } from '@/app/lib/security/sqlInjection';
+import { CSRF_HEADER } from '@/app/lib/security/csrf';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -21,42 +21,41 @@ export default function ContactPage() {
 
   useEffect(() => {
     const initializeCSRFToken = async () => {
+      console.log('CSRF initialization started. isLoading:', isLoading, 'isInitialized:', isInitialized);
       try {
         setIsLoading(true);
+        console.log('Fetching CSRF token...');
         
-        // Get the CSRF token from the cookie
-        const token = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('csrf_token='))
-          ?.split('=')[1];
+        // Always fetch the CSRF token from the dedicated API endpoint
+        const response = await fetch('/api/csrf', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to initialize CSRF token from API: ${response.status} ${response.statusText}`);
+        }
+        
+        const { token } = await response.json();
+        console.log('Received token from API:', token);
         
         if (token) {
           setCsrfToken(token);
           setIsInitialized(true);
+          console.log('CSRF Token and initialized state set:', token, true);
         } else {
-          // If no token exists, make a request to initialize one
-          const response = await fetch('/api/contact', {
-            method: 'GET',
-            credentials: 'include'
-          });
-          
-          if (response.ok) {
-            const newToken = document.cookie
-              .split('; ')
-              .find(row => row.startsWith('csrf_token='))
-              ?.split('=')[1];
-            
-            if (newToken) {
-              setCsrfToken(newToken);
-              setIsInitialized(true);
-            }
-          }
+          throw new Error('CSRF token missing in API response');
         }
       } catch (error) {
         console.error('Error initializing CSRF token:', error);
         toast.error('Failed to initialize form security. Please refresh the page.');
+        setIsInitialized(false); // Ensure initialization is marked as false on error
       } finally {
-        setIsLoading(false);
+        console.log('CSRF initialization finished. Current isInitialized:', isInitialized);
+        setTimeout(() => {
+          setIsLoading(false);
+          console.log('isLoading set to false.');
+        }, 300);
       }
     };
 
