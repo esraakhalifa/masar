@@ -26,7 +26,7 @@ model User {
 }
 
 model Skill {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   name      String
   level     Int
   category  String
@@ -35,7 +35,7 @@ model Skill {
 }
 
 model CareerPreference {
-  id              String   @id @default(cuid())
+  id              String   @id @default(uuid())
   industry        String
   preferredSalary Int
   workType        String
@@ -45,7 +45,7 @@ model CareerPreference {
 }
 
 model Education {
-  id            String   @id @default(cuid())
+  id            String   @id @default(uuid())
   degree        String
   fieldOfStudy  String
   institution   String
@@ -55,7 +55,7 @@ model Education {
 }
 
 model Experience {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   title       String
   company     String
   startDate   DateTime
