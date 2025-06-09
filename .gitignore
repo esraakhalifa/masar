@@ -44,3 +44,10 @@ next-env.d.ts
 
 #Logs
 .Logs
+
+node_modules
+.next
+.env.local
+.env
+*.log
+logs/
