@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
@@ -14,27 +8,201 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User model representing application users
+model User {
+  id               String    @id @default(cuid())
+  firstName        String?
+  lastName         String?
+  email            String    @unique
+  emailVerified    DateTime?
+  image            String?
+  password         String?
+  resumeText       String?   @map("resume_text")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  deletedAt        DateTime? @map("deleted_at")
+  additionalInfo   String?   @map("additional_info")
+  stripeCustomerId String?   @map("stripe_customer_id")
+  preferences      Json?
 
+  // Relations
+  skills        Skill[]
+  careerRoadmap CareerRoadmap?
+  payments      Payment[]
+  certificates  Certificate[] // Now nullable (can be null)
+  assessments   Assessment[] // Now nullable (can be null)
 
-model Roadmap {
-  id             String          @id @default(cuid())
-  userId          Int 
-  description    String?
-  skills         Skill[]
-  jobMarketData  JobMarketData[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  userId         String?         // Optional user ID if you have user authentication
+  @@map("users")
 }
 
+// Skills associated with users
 model Skill {
-  id        Int      @id @default(autoincrement())
-  name      String   
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  jobRole   String    @map("job_role")
+  skillName String    @map("skill_name")
   level     Int?
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deletedAt DateTime? @map("deleted_at")
+
+  // Relations
+  user        User         @relation(fields: [userId], references: [id])
+  assessments Assessment[]
+
+  @@map("skills")
+}
+
+// Career development roadmaps
+model CareerRoadmap {
+  id             String    @id @default(cuid())
+  userId         String    @unique @map("user_id")
+  roadmapRole    String    @map("roadmap_role")
+  roadmapDetails Json      @map("roadmap_details")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  // Relations
+  user    User           @relation(fields: [userId], references: [id])
+  topics  RoadmapTopic[]
+  courses Course[]
+
+  @@map("career_roadmaps")
+}
+
+// Topics within a career roadmap
+model RoadmapTopic {
+  id             String  @id @default(cuid())
+  roadmapId      String  @map("roadmap_id")
+  title          String
+  description    String?
+  order          Int
+  completedTasks Int     @default(0) @map("completed_tasks")
+  totalTasks     Int     @default(0) @map("total_tasks")
+
+  // Relations
+  roadmap CareerRoadmap @relation(fields: [roadmapId], references: [id])
+  tasks   Task[]
+  courses CourseTopic[] // updated
+
+  @@map("roadmap_topics")
+}
+
+// Learning courses
+model Course {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  instructors String?
+  topics      CourseTopic[] // updated
+  courseLink  String        @map("course_link")
+  roadmapId   String        @map("roadmap_id")
+
+  // Relations
+  roadmap      CareerRoadmap @relation(fields: [roadmapId], references: [id])
+  certificates Certificate[]
+
+  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  @@unique([userId, name])
+model CourseTopic {
+  id       String @id @default(cuid())
+  courseId String @map("course_id")
+  topicId  String @map("topic_id")
+
+  // Relations
+  course Course       @relation(fields: [courseId], references: [id])
+  topic  RoadmapTopic @relation(fields: [topicId], references: [id])
+
+  @@unique([courseId, topicId])
+  @@map("course_topics")
+}
+
+// User certificates
+model Certificate {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  courseId  String   @map("course_id")
+  title     String
+  provider  String
+  issueDate DateTime @map("issue_date")
+  fileUrl   String   @map("file_url")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@map("certificates")
+}
+
+// Skill assessments
+model Assessment {
+  id       String   @id @default(cuid())
+  userId   String   @map("user_id")
+  skillId  String   @map("skill_id")
+  title    String
+  score    Int
+  maxScore Int      @map("max_score")
+  takenAt  DateTime @default(now()) @map("taken_at")
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id])
+  skill Skill @relation(fields: [skillId], references: [id])
+
+  @@map("assessments")
+}
+
+// Tasks within roadmap topics
+model Task {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  isCompleted Boolean @default(false)
+  topicId     String
+  order       Int // For ordering tasks within a topic
+
+  // Relations
+  topic RoadmapTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Subscription plans
+model SubscriptionPlan {
+  id              String    @id @default(cuid())
+  planName        String    @map("plan_name")
+  amount          Float
+  currency        String
+  billingInterval String    @map("billing_interval")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  // Relations
+  payments Payment[]
+
+  @@map("subscription_plans")
+}
+
+// Payment records
+model Payment {
+  id                    String    @id @default(cuid())
+  userId                String    @map("user_id")
+  planId                String    @map("plan_id")
+  stripePaymentIntentId String    @map("stripe_payment_intent_id")
+  amount                Float
+  currency              String
+  status                String
+  paymentDate           DateTime  @map("payment_date")
+  periodStart           DateTime  @map("period_start")
+  periodEnd             DateTime  @map("period_end")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  deletedAt             DateTime? @map("deleted_at")
+
+  // Relations
+  user             User             @relation(fields: [userId], references: [id])
+  subscriptionPlan SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  @@map("payments")
 }
