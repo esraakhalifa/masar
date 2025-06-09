@@ -5,19 +5,18 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import type { UserProfile, Skill, CareerPreference } from '@/app/lib/types/profile';
-import { validateStep, ValidationError } from '@/app/lib/utils/validation';
-import { 
+import { ValidationError } from '@/app/lib/validation/validation';
+import {
   createValidationError,
   createServerError,
-  createNotFoundError
-} from '@/app/lib/utils/clientError';
-import { CSRF_HEADER, CSRF_COOKIE } from '@/app/lib/utils/csrf';
+} from '@/app/lib/errors/clientError';
+import { CSRF_HEADER, CSRF_COOKIE } from '@/app/lib/security/csrf';
 import SkillsAssessment from './SkillsAssessment';
 import CareerPreferences from './CareerPreferences';
 import EducationForm from './EducationForm';
 import ExperienceForm from './ExperienceForm';
-import { generateProfilePDF } from '@/app/lib/utils/pdfExport';
-import { generateCalendarEvents } from '@/app/lib/utils/calendarExport';
+import { exportProfileToPdf } from '@/app/lib/services/pdfExport';
+import { generateCalendarEvents } from '@/app/lib/services/calendarExport';
 
 export default function ProfileForm() {
   const router = useRouter();
@@ -35,7 +34,6 @@ export default function ProfileForm() {
   const [isSaving, setIsSaving] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [formError, setFormError] = useState<string | null>(null);
 
   // Initialize CSRF token
   useEffect(() => {
@@ -189,7 +187,6 @@ export default function ProfileForm() {
   const onSubmit = async (data: UserProfile) => {
     try {
       setIsSaving(true);
-      setFormError(null);
 
       // Validate all required fields before submission
       if (!validateCurrentStep()) {
@@ -295,7 +292,7 @@ export default function ProfileForm() {
         if (response.status === 400) {
           // Validation error
           const errors = responseData.details || [];
-          const errorMessage = errors.map((err: any) => err.message).join(', ');
+          const errorMessage = errors.map((err: { message: string }) => err.message).join(', ');
           throw createValidationError('form', errorMessage);
         }
 
@@ -312,10 +309,8 @@ export default function ProfileForm() {
     } catch (error) {
       console.error('Form submission error:', error);
       if (error instanceof Error) {
-        setFormError(error.message);
         toast.error(error.message);
       } else {
-        setFormError('An unexpected error occurred');
         toast.error('An unexpected error occurred');
       }
     } finally {
@@ -324,28 +319,27 @@ export default function ProfileForm() {
   };
 
   const handleExportPDF = async () => {
-    if (isExporting) return;
-    
+    if (!isFormComplete()) {
+      toast.error('Please complete all required fields before exporting.');
+      return;
+    }
     setIsExporting(true);
     try {
       const completeProfile: UserProfile = {
-        fullName: watch('fullName') || '',
-        email: watch('email') || '',
-        skills,
-        careerPreferences,
-        education,
-        experience
+        fullName: fullName,
+        email: email,
+        skills: skills,
+        careerPreferences: careerPreferences,
+        education: education,
+        experience: experience,
       };
-      
-      const element = document.getElementById('profile-form');
-      if (!element) {
-        throw createValidationError('form', 'Form element not found');
-      }
-      
-      await generateProfilePDF(completeProfile, element);
+
+      // The html2canvas part is commented out in pdfExport.ts, so we'll just call the pdf generation
+      await exportProfileToPdf(completeProfile);
       toast.success('PDF exported successfully!');
     } catch (error) {
-      handleValidationError(error as ValidationError);
+      console.error("Error exporting PDF:", error);
+      toast.error('Failed to export PDF.');
     } finally {
       setIsExporting(false);
     }
@@ -483,7 +477,7 @@ export default function ProfileForm() {
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Build Your Profile</h1>
-        <p className="mt-2 text-gray-600">Let's create your professional profile to help us generate your career roadmap.</p>
+        <p className="mt-2 text-gray-600">Let&apos;s create your professional profile to help us generate your career roadmap.</p>
       </div>
 
       <form id="profile-form" onSubmit={(e) => {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { generateCSRFToken } from '@/app/lib/utils/csrf';
-import { CSRF_COOKIE } from '@/app/lib/utils/csrf';
+import { generateCSRFToken } from '@/app/lib/security/csrf';
+import { CSRF_COOKIE } from '@/app/lib/security/csrf';
 
 export async function GET() {
   try {

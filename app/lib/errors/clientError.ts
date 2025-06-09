@@ -1,7 +1,7 @@
 'use client';
 
 import { toast } from 'react-hot-toast';
-import { ValidationError } from './validation';
+import { ValidationError } from '@/app/lib/validation/validation';
 
 export class ClientError extends Error {
   constructor(

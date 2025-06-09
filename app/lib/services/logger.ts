@@ -1,7 +1,8 @@
 import morgan from 'morgan';
-import winston from 'winston';
-import 'winston-daily-rotate-file';
-import path from 'path';
+import winston, { LoggerOptions } from 'winston';
+// import 'winston-daily-rotate-file'; // Removed as not used
+// import { TransportStream } from 'winston-transport'; // Removed as this was causing issues
+// import path from 'path'; // Removed as no longer needed outside Node.js env
 import { Request, Response } from 'express';
 
 // Define log context type
@@ -43,29 +44,36 @@ const format = winston.format.combine(
 );
 
 // Define which transports to use
-const transports = [
+const transports: LoggerOptions['transports'] = [
   // Console transport
   new winston.transports.Console(),
-
-  // Error log file transport
-  new winston.transports.DailyRotateFile({
-    filename: path.join(process.cwd(), 'logs', 'error-%DATE%.log'),
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: '20m',
-    maxFiles: '14d',
-    level: 'error',
-  }),
-
-  // All logs file transport
-  new winston.transports.DailyRotateFile({
-    filename: path.join(process.cwd(), 'logs', 'combined-%DATE%.log'),
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: '20m',
-    maxFiles: '14d',
-  }),
 ];
+
+// Conditionally add file transports for Node.js environment
+/*
+if (process.env.NEXT_RUNTIME === 'nodejs') {
+  transports.push(
+    // Error log file transport
+    new winston.transports.DailyRotateFile({
+      filename: `logs/error-%DATE%.log`,
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '14d',
+      level: 'error',
+    }),
+
+    // All logs file transport
+    new winston.transports.DailyRotateFile({
+      filename: `logs/combined-%DATE%.log`,
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '14d',
+    }),
+  );
+}
+*/
 
 // Create the logger instance
 export const logger = winston.createLogger({

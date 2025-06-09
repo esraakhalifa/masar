@@ -37,8 +37,8 @@ export const sanitizeSQLInput = (input: string): string => {
 };
 
 // Validate and sanitize an object's string values
-export const sanitizeObjectForSQL = <T extends Record<string, any>>(obj: T): T => {
-  const sanitized: Record<string, any> = {};
+export const sanitizeObjectForSQL = <T extends Record<string, unknown>>(obj: T): T => {
+  const sanitized: Record<string, unknown> = {};
   
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === 'string') {
@@ -49,10 +49,10 @@ export const sanitizeObjectForSQL = <T extends Record<string, any>>(obj: T): T =
     } else if (Array.isArray(value)) {
       sanitized[key] = value.map(item => 
         typeof item === 'string' ? sanitizeSQLInput(item) : 
-        typeof item === 'object' ? sanitizeObjectForSQL(item) : item
+        typeof item === 'object' && item !== null ? sanitizeObjectForSQL(item as Record<string, unknown>) : item
       );
     } else if (value && typeof value === 'object') {
-      sanitized[key] = sanitizeObjectForSQL(value);
+      sanitized[key] = sanitizeObjectForSQL(value as Record<string, unknown>);
     } else {
       sanitized[key] = value;
     }

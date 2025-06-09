@@ -3,6 +3,7 @@ import { UserProfile, Skill, CareerPreference } from '../types/profile';
 export interface ValidationError {
   field: string;
   message: string;
+  details?: unknown;
 }
 
 export const validateFullName = (fullName: string): ValidationError | null => {
@@ -44,7 +45,7 @@ export const validateSkills = (skills: Skill[]): ValidationError | null => {
   if (skills.some(skill => skill.name.length > 50)) {
     return { field: 'skills', message: 'Skill names must be less than 50 characters' };
   }
-  if (skills.some(skill => skill.level < 1 || skill.level > 5)) {
+  if (skills.some(skill => skill.level === undefined || skill.level === null || skill.level < 1 || skill.level > 5)) {
     return { field: 'skills', message: 'Skill levels must be between 1 and 5' };
   }
   return null;
@@ -63,10 +64,10 @@ export const validateCareerPreferences = (preferences: CareerPreference): Valida
   if (preferences.location.length < 2) {
     return { field: 'location', message: 'Location must be at least 2 characters long' };
   }
-  if (preferences.preferredSalary < 0) {
+  if (preferences.preferredSalary !== undefined && preferences.preferredSalary !== null && preferences.preferredSalary < 0) {
     return { field: 'salary', message: 'Salary cannot be negative' };
   }
-  if (preferences.preferredSalary > 1000000) {
+  if (preferences.preferredSalary !== undefined && preferences.preferredSalary !== null && preferences.preferredSalary > 1000000) {
     return { field: 'salary', message: 'Please enter a realistic salary amount' };
   }
   if (!['remote', 'hybrid', 'onsite'].includes(preferences.workType)) {
@@ -88,7 +89,7 @@ export const validateEducation = (education: UserProfile['education']): Validati
   if (education.some(edu => edu.degree.length > 50 || edu.fieldOfStudy.length > 50 || edu.institution.length > 100)) {
     return { field: 'education', message: 'Degree and field of study must be less than 50 characters, institution less than 100 characters' };
   }
-  if (education.some(edu => edu.graduationYear < 1900 || edu.graduationYear > new Date().getFullYear() + 10)) {
+  if (education.some(edu => parseInt(edu.graduationYear) < 1900 || parseInt(edu.graduationYear) > new Date().getFullYear() + 10)) {
     return { field: 'education', message: 'Invalid graduation year' };
   }
   return null;

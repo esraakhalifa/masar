@@ -15,8 +15,8 @@ export function generateCalendarEvents(profile: UserProfile) {
   profile.education.forEach(edu => {
     events.push({
       title: `Education: ${edu.degree} in ${edu.fieldOfStudy}`,
-      start: new Date(edu.graduationYear, 0, 1),
-      end: new Date(edu.graduationYear, 0, 1),
+      start: new Date(parseInt(edu.graduationYear), 0, 1),
+      end: new Date(parseInt(edu.graduationYear), 0, 1),
       description: `${edu.institution}`,
       location: edu.institution
     });

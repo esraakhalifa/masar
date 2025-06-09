@@ -1,6 +1,7 @@
 'use client';
 
 import DOMPurify from 'dompurify';
+// import { UserProfile } from '../types/profile'; // Removed as no longer used
 
 // Initialize DOMPurify with default configuration
 const purify = DOMPurify;
@@ -20,26 +21,22 @@ export function sanitizeString(input: string): string {
   return input.replace(/<[^>]*>/g, '').trim();
 }
 
-export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
-  const sanitized: Record<string, any> = {};
+export function sanitizeObject<T extends Record<string, unknown>>(obj: T): T {
+  const sanitized: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === 'string') {
       sanitized[key] = sanitizeString(value);
     } else if (Array.isArray(value)) {
       sanitized[key] = value.map(item => 
-        typeof item === 'string' ? sanitizeString(item) : sanitizeObject(item)
+        typeof item === 'string' ? sanitizeString(item) : sanitizeObject(item as Record<string, unknown>)
       );
     } else if (value && typeof value === 'object') {
-      sanitized[key] = sanitizeObject(value);
+      sanitized[key] = sanitizeObject(value as Record<string, unknown>);
     } else {
       sanitized[key] = value;
     }
   }
 
   return sanitized as T;
-}
-
-export function sanitizeProfile(profile: any): any {
-  return sanitizeObject(profile);
 } 

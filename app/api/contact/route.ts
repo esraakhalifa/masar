@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validateCSRFToken } from '@/app/lib/utils/csrf';
-import { sanitizeObjectForSQL } from '@/app/lib/utils/sqlInjection';
-import { validateContactForm } from '@/app/lib/utils/contactValidation';
-import { emailService } from '@/app/lib/utils/emailService';
-import { logError, logInfo, logWarning } from '@/app/lib/utils/logger';
+import { validateCSRFToken } from '@/app/lib/security/csrf';
+import { sanitizeObjectForSQL } from '@/app/lib/security/sqlInjection';
+import { validateContactForm } from '@/app/lib/validation/contactValidation';
+import { emailService } from '@/app/lib/services/emailService';
+import { logError, logInfo, logWarning } from '@/app/lib/services/logger';
 
 // GET handler for CSRF token initialization
 export async function GET() {

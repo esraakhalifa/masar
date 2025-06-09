@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import prisma from '@/app/lib/utils/db';
-import { profileSchema } from '@/app/lib/utils/security';
-import { logger } from '@/app/lib/utils/logger';
-import { createServerError } from '@/app/lib/utils/serverError';
-import { sanitizeObjectForSQL } from '@/app/lib/utils/sqlInjection';
-import { CSRF_HEADER } from '@/app/lib/utils/csrf';
+import prisma from '@/app/lib/database/db';
+import { profileSchema } from '@/app/lib/security/security';
+import { logger } from '@/app/lib/services/logger';
+import { createServerError } from '@/app/lib/errors/serverError';
+import { sanitizeObjectForSQL } from '@/app/lib/security/sqlInjection';
+import { CSRF_HEADER } from '@/app/lib/security/csrf';
 import type { Skill, Education, Experience } from '@/app/lib/types/profile';
 
 export async function POST(request: NextRequest) {
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
 
     // Handle Prisma errors
     if (error instanceof Error && 'code' in error) {
-      const prismaError = error as { code: string; meta?: any };
+      const prismaError = error as { code: string; meta?: { target: string | string[] } };
       
       if (prismaError.code === 'P2002') {
         return NextResponse.json({ 

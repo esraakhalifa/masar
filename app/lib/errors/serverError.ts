@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
-import { logger } from './logger';
+import { logger } from '@/app/lib/services/logger';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { ValidationError } from '@/app/lib/validation/validation';
 
 export class ServerError extends Error {
   constructor(
     message: string,
     public statusCode: number = 500,
     public code: string = 'INTERNAL_SERVER_ERROR',
-    public details?: any
+    public details?: unknown
   ) {
     super(message);
     this.name = 'ServerError';
@@ -16,7 +18,7 @@ export class ServerError extends Error {
 export async function createServerError(
   message: string,
   statusCode: number = 500,
-  details?: any
+  details?: unknown
 ): Promise<NextResponse> {
   logger.error('Server error', {
     message,
@@ -34,7 +36,7 @@ export async function createServerError(
   );
 }
 
-export async function handlePrismaError(error: any): Promise<NextResponse> {
+export async function handlePrismaError(error: PrismaClientKnownRequestError): Promise<NextResponse> {
   if (error.code === 'P2002') {
     return createServerError('A record with this value already exists', 409);
   }
@@ -52,7 +54,7 @@ export async function handlePrismaError(error: any): Promise<NextResponse> {
   return createServerError('Database operation failed', 500);
 }
 
-export async function handleValidationError(error: any): Promise<NextResponse> {
+export async function handleValidationError(error: ValidationError): Promise<NextResponse> {
   logger.warn('Validation error', {
     error: error.message,
     details: error.details,
@@ -61,7 +63,7 @@ export async function handleValidationError(error: any): Promise<NextResponse> {
   return createServerError('Validation failed', 400, error.details);
 }
 
-export async function handleAuthError(error: any): Promise<NextResponse> {
+export async function handleAuthError(error: Error): Promise<NextResponse> {
   logger.warn('Authentication error', {
     error: error.message,
   });

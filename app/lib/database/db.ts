@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { logError, logInfo } from './logger';
+import { logError, logInfo } from '@/app/lib/services/logger';
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
@@ -18,6 +18,7 @@ const prismaClientSingleton = () => {
 };
 
 declare global {
+  // eslint-disable-next-line no-var
   var prisma: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
