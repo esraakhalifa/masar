@@ -69,18 +69,19 @@ model CareerRoadmap {
 
 // Topics within a career roadmap
 model RoadmapTopic {
-  id             String  @id @default(cuid())
-  roadmapId      String  @map("roadmap_id")
+  id             String   @id @default(cuid())
+  roadmapId      String   @map("roadmap_id")
   title          String
   description    String?
   order          Int
-  completedTasks Int     @default(0) @map("completed_tasks")
-  totalTasks     Int     @default(0) @map("total_tasks")
+  completedTasks Int      @default(0) @map("completed_tasks")
+  totalTasks     Int      @default(0) @map("total_tasks")
+  deletedAt      DateTime? @map("deleted_at")  // added soft delete
 
   // Relations
   roadmap CareerRoadmap @relation(fields: [roadmapId], references: [id])
   tasks   Task[]
-  courses CourseTopic[] // updated
+  courses CourseTopic[] 
 
   @@map("roadmap_topics")
 }
@@ -105,9 +106,10 @@ model Course {
 }
 
 model CourseTopic {
-  id       String @id @default(cuid())
-  courseId String @map("course_id")
-  topicId  String @map("topic_id")
+  id       String   @id @default(cuid())
+  courseId String   @map("course_id")
+  topicId  String   @map("topic_id")
+  deletedAt DateTime? @map("deleted_at")  // added soft delete
 
   // Relations
   course Course       @relation(fields: [courseId], references: [id])
@@ -154,12 +156,14 @@ model Assessment {
 
 // Tasks within roadmap topics
 model Task {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   description String?
-  isCompleted Boolean @default(false)
+  isCompleted Boolean  @default(false)
   topicId     String
-  order       Int // For ordering tasks within a topic
+  order       Int
+
+  deletedAt   DateTime? @map("deleted_at")  // added soft delete
 
   // Relations
   topic RoadmapTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
