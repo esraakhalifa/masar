@@ -1,0 +1,870 @@
+2025-06-09 00:30:51:3051 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 00:30:51:3051 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 00:30:51:3051 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 00:30:51:3051 [31merror[39m: [31mServer error dompurify__WEBPACK_IMPORTED_MODULE_1__.default.sanitize is not a function[39m
+2025-06-09 00:30:51:3051 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 00:30:53:3053 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 00:33:53:3353 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 00:33:53:3353 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 00:33:53:3353 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 00:33:53:3353 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 00:33:53:3353 [31merror[39m: [31mServer error dompurify__WEBPACK_IMPORTED_MODULE_1__.default.sanitize is not a function[39m
+2025-06-09 00:38:14:3814 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 00:38:14:3814 [33mwarn[39m: [33mCSRF token missing[39m
+2025-06-09 00:38:14:3814 [31merror[39m: [31mServer error CSRF token missing[39m
+2025-06-09 00:38:15:3815 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 00:38:16:3816 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 00:40:15:4015 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 00:40:15:4015 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 00:40:15:4015 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 00:40:15:4015 [31merror[39m: [31mServer error dompurify__WEBPACK_IMPORTED_MODULE_1__.default.sanitize is not a function[39m
+2025-06-09 00:40:15:4015 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 00:40:17:4017 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 00:41:57:4157 [32minfo[39m: [32mContact form submission successful[39m
+2025-06-09 01:40:08:408 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 01:40:08:408 [33mwarn[39m: [33mCSRF token missing[39m
+2025-06-09 01:40:08:408 [31merror[39m: [31mServer error CSRF token missing[39m
+2025-06-09 01:40:08:408 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 01:40:10:4010 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:11:59:1159 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:11:59:1159 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:11:59:1159 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 07:11:59:1159 [31merror[39m: [31mServer error dompurify__WEBPACK_IMPORTED_MODULE_1__.default.sanitize is not a function[39m
+2025-06-09 07:11:59:1159 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:12:01:121 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:17:19:1719 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:17:19:1719 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:17:19:1719 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 07:17:19:1719 [31merror[39m: [31mServer error dompurify__WEBPACK_IMPORTED_MODULE_1__.default.sanitize is not a function[39m
+2025-06-09 07:17:19:1719 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:17:21:1721 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:17:49:1749 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:17:49:1749 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:17:49:1749 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:17:49:1749 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 07:17:49:1749 [31merror[39m: [31mServer error dompurify__WEBPACK_IMPORTED_MODULE_1__.default.sanitize is not a function[39m
+2025-06-09 07:21:01:211 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:21:01:211 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:21:01:211 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 07:21:02:212 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:21:03:213 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:23:17:2317 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:23:17:2317 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:23:17:2317 [33mwarn[39m: [33mProfile validation failed[39m
+2025-06-09 07:23:17:2317 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:23:19:2319 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:25:53:2553 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:25:53:2553 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:25:53:2553 [33mwarn[39m: [33mProfile validation failed[39m
+2025-06-09 07:25:53:2553 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:25:55:2555 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:29:17:2917 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:29:18:2918 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:29:18:2918 [33mwarn[39m: [33mProfile validation failed[39m
+2025-06-09 07:29:18:2918 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:29:19:2919 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:34:06:346 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:34:06:346 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:34:06:346 [33mwarn[39m: [33mProfile validation failed[39m
+2025-06-09 07:34:06:346 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:34:08:348 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:38:20:3820 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:38:20:3820 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:38:20:3820 [33mwarn[39m: [33mProfile validation failed[39m
+2025-06-09 07:38:21:3821 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:38:22:3822 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:44:32:4432 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:44:32:4432 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:44:32:4432 [33mwarn[39m: [33mProfile validation failed[39m
+2025-06-09 07:44:32:4432 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:44:34:4434 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:49:19:4919 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:49:19:4919 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:49:19:4919 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:49:21:4921 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:49:21:4921 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:49:21:4921 [33mwarn[39m: [33mProfile already exists[39m
+2025-06-09 07:52:47:5247 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:52:47:5247 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:52:47:5247 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:52:48:5248 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:52:49:5249 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:49:5249 [33mwarn[39m: [33mProfile already exists[39m
+2025-06-09 07:52:53:5253 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:52:53:5253 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:53:5253 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:54:5254 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:54:5254 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:54:5254 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:54:5254 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:54:5254 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:54:5254 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:55:5255 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:55:5255 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:55:5255 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:55:5255 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:56:5256 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:56:5256 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:56:5256 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:56:5256 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:56:5256 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:56:5256 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:56:5256 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:52:56:5256 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:54:57:5457 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:54:57:5457 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async GET (webpack-internal:///(rsc)/./app/api/profile/route.ts:190:22)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 07:54:57:5457 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async GET (webpack-internal:///(rsc)/./app/api/profile/route.ts:190:22)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 07:54:57:5457 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async GET (webpack-internal:///(rsc)/./app/api/profile/route.ts:190:22)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 07:54:57:5457 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:54:57:5457 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:54:57:5457 [31merror[39m: [31mError fetching profile:[39m
+2025-06-09 07:54:57:5457 [31merror[39m: [31mServer error [39m
+[31mInvalid `prisma.user.findUnique()` invocation:[39m
+
+[31m{[39m
+[31m  where: {[39m
+[31m    email: "moameayman596@gmail.com"[39m
+[31m  },[39m
+[31m  include: {[39m
+[31m    skills: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        name: true,[39m
+[31m        level: true,[39m
+[31m        category: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    preferences: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        industry: true,[39m
+[31m        preferredSalary: true,[39m
+[31m        workType: true,[39m
+[31m        location: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    education: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        degree: true,[39m
+[31m        fieldOfStudy: true,[39m
+[31m        institution: true,[39m
+[31m        graduationYear: true,[39m
+[31m        description: true,[39m
+[31m        ~~~~~~~~~~~[39m
+[31m?       userId?: true,[39m
+[31m?       user?: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    experience: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        title: true,[39m
+[31m        company: true,[39m
+[31m        startDate: true,[39m
+[31m        endDate: true,[39m
+[31m        description: true[39m
+[31m      }[39m
+[31m    }[39m
+[31m  }[39m
+[31m}[39m
+
+[31mUnknown field `description` for select statement on model `Education`. Available options are marked with ?.[39m
+2025-06-09 07:54:57:5457 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:55:46:5546 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 07:55:48:5548 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:55:48:5548 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async GET (webpack-internal:///(rsc)/./app/api/profile/route.ts:190:22)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 07:55:48:5548 [31merror[39m: [31mError fetching profile:[39m
+2025-06-09 07:55:48:5548 [31merror[39m: [31mServer error [39m
+[31mInvalid `prisma.user.findUnique()` invocation:[39m
+
+[31m{[39m
+[31m  where: {[39m
+[31m    email: "moameayman596@gmail.com"[39m
+[31m  },[39m
+[31m  include: {[39m
+[31m    skills: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        name: true,[39m
+[31m        level: true,[39m
+[31m        category: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    preferences: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        industry: true,[39m
+[31m        preferredSalary: true,[39m
+[31m        workType: true,[39m
+[31m        location: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    education: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        degree: true,[39m
+[31m        fieldOfStudy: true,[39m
+[31m        institution: true,[39m
+[31m        graduationYear: true,[39m
+[31m        description: true,[39m
+[31m        ~~~~~~~~~~~[39m
+[31m?       userId?: true,[39m
+[31m?       user?: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    experience: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        title: true,[39m
+[31m        company: true,[39m
+[31m        startDate: true,[39m
+[31m        endDate: true,[39m
+[31m        description: true[39m
+[31m      }[39m
+[31m    }[39m
+[31m  }[39m
+[31m}[39m
+
+[31mUnknown field `description` for select statement on model `Education`. Available options are marked with ?.[39m
+2025-06-09 07:56:32:5632 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 07:56:32:5632 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 07:56:32:5632 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:56:32:5632 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 07:56:32:5632 [33mwarn[39m: [33mProfile already exists[39m
+2025-06-09 07:56:36:5636 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 07:56:36:5636 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async GET (webpack-internal:///(rsc)/./app/api/profile/route.ts:190:22)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 07:56:36:5636 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async GET (webpack-internal:///(rsc)/./app/api/profile/route.ts:190:22)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 07:56:36:5636 [31merror[39m: [31mError fetching profile:[39m
+2025-06-09 07:56:36:5636 [31merror[39m: [31mServer error [39m
+[31mInvalid `prisma.user.findUnique()` invocation:[39m
+
+[31m{[39m
+[31m  where: {[39m
+[31m    email: "moameayman596@gmail.com"[39m
+[31m  },[39m
+[31m  include: {[39m
+[31m    skills: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        name: true,[39m
+[31m        level: true,[39m
+[31m        category: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    preferences: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        industry: true,[39m
+[31m        preferredSalary: true,[39m
+[31m        workType: true,[39m
+[31m        location: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    education: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        degree: true,[39m
+[31m        fieldOfStudy: true,[39m
+[31m        institution: true,[39m
+[31m        graduationYear: true,[39m
+[31m        description: true,[39m
+[31m        ~~~~~~~~~~~[39m
+[31m?       userId?: true,[39m
+[31m?       user?: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    experience: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        title: true,[39m
+[31m        company: true,[39m
+[31m        startDate: true,[39m
+[31m        endDate: true,[39m
+[31m        description: true[39m
+[31m      }[39m
+[31m    }[39m
+[31m  }[39m
+[31m}[39m
+
+[31mUnknown field `description` for select statement on model `Education`. Available options are marked with ?.[39m
+2025-06-09 07:56:36:5636 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async GET (webpack-internal:///(rsc)/./app/api/profile/route.ts:190:22)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 07:56:36:5636 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async GET (webpack-internal:///(rsc)/./app/api/profile/route.ts:190:22)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 07:56:36:5636 [31merror[39m: [31mError fetching profile:[39m
+2025-06-09 07:56:36:5636 [31merror[39m: [31mServer error [39m
+[31mInvalid `prisma.user.findUnique()` invocation:[39m
+
+[31m{[39m
+[31m  where: {[39m
+[31m    email: "moameayman596@gmail.com"[39m
+[31m  },[39m
+[31m  include: {[39m
+[31m    skills: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        name: true,[39m
+[31m        level: true,[39m
+[31m        category: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    preferences: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        industry: true,[39m
+[31m        preferredSalary: true,[39m
+[31m        workType: true,[39m
+[31m        location: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    education: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        degree: true,[39m
+[31m        fieldOfStudy: true,[39m
+[31m        institution: true,[39m
+[31m        graduationYear: true,[39m
+[31m        description: true,[39m
+[31m        ~~~~~~~~~~~[39m
+[31m?       userId?: true,[39m
+[31m?       user?: true[39m
+[31m      }[39m
+[31m    },[39m
+[31m    experience: {[39m
+[31m      select: {[39m
+[31m        id: true,[39m
+[31m        title: true,[39m
+[31m        company: true,[39m
+[31m        startDate: true,[39m
+[31m        endDate: true,[39m
+[31m        description: true[39m
+[31m      }[39m
+[31m    }[39m
+[31m  }[39m
+[31m}[39m
+
+[31mUnknown field `description` for select statement on model `Education`. Available options are marked with ?.[39m
+2025-06-09 08:00:03:03 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 08:00:03:03 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 08:00:03:03 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 08:00:04:04 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:04:04 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:04:04 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:04:04 [33mwarn[39m: [33mProfile already exists[39m
+2025-06-09 08:00:04:04 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:04:04 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:04:04 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:06:06 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:06:06 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:06:06 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:06:06 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:06:06 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:06:06 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:07:07 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:07:07 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:07:07 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:07:07 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:07:07 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:07:07 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:08:08 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:09:09 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:09:09 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:09:09 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:09:09 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:09:09 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:00:09:09 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:02:56:256 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 08:02:58:258 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 08:02:58:258 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:02:59:259 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:02:59:259 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:00:30 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:00:30 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:04:34 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:04:34 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:04:34 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:04:34 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:05:35 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:05:35 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:05:35 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:06:36 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:06:36 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:06:36 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:36:336 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:36:336 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:36:336 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:37:337 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:37:337 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:03:37:337 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:04:55:455 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 08:04:55:455 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 08:04:55:455 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 08:04:56:456 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:04:56:456 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:04:56:456 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:04:56:456 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:04:56:456 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async POST (webpack-internal:///(rsc)/./app/api/profile/route.ts:108:25)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 08:04:56:456 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async POST (webpack-internal:///(rsc)/./app/api/profile/route.ts:108:25)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 08:04:56:456 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 08:09:00:90 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 08:09:00:90 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 08:09:00:90 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 08:09:02:92 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 08:09:03:93 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:09:03:93 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async POST (webpack-internal:///(rsc)/./app/api/profile/route.ts:107:25)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 08:09:03:93 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 08:12:20:1220 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 08:12:20:1220 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 08:12:20:1220 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 08:12:22:1222 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 08:12:22:1222 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:12:22:1222 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async POST (webpack-internal:///(rsc)/./app/api/profile/route.ts:107:25)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 08:12:22:1222 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 08:14:12:1412 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 08:14:12:1412 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 08:14:12:1412 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 08:14:14:1414 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 08:14:14:1414 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:14:14:1414 [31merror[39m: [31mPrisma Error[39m
+[31mError: Prisma Error[39m
+[31m    at EventEmitter.eval (webpack-internal:///(rsc)/./app/lib/utils/db.ts:50:55)[39m
+[31m    at EventEmitter.emit (node:events:530:35)[39m
+[31m    at Zn.handleAndLogRequestError (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6854)[39m
+[31m    at Zn.request (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:121:6491)[39m
+[31m    at async l (/home/moamen/Desktop/Grade-project/masar/node_modules/@prisma/client/runtime/library.js:130:9778)[39m
+[31m    at async POST (webpack-internal:///(rsc)/./app/api/profile/route.ts:107:25)[39m
+[31m    at async AppRouteRouteModule.do (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)[39m
+[31m    at async AppRouteRouteModule.handle (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)[39m
+[31m    at async doRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1518:42)[39m
+[31m    at async DevServer.renderToResponseWithComponentsImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1920:28)[39m
+[31m    at async DevServer.renderPageComponent (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2408:24)[39m
+[31m    at async DevServer.renderToResponseImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:2445:32)[39m
+[31m    at async DevServer.pipeImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:1008:25)[39m
+[31m    at async NextNodeServer.handleCatchallRenderRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/next-server.js:305:17)[39m
+[31m    at async DevServer.handleRequestImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/base-server.js:900:17)[39m
+[31m    at async /home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:371:20[39m
+[31m    at async Span.traceAsyncFn (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/trace/trace.js:157:20)[39m
+[31m    at async DevServer.handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/dev/next-dev-server.js:368:24)[39m
+[31m    at async invokeRender (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:237:21)[39m
+[31m    at async handleRequest (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:428:24)[39m
+[31m    at async requestHandlerImpl (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/router-server.js:452:13)[39m
+[31m    at async Server.requestListener (/home/moamen/Desktop/Grade-project/masar/node_modules/next/dist/server/lib/start-server.js:158:13)[39m
+2025-06-09 08:14:14:1414 [31merror[39m: [31mProfile creation failed[39m
+2025-06-09 08:16:52:1652 [32minfo[39m: [32mPrisma Info[39m
+2025-06-09 08:16:54:1654 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 08:16:54:1654 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:16:55:1655 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:16:55:1655 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:16:56:1656 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:16:57:1657 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:28:1728 [32minfo[39m: [32mDatabase connection successful[39m
+2025-06-09 08:17:28:1728 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:28:1728 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:28:1728 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:28:1728 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:29:1729 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:29:1729 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:29:1729 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:29:1729 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:29:1729 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:29:1729 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:29:1729 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:29:1729 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:30:1730 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:30:1730 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:30:1730 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:30:1730 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:30:1730 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:30:1730 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:31:1731 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:31:1731 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:31:1731 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:17:31:1731 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:25:1925 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 08:19:25:1925 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 08:19:25:1925 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:25:1925 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:26:1926 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:26:1926 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:26:1926 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:26:1926 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:26:1926 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:26:1926 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:27:1927 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:27:1927 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:27:1927 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:27:1927 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:28:1928 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:28:1928 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:28:1928 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:28:1928 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:29:1929 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:29:1929 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:29:1929 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:29:1929 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:29:1929 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:29:1929 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:30:1930 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:30:1930 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:30:1930 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:30:1930 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:30:1930 [32minfo[39m: [32mProfile created successfully[39m
+2025-06-09 08:19:30:1930 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:30:1930 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:31:1931 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:31:1931 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:31:1931 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:31:1931 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:31:1931 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:31:1931 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:32:1932 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:32:1932 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:32:1932 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:32:1932 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:32:1932 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:32:1932 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:32:1932 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:32:1932 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:33:1933 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:33:1933 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:33:1933 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:33:1933 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:33:1933 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:19:33:1933 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:38:2038 [32minfo[39m: [32mProfile creation request received[39m
+2025-06-09 08:20:38:2038 [32minfo[39m: [32mRequest body received[39m
+2025-06-09 08:20:38:2038 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:38:2038 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:38:2038 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:38:2038 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:39:2039 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:39:2039 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:39:2039 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:39:2039 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:39:2039 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:39:2039 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:39:2039 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:39:2039 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:40:2040 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:41:2041 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:41:2041 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:41:2041 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:41:2041 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:41:2041 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:41:2041 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:41:2041 [32minfo[39m: [32mProfile created successfully[39m
+2025-06-09 08:20:42:2042 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:42:2042 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:42:2042 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:42:2042 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:42:2042 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:42:2042 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:43:2043 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:43:2043 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:43:2043 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:43:2043 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:43:2043 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:43:2043 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:44:2044 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:44:2044 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:44:2044 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:44:2044 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:44:2044 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:44:2044 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:44:2044 [32minfo[39m: [32mPrisma Query[39m
+2025-06-09 08:20:44:2044 [32minfo[39m: [32mPrisma Query[39m

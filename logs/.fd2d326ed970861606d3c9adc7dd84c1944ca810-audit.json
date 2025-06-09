@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/moamen/Desktop/Grade-project/masar/logs/.fd2d326ed970861606d3c9adc7dd84c1944ca810-audit.json",
+    "files": [
+        {
+            "date": 1749406231651,
+            "name": "/home/moamen/Desktop/Grade-project/masar/logs/error-2025-06-08.log",
+            "hash": "e0a5b67a3b43e0b43032e6d5cda1bf2a88cc45842f9b02e41c70dbc9948f8136"
+        },
+        {
+            "date": 1749418251106,
+            "name": "/home/moamen/Desktop/Grade-project/masar/logs/error-2025-06-09.log",
+            "hash": "bf4b34f0900709c7fe18addc58f48a117185cd6f0eb179c95ed497582a39b4d7"
+        }
+    ],
+    "hashType": "sha256"
+}
