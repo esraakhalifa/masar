@@ -34,7 +34,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
     degree: '',
     fieldOfStudy: '',
     institution: '',
-    graduationYear: new Date().getFullYear()
+    graduationYear: new Date().getFullYear().toString()
   });
 
   const [customDegree, setCustomDegree] = useState('');
@@ -110,7 +110,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
         degree: '',
         fieldOfStudy: '',
         institution: '',
-        graduationYear: new Date().getFullYear()
+        graduationYear: new Date().getFullYear().toString()
       });
       setCustomDegree('');
       setCustomField('');
@@ -124,12 +124,6 @@ export default function EducationForm({ education, onChange }: EducationFormProp
     const updatedEducation = [...education];
     updatedEducation.splice(index, 1);
     onChange(updatedEducation);
-  };
-
-  const updateEducation = (index: number, field: keyof Education, value: string) => {
-    const newEducation = [...education];
-    newEducation[index] = { ...newEducation[index], [field]: value };
-    onChange(newEducation);
   };
 
   return (
@@ -220,7 +214,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
           <select
             id="graduationYear"
             value={newEducation.graduationYear}
-            onChange={(e) => setNewEducation({ ...newEducation, graduationYear: Number(e.target.value) })}
+            onChange={(e) => setNewEducation({ ...newEducation, graduationYear: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
           >
             {years.map((year) => (

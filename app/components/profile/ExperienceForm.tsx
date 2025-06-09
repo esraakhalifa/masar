@@ -125,10 +125,10 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
 
   // Initialize custom values when editing existing experience
   useEffect(() => {
-    if (newExperience.title && !JOB_TITLES.includes(newExperience.title as any)) {
+    if (newExperience.title && !(JOB_TITLES as readonly string[]).includes(newExperience.title)) {
       setCustomTitle(newExperience.title);
     }
-    if (newExperience.company && !COMPANIES.includes(newExperience.company as any)) {
+    if (newExperience.company && !(COMPANIES as readonly string[]).includes(newExperience.company)) {
       setCustomCompany(newExperience.company);
     }
   }, [newExperience.title, newExperience.company]);
@@ -221,7 +221,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
           </label>
           <select
             id="title"
-            value={JOB_TITLES.includes(newExperience.title as any) ? newExperience.title : 'Other'}
+            value={(JOB_TITLES as readonly string[]).includes(newExperience.title as string) ? newExperience.title : 'Other'}
             onChange={(e) => handleTitleChange(e.target.value)}
             className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 ${
               errors.title ? 'border-red-300' : ''
@@ -234,11 +234,11 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
               </option>
             ))}
           </select>
-          {(newExperience.title === 'Other' || !JOB_TITLES.includes(newExperience.title as any)) && (
+          {(newExperience.title === 'Other' || !(JOB_TITLES as readonly string[]).includes(newExperience.title as string)) && (
             <input
               type="text"
               value={customTitle}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setCustomTitle(e.target.value);
                 setNewExperience({ ...newExperience, title: e.target.value });
               }}
@@ -259,7 +259,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
           </label>
           <select
             id="company"
-            value={COMPANIES.includes(newExperience.company as any) ? newExperience.company : 'Other'}
+            value={(COMPANIES as readonly string[]).includes(newExperience.company as string) ? newExperience.company : 'Other'}
             onChange={(e) => handleCompanyChange(e.target.value)}
             className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 ${
               errors.company ? 'border-red-300' : ''
@@ -272,15 +272,15 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
               </option>
             ))}
           </select>
-          {(newExperience.company === 'Other' || !COMPANIES.includes(newExperience.company as any)) && (
+          {(newExperience.company === 'Other' || !(COMPANIES as readonly string[]).includes(newExperience.company as string)) && (
             <input
               type="text"
               value={customCompany}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setCustomCompany(e.target.value);
                 setNewExperience({ ...newExperience, company: e.target.value });
               }}
-              placeholder="Enter custom company"
+              placeholder="Enter custom company name"
               className={`mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 ${
                 errors.company ? 'border-red-300' : ''
               }`}
@@ -316,7 +316,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
           <input
             type="date"
             id="endDate"
-            value={newExperience.endDate}
+            value={newExperience.endDate ?? ''}
             onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
             className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 ${
               errors.endDate ? 'border-red-300' : ''

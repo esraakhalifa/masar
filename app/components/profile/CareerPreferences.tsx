@@ -41,7 +41,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
 
   // Initialize customIndustry when preferences.industry is not in INDUSTRIES
   useEffect(() => {
-    if (preferences.industry && !INDUSTRIES.includes(preferences.industry as any)) {
+    if (preferences.industry && !(INDUSTRIES as readonly string[]).includes(preferences.industry)) {
       setCustomIndustry(preferences.industry);
     }
   }, [preferences.industry]);
@@ -123,7 +123,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
           </label>
           <select
             id="industry"
-            value={INDUSTRIES.includes(preferences.industry as any) ? preferences.industry : 'Other'}
+            value={(INDUSTRIES as readonly string[]).includes(preferences.industry) ? preferences.industry : 'Other'}
             onChange={(e) => handleIndustryChange(e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
           >
@@ -134,7 +134,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
               </option>
             ))}
           </select>
-          {(preferences.industry === 'Other' || !INDUSTRIES.includes(preferences.industry as any)) && (
+          {(preferences.industry === 'Other' || !(INDUSTRIES as readonly string[]).includes(preferences.industry)) && (
             <input
               type="text"
               value={customIndustry}
