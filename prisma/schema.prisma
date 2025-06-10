@@ -15,10 +15,10 @@ datasource db {
 }
 
 model User {
-
   id        String   @id @default(uuid())
   email     String   @unique
   fullName  String
+  avatarUrl String?
   skills    Skill[]
   preferences CareerPreference?
   education Education[]
@@ -32,7 +32,7 @@ model Skill {
   name      String
   level     Int?
   category  String
-  userId    Int
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,7 +68,6 @@ model Experience {
   description String?
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
 }
 
 

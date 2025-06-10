@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
+import Layout from '../../../components/Layout';
 import { motion } from 'framer-motion';
 
 interface Profile {
   id: string;
   fullName: string;
   email: string;
+  avatarUrl?: string;
   skills: Array<{
     id: string;
     name: string;
@@ -39,199 +41,305 @@ interface Profile {
   }>;
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.5
-    }
-  }
-};
-
 export default function ProfilePage() {
+  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const email = localStorage.getItem('userEmail');
-        if (!email) {
-          router.push('/');
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const userEmail = localStorage.getItem('userEmail');
+      if (!userEmail) {
+        toast.error('User email not found. Please create a profile.');
+        router.push('/build-profile');
+        return;
+      }
+
+      const response = await fetch(`/api/profile?email=${encodeURIComponent(userEmail)}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          setProfile(null);
           return;
         }
-
-        const response = await fetch(`/api/profile?email=${email}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch profile');
-        }
-
-        const data = await response.json();
-        setProfile(data);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        toast.error('Failed to load profile');
-      } finally {
-        setLoading(false);
+        throw new Error(`Failed to fetch profile: ${response.statusText}`);
       }
-    };
+      const data: Profile = await response.json();
+      setProfile(data);
+      if (data.avatarUrl) {
+        setAvatarPreviewUrl(data.avatarUrl);
+      }
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      toast.error(`Error loading profile: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const initializeCSRFToken = async () => {
+    try {
+      const response = await fetch('/api/csrf', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to initialize CSRF token');
+      }
+
+      const { token } = await response.json();
+      setCsrfToken(token);
+    } catch (error) {
+      console.error('Failed to initialize CSRF token:', error);
+      toast.error('Failed to initialize security token. Please refresh the page.');
+    }
+  };
+
+  useEffect(() => {
     fetchProfile();
+    initializeCSRFToken();
   }, [router]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  };
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedAvatarFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setSelectedAvatarFile(null);
+      setAvatarPreviewUrl(profile?.avatarUrl || null);
+    }
+  };
+
+  const handleAvatarUpload = async () => {
+    if (!selectedAvatarFile || !profile?.email || !csrfToken) {
+      toast.error('Please select an avatar file and ensure your profile email and security token are available.');
+      return;
+    }
+
+    setLoading(true);
+    const formData = new FormData();
+    formData.append('avatar', selectedAvatarFile);
+    formData.append('email', profile.email);
+
+    try {
+      const response = await fetch('/api/profile/upload-avatar', {
+        method: 'POST',
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to upload avatar');
+      }
+
+      const result = await response.json();
+      toast.success(result.message);
+      await fetchProfile();
+    } catch (error) {
+      console.error('Avatar upload error:', error);
+      toast.error(error instanceof Error ? error.message : 'An unexpected error occurred during avatar upload.');
+    } finally {
+      setSelectedAvatarFile(null);
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div>
-      </div>
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-white">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-600"></div>
+        </div>
+      </Layout>
     );
   }
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-50">
-        <motion.div 
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="text-center bg-white p-8 rounded-xl shadow-lg"
-        >
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Profile not found</h1>
-          <p className="mt-2 text-gray-600 mb-6">Please complete your profile first.</p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => router.push('/build-profile')}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-white">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="text-center bg-white p-8 rounded-xl shadow-lg"
           >
-            Create Profile
-          </motion.button>
-        </motion.div>
-      </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Profile not found</h1>
+            <p className="mt-2 text-gray-600 mb-6">Please complete your profile first.</p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.push('/build-profile')}
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-md"
+            >
+              Create Profile
+            </motion.button>
+          </motion.div>
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50 py-12">
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="max-w-4xl mx-auto px-4"
-      >
-        {/* Header Section */}
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white py-12">
         <motion.div 
-          variants={itemVariants}
-          className="bg-white rounded-xl shadow-lg border border-indigo-100 p-8 mb-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-w-4xl mx-auto px-4"
         >
-          <h1 className="text-4xl font-bold text-indigo-900 mb-2">{profile.fullName}</h1>
-          <p className="text-indigo-600 text-lg">{profile.email}</p>
-        </motion.div>
-
-        {/* Skills Section */}
-        <motion.div 
-          variants={itemVariants}
-          className="bg-white rounded-xl shadow-lg border border-indigo-100 p-8 mb-8"
-        >
-          <h2 className="text-2xl font-semibold text-indigo-900 mb-6">Skills</h2>
-          <div className="flex flex-wrap gap-3">
-            {profile.skills.map((skill) => (
-              <motion.span
-                key={skill.id}
-                whileHover={{ scale: 1.05 }}
-                className="px-4 py-2 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium shadow-sm"
-              >
-                {skill.name} (Level {skill.level})
-              </motion.span>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Career Preferences */}
-        <motion.div 
-          variants={itemVariants}
-          className="bg-white rounded-xl shadow-lg border border-indigo-100 p-8 mb-8"
-        >
-          <h2 className="text-2xl font-semibold text-indigo-900 mb-6">Career Preferences</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-indigo-50 p-4 rounded-lg">
-              <p className="text-sm text-indigo-600 font-medium">Industry</p>
-              <p className="text-lg text-indigo-900 mt-1">{profile.preferences.industry}</p>
+          {/* Header Section */}
+          <motion.div 
+            variants={itemVariants}
+            className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8 flex items-center space-x-6"
+          >
+            <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-purple-200 group">
+              <img
+                src={avatarPreviewUrl || "/user-placeholder.png"}
+                alt="User Avatar"
+                className="w-full h-full object-cover"
+              />
+              <label htmlFor="avatar-upload" className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <span className="text-white text-sm">Change Photo</span>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="hidden"
+                />
+              </label>
             </div>
-            <div className="bg-indigo-50 p-4 rounded-lg">
-              <p className="text-sm text-indigo-600 font-medium">Location</p>
-              <p className="text-lg text-indigo-900 mt-1">{profile.preferences.location}</p>
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">{profile.fullName}</h1>
+              <p className="text-gray-600 text-lg">{profile.email}</p>
+              {selectedAvatarFile && (
+                <button
+                  onClick={handleAvatarUpload}
+                  disabled={loading}
+                  className={`mt-4 px-4 py-2 text-sm font-medium text-white rounded-md ${loading ? 'bg-purple-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}`}
+                >
+                  {loading ? 'Uploading...' : 'Save Photo'}
+                </button>
+              )}
             </div>
-            <div className="bg-indigo-50 p-4 rounded-lg">
-              <p className="text-sm text-indigo-600 font-medium">Work Type</p>
-              <p className="text-lg text-indigo-900 mt-1 capitalize">{profile.preferences.workType}</p>
-            </div>
-            <div className="bg-indigo-50 p-4 rounded-lg">
-              <p className="text-sm text-indigo-600 font-medium">Preferred Salary</p>
-              <p className="text-lg text-indigo-900 mt-1">${profile.preferences.preferredSalary.toLocaleString()}</p>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Education */}
-        <motion.div 
-          variants={itemVariants}
-          className="bg-white rounded-xl shadow-lg border border-indigo-100 p-8 mb-8"
-        >
-          <h2 className="text-2xl font-semibold text-indigo-900 mb-6">Education</h2>
-          <div className="space-y-6">
-            {profile.education.map((edu) => (
-              <motion.div 
-                key={edu.id} 
-                whileHover={{ scale: 1.02 }}
-                className="bg-indigo-50 p-6 rounded-lg border border-indigo-100"
-              >
-                <h3 className="text-xl font-medium text-indigo-900">{edu.degree} in {edu.fieldOfStudy}</h3>
-                <p className="text-indigo-700 mt-2">{edu.institution}</p>
-                <p className="text-indigo-600 mt-1">Graduated: {edu.graduationYear}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+          {/* Skills Section */}
+          <motion.div 
+            variants={itemVariants}
+            className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8"
+          >
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Skills</h2>
+            <div className="flex flex-wrap gap-3">
+              {profile.skills.map((skill) => (
+                <motion.span
+                  key={skill.id}
+                  whileHover={{ scale: 1.05 }}
+                  className="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium shadow-sm"
+                >
+                  {skill.name} (Level {skill.level})
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
 
-        {/* Experience */}
-        <motion.div 
-          variants={itemVariants}
-          className="bg-white rounded-xl shadow-lg border border-indigo-100 p-8"
-        >
-          <h2 className="text-2xl font-semibold text-indigo-900 mb-6">Work Experience</h2>
-          <div className="space-y-6">
-            {profile.experience.map((exp) => (
-              <motion.div 
-                key={exp.id} 
-                whileHover={{ scale: 1.02 }}
-                className="bg-indigo-50 p-6 rounded-lg border border-indigo-100"
-              >
-                <h3 className="text-xl font-medium text-indigo-900">{exp.title}</h3>
-                <p className="text-indigo-700 mt-2">{exp.company}</p>
-                <p className="text-indigo-600 mt-1">
-                  {new Date(exp.startDate).toLocaleDateString()} - {exp.endDate ? new Date(exp.endDate).toLocaleDateString() : 'Present'}
-                </p>
-                {exp.description && (
-                  <p className="mt-3 text-indigo-700 bg-white p-3 rounded-md">{exp.description}</p>
-                )}
-              </motion.div>
-            ))}
-          </div>
+          {/* Career Preferences */}
+          <motion.div 
+            variants={itemVariants}
+            className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8"
+          >
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Career Preferences</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <p className="text-sm text-purple-600 font-medium">Industry</p>
+                <p className="text-lg text-gray-900 mt-1">{profile.preferences.industry}</p>
+              </div>
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <p className="text-sm text-purple-600 font-medium">Location</p>
+                <p className="text-lg text-gray-900 mt-1">{profile.preferences.location}</p>
+              </div>
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <p className="text-sm text-purple-600 font-medium">Work Type</p>
+                <p className="text-lg text-gray-900 mt-1 capitalize">{profile.preferences.workType}</p>
+              </div>
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <p className="text-sm text-purple-600 font-medium">Preferred Salary</p>
+                <p className="text-lg text-gray-900 mt-1">${profile.preferences.preferredSalary.toLocaleString()}</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Education */}
+          <motion.div 
+            variants={itemVariants}
+            className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8"
+          >
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Education</h2>
+            <div className="space-y-6">
+              {profile.education.map((edu) => (
+                <motion.div 
+                  key={edu.id} 
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-purple-50 p-6 rounded-lg border border-purple-100"
+                >
+                  <h3 className="text-xl font-medium text-gray-900">{edu.degree} in {edu.fieldOfStudy}</h3>
+                  <p className="text-gray-700 mt-2">{edu.institution}</p>
+                  <p className="text-gray-600 mt-1">Graduated: {edu.graduationYear}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Experience */}
+          <motion.div 
+            variants={itemVariants}
+            className="bg-white rounded-xl shadow-lg border border-purple-100 p-8"
+          >
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Work Experience</h2>
+            <div className="space-y-6">
+              {profile.experience.map((exp) => (
+                <motion.div 
+                  key={exp.id} 
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-purple-50 p-6 rounded-lg border border-purple-100"
+                >
+                  <h3 className="text-xl font-medium text-gray-900">{exp.title}</h3>
+                  <p className="text-gray-700 mt-2">{exp.company}</p>
+                  <p className="text-gray-600 mt-1">
+                    {new Date(exp.startDate).toLocaleDateString()} - {exp.endDate ? new Date(exp.endDate).toLocaleDateString() : 'Present'}
+                  </p>
+                  {exp.description && (
+                    <p className="mt-3 text-gray-700 bg-white p-3 rounded-md">{exp.description}</p>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </div>
+      </div>
+    </Layout>
   );
 }
