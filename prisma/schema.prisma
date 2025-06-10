@@ -1,6 +1,7 @@
+
 generator client {
   provider = "prisma-client-js"
-}
+
 
 datasource db {
   provider = "postgresql"
@@ -8,15 +9,35 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  firstName     String?
-  lastName      String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
+  id               String    @id @default(cuid())
+  email            String    @unique
+  password         String?
+  firstName        String?
+  lastName         String?
+  resumeText       String?   @map("resume_text") @db.Text
+  avatarUrl        String?
+  emailVerified    DateTime?
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime? @map("deleted_at")
+  additionalInfo   String?   @map("additional_info")
+  stripeCustomerId String?   @map("stripe_customer_id")
+  preferences      CareerPreference?
+
+  // Relations
+  skills        Skill[]
+  preferences   CareerPreference?
+  education     Education[]
+  experience    Experience[]
   accounts      Account[]
   sessions      Session[]
+  tokens        VerificationToken[]
+  careerRoadmap CareerRoadmap?
+  payments      Payment[]
+  certificates  Certificate[] // Nullable
+  assessments   Assessment[]  // Nullable
+
+  @@map("users")
 }
 
 model Account {
@@ -52,3 +73,47 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Skill {
+  id        Int      @id @default(autoincrement())
+  name      String
+  level     Int?
+  category  String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, name])
+}
+
+model CareerPreference {
+  id              String   @id @default(uuid())
+  industry        String
+  preferredSalary Int
+  workType        String
+  location        String
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id            String   @id @default(uuid())
+  degree        String
+  fieldOfStudy  String
+  institution   String
+  graduationYear Int
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Experience {
+  id          String   @id @default(uuid())
+  title       String
+  company     String
+  startDate   DateTime
+  endDate     DateTime?
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
