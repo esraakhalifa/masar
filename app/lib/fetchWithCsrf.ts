@@ -11,6 +11,7 @@ export const fetchWithCsrf = async (
   // Only add CSRF token for non-GET requests
   if (init.method && init.method.toUpperCase() !== 'GET') {
     const csrfToken = await getCsrfToken();
+    console.log("Sending CSRF token:", csrfToken);
     init.headers = {
       ...(init.headers || {}),
       'x-csrf-token': csrfToken,
