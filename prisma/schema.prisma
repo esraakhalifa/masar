@@ -1,7 +1,6 @@
-
 generator client {
   provider = "prisma-client-js"
-
+}
 
 datasource db {
   provider = "postgresql"
@@ -22,7 +21,6 @@ model User {
   deletedAt        DateTime? @map("deleted_at")
   additionalInfo   String?   @map("additional_info")
   stripeCustomerId String?   @map("stripe_customer_id")
-  preferences      CareerPreference?
 
   // Relations
   skills        Skill[]
@@ -67,15 +65,20 @@ model Session {
 }
 
 model VerificationToken {
+  id         String   @id @default(cuid())
   identifier String
   token      String   @unique
   expires    DateTime
+  userId     String   @map("user_id")
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([identifier, token])
 }
 
+
 model Skill {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   name      String
   level     Int?
   category  String
@@ -83,6 +86,7 @@ model Skill {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  assessments Assessment[]
   @@unique([userId, name])
 }
 
@@ -117,3 +121,134 @@ model Experience {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+
+model CareerRoadmap {
+  id             String         @id @default(cuid())
+  userId         String         @unique @map("user_id")
+  roadmapRole    String         @map("roadmap_role")
+  roadmapDetails Json           @map("roadmap_details")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  deletedAt      DateTime?      @map("deleted_at")
+  courses        Course[]
+  user           User           @relation(fields: [userId], references: [id])
+  topics         RoadmapTopic[]
+
+  @@map("career_roadmaps")
+}
+
+model RoadmapTopic {
+  id             String        @id @default(cuid())
+  roadmapId      String        @map("roadmap_id")
+  title          String
+  description    String?
+  order          Int
+  completedTasks Int           @default(0) @map("completed_tasks")
+  totalTasks     Int           @default(0) @map("total_tasks")
+  deletedAt      DateTime?     @map("deleted_at")
+  tasks          Task[]
+  courses        CourseTopic[]
+  roadmap        CareerRoadmap @relation(fields: [roadmapId], references: [id])
+
+  @@map("roadmap_topics")
+}
+
+model Course {
+  id           String        @id @default(cuid())
+  title        String
+  description  String?
+  instructors  String?
+  courseLink   String        @map("course_link")
+  roadmapId    String        @map("roadmap_id")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  roadmap      CareerRoadmap @relation(fields: [roadmapId], references: [id])
+  certificates Certificate[]
+  topics       CourseTopic[]
+}
+
+model CourseTopic {
+  id        String       @id @default(cuid())
+  courseId  String       @map("course_id")
+  topicId   String       @map("topic_id")
+  deletedAt DateTime?    @map("deleted_at")
+  course    Course       @relation(fields: [courseId], references: [id])
+  topic     RoadmapTopic @relation(fields: [topicId], references: [id])
+
+  @@unique([courseId, topicId])
+  @@map("course_topics")
+}
+
+model Certificate {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  courseId  String   @map("course_id")
+  title     String
+  provider  String
+  issueDate DateTime @map("issue_date")
+  fileUrl   String   @map("file_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  course    Course   @relation(fields: [courseId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("certificates")
+}
+
+model Assessment {
+  id       String   @id @default(cuid())
+  userId   String   @map("user_id")
+  skillId  String      @map("skill_id") // Change from String to Int
+  title    String
+  score    Int
+  maxScore Int      @map("max_score")
+  takenAt  DateTime @default(now()) @map("taken_at")
+  skill    Skill    @relation(fields: [skillId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@map("assessments")
+}
+
+
+model Task {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  isCompleted Boolean      @default(false)
+  topicId     String
+  order       Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?    @map("deleted_at")
+  topic       RoadmapTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+model SubscriptionPlan {
+  id              String    @id @default(cuid())
+  planName        String    @map("plan_name")
+  amount          Float
+  currency        String
+  billingInterval String    @map("billing_interval")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  deletedAt       DateTime? @map("deleted_at")
+  payments        Payment[]
+
+  @@map("subscription_plans")
+}
+
+model Payment {
+  id                    String           @id @default(cuid())
+  userId                String           @map("user_id")
+  planId                String           @map("plan_id")
+  stripePaymentIntentId String           @map("stripe_payment_intent_id")
+  amount                Float
+  currency              String
+  status                String
+  paymentDate           DateTime         @map("payment_date")
+  periodStart           DateTime         @map("period_start")
+  periodEnd             DateTime         @map("period_end")
+  createdAt             DateTime         @default(now()) @map("created_at")
+  deletedAt             DateTime?        @map("deleted_at")
+  subscriptionPlan      SubscriptionPlan @relation(fields: [planId], references: [id])
+  user                  User             @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}

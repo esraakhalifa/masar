@@ -13,6 +13,12 @@ export default function Register() {
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
+  const getCsrfToken = async (): Promise<string> => {
+    const res = await fetch('/api/csrf', { credentials: 'include' });
+    const data = await res.json();
+    return data.token;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -21,10 +27,15 @@ export default function Register() {
       setError("Passwords do not match");
       return;
     }
+    const csrfToken = await getCsrfToken();
     const res = await fetch("/api/register", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "x-csrf-token": csrfToken,
+      },
       body: JSON.stringify({ firstName, lastName, email, password }),
+      credentials: "include",
     });
     const data = await res.json();
     if (!res.ok) {
