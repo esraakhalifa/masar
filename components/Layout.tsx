@@ -4,6 +4,7 @@ import { useState, ReactNode } from 'react';
 import Link from 'next/link';
 import { Menu, X, Upload, CreditCard, Phone, Home, Info, User, LogIn, ClipboardList } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useSession, signOut } from "next-auth/react";
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,6 +18,9 @@ interface NavigationItem {
 
 const Layout = ({ children }: LayoutProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+
+  console.log("Session:", session, "Status:", status);
 
   const navigation: NavigationItem[] = [
     { name: 'Home', href: '/', icon: Home },
@@ -46,19 +50,43 @@ const Layout = ({ children }: LayoutProps) => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {navigation.map((item) => {
-                const IconComponent = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="flex items-center space-x-1 text-gray-600 hover:text-purple-600 transition-colors duration-200"
-                  >
-                    <IconComponent className="w-4 h-4" />
-                    <span>{item.name}</span>
+              {navigation
+                .filter(item => item.name !== "Login" && item.name !== "Register")
+                .map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="flex items-center space-x-1 text-gray-600 hover:text-purple-600 transition-colors duration-200"
+                    >
+                      <IconComponent className="w-4 h-4" />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              {!session ? (
+                <>
+                  <Link href="/login" className="flex items-center space-x-1 text-gray-600 hover:text-purple-600 transition-colors duration-200">
+                    <LogIn className="w-4 h-4" />
+                    <span>Login</span>
                   </Link>
-                );
-              })}
+                  <Link href="/register" className="flex items-center space-x-1 text-gray-600 hover:text-purple-600 transition-colors duration-200">
+                    <User className="w-4 h-4" />
+                    <span>Register</span>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <span className="text-gray-700 font-medium">{session.user?.email}</span>
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="bg-red-500 px-4 py-2 rounded text-white hover:bg-red-600 transition"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Mobile menu button */}

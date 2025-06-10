@@ -3,37 +3,36 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id               String    @id @default(cuid())
-  email            String    @unique
+  id               String              @id @default(cuid())
+  email            String              @unique
   password         String?
   firstName        String?
   lastName         String?
-  resumeText       String?   @map("resume_text") @db.Text
+  resumeText       String?             @map("resume_text")
   avatarUrl        String?
   emailVerified    DateTime?
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt
-  deletedAt        DateTime? @map("deleted_at")
-  additionalInfo   String?   @map("additional_info")
-  stripeCustomerId String?   @map("stripe_customer_id")
-
-  // Relations
-  skills        Skill[]
-  preferences   CareerPreference?
-  education     Education[]
-  experience    Experience[]
-  accounts      Account[]
-  sessions      Session[]
-  tokens        VerificationToken[]
-  careerRoadmap CareerRoadmap?
-  payments      Payment[]
-  certificates  Certificate[] // Nullable
-  assessments   Assessment[]  // Nullable
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt
+  deletedAt        DateTime?           @map("deleted_at")
+  additionalInfo   String?             @map("additional_info")
+  stripeCustomerId String?             @map("stripe_customer_id")
+  accounts         Account[]
+  preferences      CareerPreference?
+  education        Education[]
+  experience       Experience[]
+  sessions         Session[]
+  skills           Skill[]
+  tokens           VerificationToken[]
+  assessments      Assessment[]
+  careerRoadmap    CareerRoadmap?
+  certificates     Certificate[]
+  payments         Payment[]
+  image            String?
 
   @@map("users")
 }
@@ -44,14 +43,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String?  @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -70,57 +69,55 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
   userId     String   @map("user_id")
-
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([identifier, token])
 }
 
-
 model Skill {
-  id        String      @id @default(cuid())
-  name      String
-  level     Int?
-  category  String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String       @id @default(cuid())
+  name        String
+  level       Int?
+  category    String
+  userId      String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   assessments Assessment[]
+
   @@unique([userId, name])
 }
 
 model CareerPreference {
-  id              String   @id @default(uuid())
+  id              String @id @default(uuid())
   industry        String
   preferredSalary Int
   workType        String
   location        String
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String @unique
+  user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Education {
-  id            String   @id @default(uuid())
-  degree        String
-  fieldOfStudy  String
-  institution   String
+  id             String @id @default(uuid())
+  degree         String
+  fieldOfStudy   String
+  institution    String
   graduationYear Int
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Experience {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
   company     String
   startDate   DateTime
   endDate     DateTime?
   description String?
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
 
 model CareerRoadmap {
   id             String         @id @default(cuid())
@@ -196,7 +193,7 @@ model Certificate {
 model Assessment {
   id       String   @id @default(cuid())
   userId   String   @map("user_id")
-  skillId  String      @map("skill_id") // Change from String to Int
+  skillId  String   @map("skill_id")
   title    String
   score    Int
   maxScore Int      @map("max_score")
@@ -206,7 +203,6 @@ model Assessment {
 
   @@map("assessments")
 }
-
 
 model Task {
   id          String       @id @default(cuid())

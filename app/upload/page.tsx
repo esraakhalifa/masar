@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
 import { Upload, FileText, CheckCircle, AlertCircle, ArrowRight, XCircle } from 'lucide-react';
+import { fetchWithCsrf } from '../lib/fetchWithCsrf';
 
 interface FormData {
   jobRole: string;
@@ -69,6 +70,11 @@ export default function CVUploadPage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const getCsrfToken = async (): Promise<string> => {
+    const res = await fetch('/api/csrf', { credentials: 'include' });
+    const data = await res.json();
+    return data.token;
+  };
 
   const onSubmit = async (data: FormData) => {
     if (!uploadedFile) {
@@ -113,19 +119,20 @@ export default function CVUploadPage() {
       setShowParsedData(false);
 
       try {
+        const csrfToken = await getCsrfToken();
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch('/api/parse-resume', {
+        const res = await fetchWithCsrf('/api/parse-resume', {
           method: 'POST',
           body: formData,
         });
 
-        if (!response.ok) {
+        if (!res.ok) {
           throw new Error('Failed to parse resume');
         }
 
-        const result = await response.json();
+        const result = await res.json();
 
         if (result.success) {
           setParsedData({

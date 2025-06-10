@@ -13,7 +13,7 @@ const securityHeaders = {
     script-src 'self' 'unsafe-inline' 'unsafe-eval';
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: https:;
-    font-src 'self';
+    font-sr c 'self';
     connect-src 'self';
     frame-ancestors 'none';
     form-action 'self';
@@ -56,13 +56,13 @@ export async function middleware(request: NextRequest) {
       rateLimit.set(ip, { count: 1, resetTime: now + RATE_LIMIT.windowMs });
     }
 
-    // CSRF protection for API routes
-    if (request.nextUrl.pathname.startsWith('/api/')) {
-      // Skip CSRF check for CSRF token generation endpoint and GET requests
-      if (request.nextUrl.pathname === '/api/csrf' || request.method === 'GET') {
-        return NextResponse.next();
-      }
-
+    // CSRF protection for API routes, but skip NextAuth.js routes
+    if (
+      request.nextUrl.pathname.startsWith('/api/') &&
+      !request.nextUrl.pathname.startsWith('/api/auth/') &&
+      request.nextUrl.pathname !== '/api/csrf' &&
+      request.method !== 'GET'
+    ) {
       const csrfToken = request.headers.get(CSRF_HEADER);
       const storedToken = request.cookies.get(CSRF_COOKIE)?.value;
 

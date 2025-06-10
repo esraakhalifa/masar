@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Header from "../components/Header";
-import Link from "next/link";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -60,11 +59,6 @@ export default function ForgotPassword() {
               Send Reset Link
             </button>
           </form>
-          <p className="text-center mt-4">
-            <Link href="/forgot-password" className="text-purple-500 hover:underline">
-              Forgot Password?
-            </Link>
-          </p>
         </div>
       </main>
     </div>

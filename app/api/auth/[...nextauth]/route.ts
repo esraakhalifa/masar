@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcrypt";
-import { PrismaClient } from "../../../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import GoogleProvider from "next-auth/providers/google";
 const prisma = new PrismaClient();
 
