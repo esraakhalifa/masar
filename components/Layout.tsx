@@ -2,7 +2,8 @@
 
 import { useState, ReactNode } from 'react';
 import Link from 'next/link';
-import { Menu, X, Upload, CreditCard, Phone, Home, Info, User, LogIn, LucideIcon } from 'lucide-react';
+import { Menu, X, Upload, CreditCard, Phone, Home, Info, User, LogIn, ClipboardList } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface LayoutProps {
   children: ReactNode;
@@ -22,6 +23,7 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'About', href: '/about', icon: Info },
     { name: 'Contact', href: '/contact', icon: Phone },
     { name: 'Upload CV', href: '/upload', icon: Upload },
+    { name: 'Build Profile', href: '/build-profile', icon: ClipboardList },
     { name: 'Payment', href: '/payment', icon: CreditCard },
     { name: 'Login', href: '/login', icon: LogIn },
     { name: 'Register', href: '/register', icon: User },

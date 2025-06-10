@@ -392,7 +392,7 @@ export default function ProfileForm() {
                       message: 'Full name can only contain letters and spaces'
                     }
                   })}
-                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-400 ${
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
                     errors.fullName ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Enter your full name"
@@ -416,7 +416,7 @@ export default function ProfileForm() {
                       message: 'Invalid email address'
                     }
                   })}
-                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-400 ${
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
                     errors.email ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Enter your email"
@@ -493,13 +493,13 @@ export default function ProfileForm() {
                 stepNumber < step
                   ? 'text-green-600'
                   : stepNumber === step
-                  ? 'text-blue-600 font-semibold'
+                  ? 'text-purple-600 font-semibold'
                   : 'text-gray-400'
               }`}
             >
               <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center ${
                 stepNumber < step ? 'bg-green-600 text-white' :
-                stepNumber === step ? 'bg-blue-600 text-white' : 'bg-gray-200'
+                stepNumber === step ? 'bg-purple-600 text-white' : 'bg-gray-200'
               }`}>
                 {stepNumber}
               </div>
@@ -535,8 +535,8 @@ export default function ProfileForm() {
             disabled={!isFormComplete()}
             className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
               !isFormComplete()
-                ? 'bg-green-400 cursor-not-allowed'
-                : 'bg-green-600 hover:bg-green-700'
+                ? 'bg-purple-400 cursor-not-allowed'
+                : 'bg-purple-600 hover:bg-purple-700'
             }`}
           >
             Export Calendar
@@ -559,7 +559,7 @@ export default function ProfileForm() {
             <button
               type="button"
               onClick={handleNext}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700"
               disabled={isSaving}
             >
               Next
@@ -570,7 +570,7 @@ export default function ProfileForm() {
               disabled={!isFormComplete() || isSaving}
               className={`px-4 py-2 text-sm font-medium text-white rounded-md flex items-center space-x-2 ${
                 isFormComplete() && !isSaving
-                  ? 'bg-green-600 hover:bg-green-700'
+                  ? 'bg-purple-600 hover:bg-purple-700'
                   : 'bg-gray-400 cursor-not-allowed'
               }`}
             >
@@ -594,7 +594,7 @@ export default function ProfileForm() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
           >
             Cancel
           </button>

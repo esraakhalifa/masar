@@ -140,7 +140,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
             id="degree"
             value={newEducation.degree}
             onChange={(e) => handleDegreeChange(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
           >
             <option value="">Select a degree</option>
             {DEGREES.map((degree) => (
@@ -155,7 +155,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
               value={customDegree}
               onChange={(e) => setCustomDegree(e.target.value)}
               placeholder="Enter custom degree"
-              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-400"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 placeholder-gray-400"
             />
           )}
         </div>
@@ -168,7 +168,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
             id="fieldOfStudy"
             value={newEducation.fieldOfStudy}
             onChange={(e) => handleFieldChange(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
           >
             <option value="">Select a field</option>
             {FIELDS_OF_STUDY.map((field) => (
@@ -183,7 +183,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
               value={customField}
               onChange={(e) => setCustomField(e.target.value)}
               placeholder="Enter custom field"
-              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-400"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 placeholder-gray-400"
             />
           )}
         </div>
@@ -197,7 +197,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
             id="institution"
             value={newEducation.institution}
             onChange={handleInstitutionChange}
-            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 placeholder-gray-400 ${
+            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
               institutionError ? 'border-red-300' : 'border-gray-300'
             }`}
             placeholder="Enter your institution (letters only, min 3)"
@@ -215,7 +215,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
             id="graduationYear"
             value={newEducation.graduationYear}
             onChange={(e) => setNewEducation({ ...newEducation, graduationYear: e.target.value })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
           >
             {years.map((year) => (
               <option key={year} value={year}>
@@ -229,7 +229,7 @@ export default function EducationForm({ education, onChange }: EducationFormProp
       <button
         type="button" // Add type="button" to prevent form submission
         onClick={addEducation}
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors mb-6"
+        className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors mb-6"
       >
         Add Education
       </button>

@@ -27,11 +27,7 @@ const nextConfig = {
         source: '/profile',
         destination: '/pages/profile',
       },
-      // Removed rewrite for auth/signin as authentication is being removed
-      // {
-      //   source: '/auth/signin',
-      //   destination: '/pages/auth/signin',
-      // },
+      
     ];
   },
 };

@@ -45,7 +45,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             id="skillName"
             value={newSkill.name}
             onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-400"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 placeholder-gray-400"
             placeholder="Enter skill name"
           />
         </div>
@@ -58,7 +58,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             id="skillCategory"
             value={newSkill.category}
             onChange={(e) => setNewSkill({ ...newSkill, category: e.target.value as Skill['category'] })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
           >
             {SKILL_CATEGORIES.map((category) => (
               <option key={category} value={category}>
@@ -76,7 +76,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             id="skillLevel"
             value={newSkill.level}
             onChange={(e) => setNewSkill({ ...newSkill, level: Number(e.target.value) as Skill['level'] })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
           >
             {SKILL_LEVELS.map((level) => (
               <option key={level} value={level}>
@@ -90,7 +90,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
           <button
             type="button"
             onClick={addSkill}
-            className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className="w-full px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700"
           >
             Add Skill
           </button>
@@ -110,7 +110,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             <button
               type="button"
               onClick={() => removeSkill(index)}
-              className="text-red-600 hover:text-red-800"
+              className="text-red-600 hover:text-red-700"
             >
               Remove
             </button>
