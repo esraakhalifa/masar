@@ -8,18 +8,35 @@ const rateLimit = new Map<string, { count: number; resetTime: number }>();
 
 // Security headers
 const securityHeaders = {
-  'Content-Security-Policy': `
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval';
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' data: https:;
-    font-sr c 'self';
-    connect-src 'self';
-    frame-ancestors 'none';
-    form-action 'self';
-    base-uri 'self';
-    object-src 'none';
-  `.replace(/\s+/g, ' ').trim(),
+  'Content-Security-Policy': process.env.NODE_ENV === 'development' 
+    ? `
+      default-src 'self' https:;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https:;
+      style-src 'self' 'unsafe-inline' https:;
+      img-src 'self' data: https:;
+      font-src 'self' data: https:;
+      connect-src 'self' https:;
+      frame-src 'self' https:;
+      frame-ancestors 'none';
+      form-action 'self';
+      base-uri 'self';
+      object-src 'none';
+      media-src 'self' data: https:;
+    `.replace(/\s+/g, ' ').trim()
+    : `
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https:;
+      font-src 'self';
+      connect-src 'self' https://api.stripe.com;
+      frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
+      frame-ancestors 'none';
+      form-action 'self';
+      base-uri 'self';
+      object-src 'none';
+      media-src 'self' data:;
+    `.replace(/\s+/g, ' ').trim(),
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'X-XSS-Protection': '1; mode=block',
@@ -86,11 +103,12 @@ export async function middleware(request: NextRequest) {
       ...securityHeaders,
       'Content-Security-Policy': `
         default-src 'self';
-        script-src 'self' 'unsafe-inline' 'unsafe-eval';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com;
         style-src 'self' 'unsafe-inline';
         img-src 'self' data: https:;
         font-src 'self';
-        connect-src 'self';
+        connect-src 'self' https://api.stripe.com;
+        frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
         frame-ancestors 'none';
         form-action 'self';
         base-uri 'self';
