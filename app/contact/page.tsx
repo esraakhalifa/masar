@@ -36,8 +36,10 @@ export default function ContactPage() {
     setSubmitStatus(null);
 
     try {
+      // Simulate form submission
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      // Here you would send the form data to your backend
       console.log('Form data:', data);
       
       setSubmitStatus({ 
@@ -45,7 +47,7 @@ export default function ContactPage() {
         message: 'Thank you for your message! We\'ll get back to you within 24 hours.' 
       });
       
-      reset(); 
+      reset(); // Clear the form
       
     } catch (error) {
       setSubmitStatus({ 
