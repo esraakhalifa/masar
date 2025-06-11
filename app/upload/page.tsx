@@ -86,7 +86,6 @@ export default function CVUploadPage() {
     setUploadStatus(null);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
       
       
       setUploadStatus({ 
@@ -172,7 +171,7 @@ export default function CVUploadPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* File Upload Section */}
-            <div className="border-2 border-dashed rounded-xl p-8 text-center transition-colors" style={{borderColor: '#2434B3'}} onMouseEnter={(e) => e.target.style.borderColor = '#FF4B36'} onMouseLeave={(e) => e.target.style.borderColor = '#2434B3'}>
+            <div className="border-2 border-dashed rounded-xl p-8 text-center transition-colors" style={{borderColor: '#2434B3'}} onMouseEnter={(e) => (e.target as HTMLElement).style.borderColor = '#FF4B36'} onMouseLeave={(e) => (e.target as HTMLElement).style.borderColor = '#2434B3'}>
               <input
                 type="file"
                 id="cv-upload"
@@ -204,8 +203,8 @@ export default function CVUploadPage() {
                         }}
                         className="rounded-full p-1 transition-colors" 
                         style={{backgroundColor: '#ffebe9'}}
-                        onMouseEnter={(e) => e.target.style.backgroundColor = '#ffd6d1'}
-                        onMouseLeave={(e) => e.target.style.backgroundColor = '#ffebe9'}
+                        onMouseEnter={(e) => ((e.target as HTMLButtonElement).style.backgroundColor = '#ffd6d1')}
+                        onMouseLeave={(e) => ((e.target as HTMLButtonElement).style.backgroundColor = '#ffebe9')}
                       >
                         <XCircle className="w-5 h-5" style={{color: '#FF4B36'}} />
                       </button>
@@ -281,7 +280,7 @@ export default function CVUploadPage() {
               <select
                 {...register('jobRole', { required: 'Please select a job role' })}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
-                style={{'--tw-ring-color': '#2434B3'}}
+                style={{'--tw-ring-color': '#2434B3'} as React.CSSProperties}
                 onFocus={(e) => {
                   e.target.style.outline = 'none';
                   e.target.style.borderColor = '#2434B3';
@@ -378,13 +377,13 @@ export default function CVUploadPage() {
                   : 'linear-gradient(to right, #2434B3, #FF4B36)'
               }}
               onMouseEnter={(e) => {
-                if (!e.target.disabled) {
-                  e.target.style.background = 'linear-gradient(to right, #1e29a3, #e6412d)';
+                if (!(e.target as HTMLButtonElement).disabled) {
+                  (e.target as HTMLButtonElement).style.background = 'linear-gradient(to right, #1e29a3, #e6412d)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (!e.target.disabled) {
-                  e.target.style.background = 'linear-gradient(to right, #2434B3, #FF4B36)';
+                if (!(e.target as HTMLButtonElement).disabled) {
+                  (e.target as HTMLButtonElement).style.background = 'linear-gradient(to right, #2434B3, #FF4B36)';
                 }
               }}
             >
