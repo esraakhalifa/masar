@@ -49,16 +49,18 @@ export default function Register() {
   };
 
   return (
-    <Layout>
-      <main className="flex flex-col items-center justify-center min-h-[80vh] px-2">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-purple-100 p-8">
+<Layout>
+    <div className="min-h-screen flex items-center justify-center px-4 mt-4">
+      <main className="flex flex-col items-center justify-center w-full max-w-lg px-4">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-blue-100 p-8">
           <div className="flex flex-col items-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mb-2">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mb-2" style={{background: 'linear-gradient(135deg, #2434B3 0%, #1a2a8a 100%)'}}>
               <span className="text-white font-bold text-2xl">M</span>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-1">Sign Up</h1>
             <p className="text-gray-500 text-sm">Create your account to get started.</p>
           </div>
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="firstName" className="block text-sm font-medium mb-2 text-gray-700">First Name</label>
@@ -67,11 +69,13 @@ export default function Register() {
                 id="firstName"
                 value={firstName}
                 onChange={e => setFirstName(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300"
+                className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
+                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your First Name"
                 required
               />
             </div>
+            
             <div>
               <label htmlFor="lastName" className="block text-sm font-medium mb-2 text-gray-700">Last Name</label>
               <input
@@ -79,11 +83,13 @@ export default function Register() {
                 id="lastName"
                 value={lastName}
                 onChange={e => setLastName(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300"
+                className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
+                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your Last Name"
                 required
               />
             </div>
+            
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">Email</label>
               <input
@@ -91,11 +97,13 @@ export default function Register() {
                 id="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300"
+                className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
+                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your Email"
                 required
               />
             </div>
+            
             <div>
               <label htmlFor="password" className="block text-sm font-medium mb-2 text-gray-700">Password</label>
               <input
@@ -103,11 +111,13 @@ export default function Register() {
                 id="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300"
+                className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
+                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your Password"
                 required
               />
             </div>
+            
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-gray-700">Confirm Password</label>
               <input
@@ -115,28 +125,52 @@ export default function Register() {
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                className="w-full bg-gray-100 text-gray-900 p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300"
+                className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
+                style={{focusRingColor: '#2434B3'}}
                 placeholder="Confirm Your Password"
                 required
               />
             </div>
+            
             {error && <div className="text-red-500 text-center">{error}</div>}
             {success && <div className="text-green-500 text-center">{success}</div>}
+            
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white px-6 py-3 rounded-full font-semibold hover:from-purple-700 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow"
+              className="w-full text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              style={{background: 'linear-gradient(135deg, #2434B3 0%, #1a2a8a 100%)'}}
             >
               Register
             </button>
-            <div className="flex justify-between items-center mt-4">
+            
+            <div className="flex items-center my-4">
+              <div className="flex-grow border-t border-gray-200"></div>
+              <span className="mx-2 text-gray-400 text-xs">OR</span>
+              <div className="flex-grow border-t border-gray-200"></div>
+            </div>
+            
+            {/* <button
+              type="button"
+              onClick={() => signIn("google", { callbackUrl: "/" })}
+              className="w-full flex items-center justify-center gap-2 bg-white border-2 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-orange-50 transition-all duration-300 shadow"
+              style={{borderColor: '#FF4B36'}}
+            >
+              <FcGoogle className="text-xl" />
+              Sign up with Google
+            </button> */}
+            
+            <div className="flex justify-center items-center mt-4">
               <p className="text-sm text-gray-500">
                 Already have an account?{' '}
-                <a href="/login" className="text-purple-600 hover:underline">Sign in</a>
+                <a href="/login" className="hover:underline" style={{ color: '#FF4B36' }}>
+                  Sign in
+                </a>
               </p>
             </div>
           </form>
         </div>
       </main>
+    </div>
     </Layout>
   );
 } 

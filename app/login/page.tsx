@@ -34,7 +34,7 @@ export default function Login() {
   return (
     <Layout>
     <div className="min-h-screen  flex items-center justify-center px-4 mt-4">
-      <main className="flex flex-col items-center justify-center min-h-[80vh] px-2">
+      <main className="flex flex-col items-center justify-center w-full max-w-lg px-2">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-blue-100 p-8">
           <div className="flex flex-col items-center mb-6">
             <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mb-2" style={{background: 'linear-gradient(135deg, #2434B3 0%, #1a2a8a 100%)'}}>
