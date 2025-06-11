@@ -1,55 +1,91 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import Layout from '../../components/Layout';
 import { CreditCard, Loader2 } from 'lucide-react';
 
 // Initialize Stripe
+console.log('Stripe key:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function PaymentPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
+
+  // Fetch CSRF token on component mount
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await fetch('/api/csrf', {
+          credentials: 'include', // Important: This ensures cookies are sent with the request
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch CSRF token');
+        }
+        const data = await response.json();
+        setCsrfToken(data.token);
+      } catch (err) {
+        console.error('Failed to fetch CSRF token:', err);
+        setError('Failed to initialize payment system');
+      }
+    };
+    fetchCsrfToken();
+  }, []);
 
   const handlePayment = async () => {
     try {
       setLoading(true);
       setError(null);
 
+      if (!csrfToken) {
+        throw new Error('Payment system not initialized');
+      }
+
+      console.log('Creating checkout session...');
       // Create a checkout session
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
         },
+        credentials: 'include',
         body: JSON.stringify({
-          price: selectedPlan === 'monthly' ? 1000 : 10000, // $10/month or $100/year
+          price: selectedPlan === 'monthly' ? 1000 : 10000,
           productName: `Career Roadmap Premium - ${selectedPlan === 'monthly' ? 'Monthly' : 'Yearly'} Plan`,
         }),
       });
 
+      const data = await response.json();
+      console.log('Checkout session response:', data);
+
       if (!response.ok) {
-        throw new Error('Failed to create checkout session');
+        throw new Error(data.error || 'Failed to create checkout session');
       }
 
-      const { sessionId } = await response.json();
+      const { sessionId } = data;
+      console.log('Initializing Stripe...');
       const stripe = await stripePromise;
 
       if (!stripe) {
         throw new Error('Stripe failed to initialize');
       }
 
+      console.log('Redirecting to Stripe Checkout...');
       // Redirect to Stripe Checkout
       const { error } = await stripe.redirectToCheckout({
         sessionId,
       });
 
       if (error) {
+        console.error('Stripe redirect error:', error);
         throw error;
       }
     } catch (err) {
+      console.error('Payment error:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
