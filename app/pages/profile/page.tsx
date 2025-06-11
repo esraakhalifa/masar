@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/Layout';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface Profile {
   id: string;
@@ -49,11 +50,12 @@ export default function ProfilePage() {
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     setLoading(true);
     try {
       const userEmail = localStorage.getItem('userEmail');
       if (!userEmail) {
+        console.warn('User email not found. Redirecting to build-profile page.', { context: 'Profile Fetch' });
         toast.error('User email not found. Please create a profile.');
         router.push('/build-profile');
         return;
@@ -62,6 +64,7 @@ export default function ProfilePage() {
       const response = await fetch(`/api/profile?email=${encodeURIComponent(userEmail)}`);
       if (!response.ok) {
         if (response.status === 404) {
+          console.info('Profile not found for the given email.', { context: 'Profile Fetch' });
           setProfile(null);
           return;
         }
@@ -72,15 +75,16 @@ export default function ProfilePage() {
       if (data.avatarUrl) {
         setAvatarPreviewUrl(data.avatarUrl);
       }
+      console.info('Profile fetched successfully.', { context: 'Profile Fetch', profileId: data.id });
     } catch (err) {
-      console.error("Error fetching profile:", err);
+      console.error(err as Error, { context: 'Profile Fetch' });
       toast.error(`Error loading profile: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
-  const initializeCSRFToken = async () => {
+  const initializeCSRFToken = useCallback(async () => {
     try {
       const response = await fetch('/api/csrf', {
         method: 'GET',
@@ -93,16 +97,17 @@ export default function ProfilePage() {
 
       const { token } = await response.json();
       setCsrfToken(token);
+      console.info('CSRF token initialized successfully.', { context: 'CSRF Token Initialization' });
     } catch (error) {
-      console.error('Failed to initialize CSRF token:', error);
+      console.error(error as Error, { context: 'CSRF Token Initialization' });
       toast.error('Failed to initialize security token. Please refresh the page.');
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProfile();
     initializeCSRFToken();
-  }, [router]);
+  }, [fetchProfile, initializeCSRFToken]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -131,6 +136,12 @@ export default function ProfilePage() {
 
   const handleAvatarUpload = async () => {
     if (!selectedAvatarFile || !profile?.email || !csrfToken) {
+      console.warn('Attempted avatar upload without required data.', { 
+        context: 'Avatar Upload', 
+        hasFile: !!selectedAvatarFile, 
+        hasEmail: !!profile?.email, 
+        hasToken: !!csrfToken 
+      });
       toast.error('Please select an avatar file and ensure your profile email and security token are available.');
       return;
     }
@@ -155,10 +166,11 @@ export default function ProfilePage() {
       }
 
       const result = await response.json();
+      console.info('Avatar uploaded successfully!', { context: 'Avatar Upload', profileEmail: profile.email, imageUrl: result.avatarUrl });
       toast.success(result.message);
       await fetchProfile();
     } catch (error) {
-      console.error('Avatar upload error:', error);
+      console.error(error as Error, { context: 'Avatar Upload' });
       toast.error(error instanceof Error ? error.message : 'An unexpected error occurred during avatar upload.');
     } finally {
       setSelectedAvatarFile(null);
@@ -216,10 +228,11 @@ export default function ProfilePage() {
             className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8 flex items-center space-x-6"
           >
             <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-purple-200 group">
-              <img
+              <Image
                 src={avatarPreviewUrl || "/user-placeholder.png"}
                 alt="User Avatar"
-                className="w-full h-full object-cover"
+                layout="fill"
+                objectFit="cover"
               />
               <label htmlFor="avatar-upload" className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                 <span className="text-white text-sm">Change Photo</span>
@@ -260,7 +273,22 @@ export default function ProfilePage() {
                   whileHover={{ scale: 1.05 }}
                   className="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium shadow-sm"
                 >
-                  {skill.name} (Level {skill.level})
+                  {skill.name} ({(() => {
+                    switch (skill.level) {
+                      case 1:
+                        return 'Beginner';
+                      case 2:
+                        return 'Novice';
+                      case 3:
+                        return 'Intermediate';
+                      case 4:
+                        return 'Advanced';
+                      case 5:
+                        return 'Expert';
+                      default:
+                        return `Level ${skill.level}`;
+                    }
+                  })()})
                 </motion.span>
               ))}
             </div>
@@ -287,7 +315,7 @@ export default function ProfilePage() {
               </div>
               <div className="bg-purple-50 p-4 rounded-lg">
                 <p className="text-sm text-purple-600 font-medium">Preferred Salary</p>
-                <p className="text-lg text-gray-900 mt-1">${profile.preferences.preferredSalary.toLocaleString()}</p>
+                <p className="text-lg text-gray-900 mt-1">EGP {profile.preferences.preferredSalary.toLocaleString()}</p>
               </div>
             </div>
           </motion.div>

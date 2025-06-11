@@ -38,6 +38,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
   const [customIndustry, setCustomIndustry] = useState('');
   const [locationError, setLocationError] = useState<string>('');
   const [salaryError, setSalaryError] = useState<string>('');
+  const [customIndustryError, setCustomIndustryError] = useState<string>('');
 
   // Initialize customIndustry when preferences.industry is not in INDUSTRIES
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
   const handleCustomIndustryChange = (value: string) => {
     setCustomIndustry(value);
     onChange({ ...preferences, industry: value });
+    validateCustomIndustry(value); // Validate on change
   };
 
   const validateLocation = (location: string): boolean => {
@@ -100,6 +102,19 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
     return true;
   };
 
+  const validateCustomIndustry = (industry: string): boolean => {
+    if (!industry.trim()) {
+      setCustomIndustryError('Custom industry is required');
+      return false;
+    }
+    if (industry.trim().length < 3) {
+      setCustomIndustryError('Custom industry must be at least 3 characters long');
+      return false;
+    }
+    setCustomIndustryError('');
+    return true;
+  };
+
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newLocation = e.target.value;
     onChange({ ...preferences, location: newLocation });
@@ -124,7 +139,15 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
           <select
             id="industry"
             value={(INDUSTRIES as readonly string[]).includes(preferences.industry) ? preferences.industry : 'Other'}
-            onChange={(e) => handleIndustryChange(e.target.value)}
+            onChange={(e) => {
+              handleIndustryChange(e.target.value);
+              if (e.target.value === 'Other') {
+                // If switching to 'Other', validate the current customIndustry value
+                validateCustomIndustry(customIndustry);
+              } else {
+                setCustomIndustryError(''); // Clear error if not 'Other'
+              }
+            }}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
           >
             <option value="">Select an industry</option>
@@ -135,13 +158,21 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
             ))}
           </select>
           {(preferences.industry === 'Other' || !(INDUSTRIES as readonly string[]).includes(preferences.industry)) && (
-            <input
-              type="text"
-              value={customIndustry}
-              onChange={(e) => handleCustomIndustryChange(e.target.value)}
-              placeholder="Enter custom industry"
-              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 placeholder-gray-400"
-            />
+            <div>
+              <input
+                type="text"
+                value={customIndustry}
+                onChange={(e) => handleCustomIndustryChange(e.target.value)}
+                onBlur={(e) => validateCustomIndustry(e.target.value)} // Validate on blur
+                className={`mt-2 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
+                  customIndustryError ? 'border-red-300' : 'border-gray-300'
+                }`}
+                placeholder="Enter custom industry"
+              />
+              {customIndustryError && (
+                <p className="mt-1 text-sm text-red-600">{customIndustryError}</p>
+              )}
+            </div>
           )}
         </div>
 
@@ -184,7 +215,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
 
         <div>
           <label htmlFor="salary" className="block text-sm font-medium text-gray-700">
-            Preferred Salary (USD)
+            Preferred Salary (EGP)
           </label>
           <input
             type="text"

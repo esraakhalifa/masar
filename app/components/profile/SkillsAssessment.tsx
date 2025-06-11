@@ -9,7 +9,11 @@ interface SkillsAssessmentProps {
 }
 
 const SKILL_CATEGORIES = ['technical', 'soft', 'language'] as const;
-const SKILL_LEVELS = [1, 2, 3, 4, 5] as const;
+const SKILL_LEVELS = [
+  { value: 1, label: 'Beginner' },
+  { value: 3, label: 'Intermediate' },
+  { value: 5, label: 'Expert' }
+] as const;
 
 export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentProps) {
   const [newSkill, setNewSkill] = useState<Partial<Skill>>({
@@ -32,7 +36,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Skills Assessment</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">User Skills</h2>
       
       {/* Add New Skill */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -79,8 +83,8 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
           >
             {SKILL_LEVELS.map((level) => (
-              <option key={level} value={level}>
-                {level} - {level === 1 ? 'Beginner' : level === 5 ? 'Expert' : `Level ${level}`}
+              <option key={level.value} value={level.value}>
+                {level.label}
               </option>
             ))}
           </select>
@@ -104,7 +108,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             <div>
               <span className="font-medium text-gray-900">{skill.name}</span>
               <span className="ml-2 text-sm text-gray-600">
-                ({skill.category} - Level {skill.level})
+                ({skill.category} - {SKILL_LEVELS.find(lvl => lvl.value === skill.level)?.label || skill.level})
               </span>
             </div>
             <button
