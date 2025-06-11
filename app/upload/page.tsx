@@ -159,11 +159,11 @@ export default function CVUploadPage() {
   };
 
   return (
-    <Layout>
+<Layout>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4" style={{background: 'linear-gradient(to right, #2434B3, #1e29a3)'}}>
               <Upload className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Your CV</h1>
@@ -172,7 +172,7 @@ export default function CVUploadPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* File Upload Section */}
-            <div className="border-2 border-dashed border-purple-300 rounded-xl p-8 text-center hover:border-purple-500 transition-colors">
+            <div className="border-2 border-dashed rounded-xl p-8 text-center transition-colors" style={{borderColor: '#2434B3'}} onMouseEnter={(e) => e.target.style.borderColor = '#FF4B36'} onMouseLeave={(e) => e.target.style.borderColor = '#2434B3'}>
               <input
                 type="file"
                 id="cv-upload"
@@ -189,7 +189,7 @@ export default function CVUploadPage() {
               >
                 {isParsing ? (
                   <div className="flex flex-col items-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 mb-4" style={{borderColor: '#2434B3'}}></div>
                     <div className="text-gray-600">Analyzing your CV...</div>
                   </div>
                 ) : uploadedFile ? (
@@ -202,20 +202,23 @@ export default function CVUploadPage() {
                           removeFile();
                           setUploadStatus(null);
                         }}
-                        className="bg-red-100 rounded-full p-1 hover:bg-red-200 transition-colors"
+                        className="rounded-full p-1 transition-colors" 
+                        style={{backgroundColor: '#ffebe9'}}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = '#ffd6d1'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = '#ffebe9'}
                       >
-                        <XCircle className="w-5 h-5 text-red-600" />
+                        <XCircle className="w-5 h-5" style={{color: '#FF4B36'}} />
                       </button>
                     </div>
-                    <FileText className="w-12 h-12 text-green-500 mx-auto" />
-                    <div className="text-green-600 font-medium truncate max-w-xs mx-auto">
+                    <FileText className="w-12 h-12 mx-auto" style={{color: '#2434B3'}} />
+                    <div className="font-medium truncate max-w-xs mx-auto" style={{color: '#2434B3'}}>
                       {uploadedFile.name}
                     </div>
                     <div className="text-sm text-gray-500 mt-2">Click to change file</div>
                   </div>
                 ) : (
                   <>
-                    <Upload className="w-12 h-12 text-purple-500" />
+                    <Upload className="w-12 h-12" style={{color: '#2434B3'}} />
                     <div className="text-lg font-medium text-gray-700">
                       Drop your CV here or click to browse
                     </div>
@@ -239,7 +242,7 @@ export default function CVUploadPage() {
                   <div>
                     <h4 className="text-md font-medium text-gray-700 mb-2 flex items-center">
                       <span>Skills</span>
-                      <span className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                      <span className="ml-2 text-xs px-2 py-1 rounded-full text-white" style={{backgroundColor: '#2434B3'}}>
                         {parsedData.skills.length} found
                       </span>
                     </h4>
@@ -247,7 +250,8 @@ export default function CVUploadPage() {
                       {parsedData.skills.map((skill, index) => (
                         <span 
                           key={index} 
-                          className="bg-purple-100 text-purple-800 text-sm px-3 py-1 rounded-full"
+                          className="text-sm px-3 py-1 rounded-full text-white"
+                          style={{backgroundColor: '#FF4B36'}}
                         >
                           {skill}
                         </span>
@@ -276,7 +280,17 @@ export default function CVUploadPage() {
               </label>
               <select
                 {...register('jobRole', { required: 'Please select a job role' })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900"
+                style={{'--tw-ring-color': '#2434B3'}}
+                onFocus={(e) => {
+                  e.target.style.outline = 'none';
+                  e.target.style.borderColor = '#2434B3';
+                  e.target.style.boxShadow = '0 0 0 2px rgba(36, 52, 179, 0.2)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#d1d5db';
+                  e.target.style.boxShadow = 'none';
+                }}
               >
                 <option value="">Choose a role...</option>
                 {jobRoles.map((role) => (
@@ -284,7 +298,7 @@ export default function CVUploadPage() {
                 ))}
               </select>
               {errors.jobRole && (
-                <p className="mt-2 text-red-600 text-sm flex items-center">
+                <p className="mt-2 text-sm flex items-center" style={{color: '#FF4B36'}}>
                   <AlertCircle className="w-4 h-4 mr-1" />
                   {errors.jobRole.message}
                 </p>
@@ -308,14 +322,27 @@ export default function CVUploadPage() {
                   placeholder="Tell us about your career goals, preferred technologies, extra skills, or any specific requirements..."
                   className={`w-full px-4 py-3 border ${
                     wordCount > MAX_WORDS ? 'border-red-300' : 'border-gray-300'
-                  } rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none`}
+                  } rounded-lg resize-none`}
+                  onFocus={(e) => {
+                    if (wordCount <= MAX_WORDS) {
+                      e.target.style.outline = 'none';
+                      e.target.style.borderColor = '#2434B3';
+                      e.target.style.boxShadow = '0 0 0 2px rgba(36, 52, 179, 0.2)';
+                    }
+                  }}
+                  onBlur={(e) => {
+                    if (wordCount <= MAX_WORDS) {
+                      e.target.style.borderColor = '#d1d5db';
+                      e.target.style.boxShadow = 'none';
+                    }
+                  }}
                 />
                 <div className="absolute bottom-2 right-2 text-sm text-gray-500">
                   {wordCount}/{MAX_WORDS} words
                 </div>
               </div>
               {errors.additionalInfo && (
-                <p className="mt-2 text-red-600 text-sm flex items-center">
+                <p className="mt-2 text-sm flex items-center" style={{color: '#FF4B36'}}>
                   <AlertCircle className="w-4 h-4 mr-1" />
                   {errors.additionalInfo.message}
                 </p>
@@ -324,11 +351,13 @@ export default function CVUploadPage() {
 
             {/* Status Messages */}
             {uploadStatus && (
-              <div className={`flex items-center p-4 rounded-lg ${
+              <div className={`flex items-center p-4 rounded-lg border ${
                 uploadStatus.type === 'success' 
-                  ? 'bg-green-50 text-green-700 border border-green-200' 
-                  : 'bg-red-50 text-red-700 border border-red-200'
-              }`}>
+                  ? 'bg-blue-50 border-blue-200' 
+                  : 'bg-red-50 border-red-200'
+              }`} style={{
+                color: uploadStatus.type === 'success' ? '#2434B3' : '#FF4B36'
+              }}>
                 {uploadStatus.type === 'success' ? (
                   <CheckCircle className="w-5 h-5 mr-2" />
                 ) : (
@@ -342,7 +371,22 @@ export default function CVUploadPage() {
             <button
               type="submit"
               disabled={isUploading || !uploadedFile || !selectedRole}
-              className="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white py-4 px-6 rounded-lg font-medium text-lg hover:from-purple-700 hover:to-purple-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200"
+              className="w-full text-white py-4 px-6 rounded-lg font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 transition-all duration-200"
+              style={{
+                background: isUploading || !uploadedFile || !selectedRole 
+                  ? '#9ca3af' 
+                  : 'linear-gradient(to right, #2434B3, #FF4B36)'
+              }}
+              onMouseEnter={(e) => {
+                if (!e.target.disabled) {
+                  e.target.style.background = 'linear-gradient(to right, #1e29a3, #e6412d)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!e.target.disabled) {
+                  e.target.style.background = 'linear-gradient(to right, #2434B3, #FF4B36)';
+                }
+              }}
             >
               {isUploading ? (
                 <>
