@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { logError, logInfo } from '@/app/lib/services/logger';
 
 const prismaClientSingleton = () => {
+  console.log('DEBUG: process.env.NEXT_RUNTIME in db.ts:', process.env.NEXT_RUNTIME);
   return new PrismaClient({
     log: [
       { emit: 'event', level: 'query' },
