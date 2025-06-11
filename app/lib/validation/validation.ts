@@ -52,12 +52,17 @@ export const validateSkills = (skills: Skill[]): ValidationError | null => {
 };
 
 export const validateCareerPreferences = (preferences: CareerPreference): ValidationError | null => {
-  if (!preferences.industry?.trim()) {
-    return { field: 'industry', message: 'Industry is required' };
+  if (!preferences.industry || preferences.industry.trim() === '') {
+    return { field: 'careerPreferences.industry', message: 'Industry is required' };
   }
-  if (preferences.industry.length < 2) {
-    return { field: 'industry', message: 'Industry must be at least 2 characters long' };
+
+  // If 'Other' is selected, validate the custom industry input
+  if (preferences.industry === 'Other' || preferences.industry.trim() === '') { // The second condition handles cases where 'Other' was selected and then a blank custom industry was entered
+    if (!preferences.industry.trim() || preferences.industry.trim().length < 3) {
+      return { field: 'careerPreferences.industry', message: 'Custom industry must be at least 3 characters long' };
+    }
   }
+
   if (!preferences.location?.trim()) {
     return { field: 'location', message: 'Location is required' };
   }

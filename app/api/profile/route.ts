@@ -2,16 +2,18 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import prisma from '@/app/lib/database/db';
 import { profileSchema } from '@/app/lib/security/security';
-import { logger } from '@/app/lib/services/logger';
+import { logError, logInfo, logWarning } from '@/app/lib/services/logger';
 import { createServerError } from '@/app/lib/errors/serverError';
 import { sanitizeObjectForSQL } from '@/app/lib/security/sqlInjection';
 import { CSRF_HEADER } from '@/app/lib/security/csrf';
 import type { Skill, Education, Experience } from '@/app/lib/types/profile';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   try {
     // Log request details
-    logger.info('Profile creation request received', {
+    await logInfo('Profile creation request received', {
       method: request.method,
       url: request.url,
       ip: request.headers.get('x-forwarded-for') ?? 'unknown',
@@ -20,7 +22,7 @@ export async function POST(request: NextRequest) {
     // Validate CSRF token
     const csrfToken = request.headers.get(CSRF_HEADER);
     if (!csrfToken) {
-      logger.warn('CSRF token missing', {
+      await logWarning('CSRF token missing', {
         ip: request.headers.get('x-forwarded-for') ?? 'unknown',
       });
       return NextResponse.json({ error: 'CSRF token missing' }, { status: 403 });
@@ -28,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     // Parse and validate request body
     const body = await request.json();
-    logger.info('Request body received', {
+    await logInfo('Request body received', {
       body: JSON.stringify(body),
       ip: request.headers.get('x-forwarded-for') ?? 'unknown',
     });
@@ -58,7 +60,7 @@ export async function POST(request: NextRequest) {
     // Validate profile data
     const validationResult = profileSchema.safeParse(body);
     if (!validationResult.success) {
-      logger.warn('Profile validation failed', {
+      await logWarning('Profile validation failed', {
         errors: validationResult.error.errors,
         ip: request.headers.get('x-forwarded-for') ?? 'unknown',
       });
@@ -78,7 +80,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingProfile) {
-      logger.warn('Profile already exists', {
+      await logWarning('Profile already exists', {
         email: sanitizedProfile.email,
         ip: request.headers.get('x-forwarded-for') ?? 'unknown',
       });
@@ -134,7 +136,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    logger.info('Profile created successfully', {
+    await logInfo('Profile created successfully', {
       profileId: profile.id,
       email: profile.email,
       ip: request.headers.get('x-forwarded-for') ?? 'unknown',
@@ -143,8 +145,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(profile, { status: 201 });
 
   } catch (error) {
-    logger.error('Profile creation failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    await logError(error instanceof Error ? error : new Error('Unknown error'), {
+      context: 'Profile creation failed',
       stack: error instanceof Error ? error.stack : undefined,
       ip: request.headers.get('x-forwarded-for') ?? 'unknown',
     });
@@ -168,9 +170,10 @@ export async function POST(request: NextRequest) {
       }
 
       // Log the specific Prisma error
-      logger.error('Prisma error details', {
+      await logError(new Error('Prisma error details'), {
         code: prismaError.code,
         meta: prismaError.meta,
+        context: 'Prisma Error in Profile Creation',
       });
     }
 
@@ -222,8 +225,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json(formattedUser);
   } catch (error) {
-    logger.error('Error fetching profile:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    await logError(error instanceof Error ? error : new Error('Unknown error'), {
+      context: 'Error fetching profile:',
       stack: error instanceof Error ? error.stack : undefined,
     });
 

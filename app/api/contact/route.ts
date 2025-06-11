@@ -5,6 +5,8 @@ import { validateContactForm } from '@/app/lib/validation/contactValidation';
 import { emailService } from '@/app/lib/services/emailService';
 import { logError, logInfo, logWarning } from '@/app/lib/services/logger';
 
+export const runtime = 'nodejs';
+
 // GET handler for CSRF token initialization
 export async function GET() {
   logInfo('CSRF token initialization request received');

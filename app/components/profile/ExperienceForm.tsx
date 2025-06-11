@@ -57,43 +57,11 @@ const JOB_TITLES = [
 ] as const;
 
 const COMPANIES = [
-  // Tech Giants
-  'Google',
-  'Microsoft',
-  'Amazon',
-  'Apple',
-  'Meta',
+  'vodafone',
+  'voice',
+  'fixedsulotion',
+  'etisalat',
   'IBM',
-  'Oracle',
-  'Salesforce',
-  'Adobe',
-  'Intel',
-  'Cisco',
-  'Dell',
-  // Cloud & Infrastructure
-  'AWS',
-  'Google Cloud',
-  'Microsoft Azure',
-  'DigitalOcean',
-  'Cloudflare',
-  // Software & Services
-  'GitHub',
-  'GitLab',
-  'Atlassian',
-  'Slack',
-  'Zoom',
-  'Dropbox',
-  // Social & Media
-  'Twitter',
-  'LinkedIn',
-  'Netflix',
-  'Spotify',
-  'Pinterest',
-  // E-commerce
-  'Shopify',
-  'eBay',
-  'PayPal',
-  'Stripe',
   // Other
   'Other'
 ] as const;

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { logger } from '@/app/lib/services/logger';
+import { logError, logWarning } from '@/app/lib/services/logger';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ValidationError } from '@/app/lib/validation/validation';
 
@@ -20,7 +20,7 @@ export async function createServerError(
   statusCode: number = 500,
   details?: unknown
 ): Promise<NextResponse> {
-  logger.error('Server error', {
+  await logError(new Error('Server error'), {
     message,
     statusCode,
     details,
@@ -45,7 +45,7 @@ export async function handlePrismaError(error: PrismaClientKnownRequestError): P
     return createServerError('Record not found', 404);
   }
 
-  logger.error('Database error', {
+  await logError(new Error('Database error'), {
     error: error.message,
     code: error.code,
     meta: error.meta,
@@ -55,7 +55,7 @@ export async function handlePrismaError(error: PrismaClientKnownRequestError): P
 }
 
 export async function handleValidationError(error: ValidationError): Promise<NextResponse> {
-  logger.warn('Validation error', {
+  await logWarning('Validation error', {
     error: error.message,
     details: error.details,
   });
@@ -64,7 +64,7 @@ export async function handleValidationError(error: ValidationError): Promise<Nex
 }
 
 export async function handleAuthError(error: Error): Promise<NextResponse> {
-  logger.warn('Authentication error', {
+  await logWarning('Authentication error', {
     error: error.message,
   });
 
@@ -72,11 +72,11 @@ export async function handleAuthError(error: Error): Promise<NextResponse> {
 }
 
 export async function handleCSRFError(): Promise<NextResponse> {
-  logger.warn('CSRF validation failed');
+  await logWarning('CSRF validation failed');
   return createServerError('Invalid CSRF token', 403);
 }
 
 export async function handleRateLimitError(): Promise<NextResponse> {
-  logger.warn('Rate limit exceeded');
+  await logWarning('Rate limit exceeded');
   return createServerError('Too many requests', 429);
-} 
+}
