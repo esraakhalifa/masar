@@ -54,9 +54,6 @@ export default function Register() {
       <main className="flex flex-col items-center justify-center w-full max-w-lg px-4">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-blue-100 p-8">
           <div className="flex flex-col items-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mb-2" style={{background: 'linear-gradient(135deg, #2434B3 0%, #1a2a8a 100%)'}}>
-              <span className="text-white font-bold text-2xl">M</span>
-            </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-1">Sign Up</h1>
             <p className="text-gray-500 text-sm">Create your account to get started.</p>
           </div>
