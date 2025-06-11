@@ -5,10 +5,12 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import type { UserProfile, Skill, CareerPreference } from '@/app/lib/types/profile';
-import { ValidationError } from '@/app/lib/validation/validation';
 import {
   createValidationError,
   createServerError,
+  handleValidationError,
+  ClientError,
+  ErrorCodes,
 } from '@/app/lib/errors/clientError';
 import { CSRF_HEADER, CSRF_COOKIE } from '@/app/lib/security/csrf';
 import SkillsAssessment from './SkillsAssessment';
@@ -33,7 +35,6 @@ export default function ProfileForm() {
   const [isExporting, setIsExporting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
 
   // Initialize CSRF token
   useEffect(() => {
@@ -79,14 +80,10 @@ export default function ProfileForm() {
   const fullName = watch('fullName');
   const email = watch('email');
 
-  const handleValidationError = (error: ValidationError) => {
-    toast.error(error.message);
-    return false;
-  };
-
   const validateCurrentStep = () => {
     // Check if there are any form errors first
     if (Object.keys(errors).length > 0) {
+      console.warn('Please fix all errors before proceeding', { context: 'Form Navigation' });
       toast.error('Please fix all errors before proceeding');
       return false;
     }
@@ -95,14 +92,17 @@ export default function ProfileForm() {
     switch (step) {
       case 1:
         if (!fullName?.trim()) {
+          console.warn('Full name is required', { context: 'Step 1 Validation' });
           toast.error('Full name is required');
           return false;
         }
         if (!email?.trim()) {
+          console.warn('Email is required', { context: 'Step 1 Validation' });
           toast.error('Email is required');
           return false;
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          console.warn('Invalid email format', { context: 'Step 1 Validation' });
           toast.error('Invalid email format');
           return false;
         }
@@ -110,6 +110,7 @@ export default function ProfileForm() {
 
       case 2:
         if (!skills.length) {
+          console.warn('At least one skill is required', { context: 'Step 2 Validation' });
           toast.error('At least one skill is required');
           return false;
         }
@@ -117,35 +118,52 @@ export default function ProfileForm() {
 
       case 3:
         if (!careerPreferences.industry?.trim()) {
+          console.warn('Industry is required', { context: 'Step 3 Validation' });
           toast.error('Industry is required');
           return false;
         }
         if (!careerPreferences.workType) {
+          console.warn('Work type is required', { context: 'Step 3 Validation' });
           toast.error('Work type is required');
+          return false;
+        }
+        if (!careerPreferences.location?.trim()) {
+          console.warn('Location is required', { context: 'Step 3 Validation' });
+          toast.error('Location is required');
+          return false;
+        }
+        if (!careerPreferences.preferredSalary || careerPreferences.preferredSalary === 0) {
+          console.warn('Preferred salary is required and must be greater than zero', { context: 'Step 3 Validation' });
+          toast.error('Preferred salary is required and must be greater than zero');
           return false;
         }
         break;
 
       case 4:
         if (!education.length) {
+          console.warn('At least one education entry is required', { context: 'Step 4 Validation' });
           toast.error('At least one education entry is required');
           return false;
         }
         // Validate each education entry
         for (const edu of education) {
           if (!edu.institution?.trim()) {
+            console.warn('Institution is required for all education entries', { context: 'Education Entry Validation' });
             toast.error('Institution is required for all education entries');
             return false;
           }
           if (!edu.degree?.trim()) {
+            console.warn('Degree is required for all education entries', { context: 'Education Entry Validation' });
             toast.error('Degree is required for all education entries');
             return false;
           }
           if (!edu.fieldOfStudy?.trim()) {
+            console.warn('Field of study is required for all education entries', { context: 'Education Entry Validation' });
             toast.error('Field of study is required for all education entries');
             return false;
           }
           if (!edu.graduationYear) {
+            console.warn('Graduation year is required for all education entries', { context: 'Education Entry Validation' });
             toast.error('Graduation year is required for all education entries');
             return false;
           }
@@ -154,20 +172,24 @@ export default function ProfileForm() {
 
       case 5:
         if (!experience.length) {
+          console.warn('At least one experience entry is required', { context: 'Step 5 Validation' });
           toast.error('At least one experience entry is required');
           return false;
         }
         // Validate each experience entry
         for (const exp of experience) {
           if (!exp.title?.trim()) {
+            console.warn('Title is required for all experience entries', { context: 'Experience Entry Validation' });
             toast.error('Title is required for all experience entries');
             return false;
           }
           if (!exp.company?.trim()) {
+            console.warn('Company is required for all experience entries', { context: 'Experience Entry Validation' });
             toast.error('Company is required for all experience entries');
             return false;
           }
           if (!exp.startDate) {
+            console.warn('Start date is required for all experience entries', { context: 'Experience Entry Validation' });
             toast.error('Start date is required for all experience entries');
             return false;
           }
@@ -180,6 +202,7 @@ export default function ProfileForm() {
 
   const handleNext = () => {
     if (validateCurrentStep()) {
+      console.info(`Navigating to next step: ${step + 1}`, { context: 'Form Navigation' });
       setStep(step + 1);
     }
   };
@@ -190,6 +213,7 @@ export default function ProfileForm() {
 
       // Validate all required fields before submission
       if (!validateCurrentStep()) {
+        console.warn('Form submission aborted due to validation errors.', { context: 'Form Submission' });
         return;
       }
 
@@ -202,6 +226,7 @@ export default function ProfileForm() {
         });
         
         if (!response.ok) {
+          console.error(new Error('Failed to initialize CSRF token during submission'), { context: 'Form Submission' });
           throw createValidationError('csrf', 'Failed to initialize security token. Please refresh the page.');
         }
         
@@ -209,6 +234,7 @@ export default function ProfileForm() {
         setCsrfToken(token);
         
         if (!token) {
+          console.error(new Error('Security token missing during submission'), { context: 'Form Submission' });
           throw createValidationError('csrf', 'Security token missing. Please refresh the page and try again.');
         }
       }
@@ -244,7 +270,7 @@ export default function ProfileForm() {
       };
 
       // Log the exact structure of the form data
-      console.log('Form data structure:', formData);
+      console.info('Form data structure:', { formData });
 
       // Submit the form data
       const response = await fetch('/api/profile', {
@@ -256,76 +282,48 @@ export default function ProfileForm() {
         body: JSON.stringify(formData),
       });
 
-      console.log('Submitting form data:', formData);
-
       if (!response.ok) {
-        const responseData = await response.json();
-        console.error('API Error:', responseData);
-        
-        if (response.status === 403) {
-          // CSRF token issue - try to refresh it
-          const csrfResponse = await fetch('/api/csrf', {
-            method: 'GET',
-            credentials: 'include',
-          });
-          
-          if (csrfResponse.ok) {
-            const { token } = await csrfResponse.json();
-            setCsrfToken(token);
-            // Retry the submission
-            if (retryCount < 3) {
-              setRetryCount(prev => prev + 1);
-              return onSubmit(data);
-            }
-          }
-          throw createValidationError('csrf', 'Security token invalid. Please refresh the page and try again.');
-        }
+        const errorData = await response.json();
+        const errorMessage = errorData.message || 'An unexpected error occurred.';
 
-        if (response.status === 409) {
-          // Profile already exists - redirect to profile page
-          toast.success('Profile already exists. Redirecting...');
-          localStorage.setItem('userEmail', data.email);
-          router.push('/profile');
-          return;
-        }
+        console.error(new Error(errorMessage), { context: 'Profile Submission', response: errorData });
 
-        if (response.status === 400) {
-          // Validation error
-          const errors = responseData.details || [];
-          const errorMessage = errors.map((err: { message: string }) => err.message).join(', ');
-          throw createValidationError('form', errorMessage);
+        if (response.status === 400 && errorData.errorType === 'ValidationError') {
+          handleValidationError({ field: errorData.field || 'unknown', message: errorMessage });
+        } else if (response.status === 403 && errorData.errorType === 'CSRFError') {
+          toast.error('Security token mismatch. Please refresh and try again.');
+        } else {
+          createServerError(errorMessage);
         }
-
-        // Handle other errors
-        const errorMessage = responseData.error || 'Failed to create profile';
-        const errorDetails = responseData.details || '';
-        throw createServerError(`${errorMessage}${errorDetails ? `: ${errorDetails}` : ''}`);
+        return;
       }
 
-      // Success - store email and redirect
-      localStorage.setItem('userEmail', data.email);
-      toast.success('Profile created successfully!');
+      console.info('Profile saved successfully!', { context: 'Profile Submission' });
+      toast.success('Profile saved successfully!');
+
+      const result = await response.json();
+      console.info('Submission result:', { result });
+      
+      // Store user email in localStorage for profile retrieval
+      localStorage.setItem('userEmail', result.email);
+
+      // Navigate to the profile page after successful submission
       router.push('/profile');
     } catch (error) {
-      console.error('Form submission error:', error);
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error('An unexpected error occurred');
-      }
-    } finally {
       setIsSaving(false);
+      console.error(error as Error, { context: 'Profile Form Submission General Error' });
+      if (error instanceof ClientError && error.code === ErrorCodes.VALIDATION_ERROR) {
+        handleValidationError({ field: (error as ClientError).field || 'unknown', message: error.message });
+      } else {
+        createServerError('Failed to save profile. Please try again.');
+      }
     }
   };
 
   const handleExportPDF = async () => {
-    if (!isFormComplete()) {
-      toast.error('Please complete all required fields before exporting.');
-      return;
-    }
     setIsExporting(true);
     try {
-      const completeProfile: UserProfile = {
+      const profileData: UserProfile = {
         fullName: fullName,
         email: email,
         skills: skills,
@@ -333,13 +331,12 @@ export default function ProfileForm() {
         education: education,
         experience: experience,
       };
-
-      // The html2canvas part is commented out in pdfExport.ts, so we'll just call the pdf generation
-      await exportProfileToPdf(completeProfile);
-      toast.success('PDF exported successfully!');
+      await exportProfileToPdf(profileData);
+      console.info('Profile exported to PDF successfully!', { context: 'PDF Export' });
+      toast.success('Profile exported to PDF successfully!');
     } catch (error) {
-      console.error("Error exporting PDF:", error);
-      toast.error('Failed to export PDF.');
+      console.error(error as Error, { context: 'PDF Export' });
+      toast.error('Failed to export profile to PDF. Please try again later.');
     } finally {
       setIsExporting(false);
     }
@@ -347,19 +344,20 @@ export default function ProfileForm() {
 
   const handleExportCalendar = () => {
     try {
-      const completeProfile: UserProfile = {
-        fullName: watch('fullName') || '',
-        email: watch('email') || '',
-        skills,
-        careerPreferences,
-        education,
-        experience
+      const profileData: UserProfile = {
+        fullName: fullName,
+        email: email,
+        skills: skills,
+        careerPreferences: careerPreferences,
+        education: education,
+        experience: experience,
       };
-      
-      generateCalendarEvents(completeProfile);
-      toast.success('Calendar events exported successfully!');
+      generateCalendarEvents(profileData);
+      console.info('Calendar events generated successfully!', { context: 'Calendar Export' });
+      toast.success('Calendar events generated successfully!');
     } catch (error) {
-      handleValidationError(error as ValidationError);
+      console.error(error as Error, { context: 'Calendar Export' });
+      toast.error('Failed to generate calendar events. Please try again later.');
     }
   };
 

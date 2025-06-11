@@ -1,158 +1,77 @@
-import morgan from 'morgan';
-import winston, { LoggerOptions } from 'winston';
-// import 'winston-daily-rotate-file'; // Removed as not used
-// import { TransportStream } from 'winston-transport'; // Removed as this was causing issues
-// import path from 'path'; // Removed as no longer needed outside Node.js env
-import { Request, Response } from 'express';
+'use server';
+
+import { createLogger, format, transports, Logger as WinstonLogger } from 'winston';
+import 'winston-daily-rotate-file'; // Required for DailyRotateFile transport
+import Transport from 'winston-transport'; // Import base Transport type
 
 // Define log context type
 type LogContext = Record<string, unknown>;
 
-// Extend Express Response type to include body
-interface ResponseWithBody extends Response {
-  body?: unknown;
-}
+// Determine if running in Node.js runtime (for file logging)
+const isNodeJsRuntime = process.env.NEXT_RUNTIME === 'nodejs';
+console.error('CRITICAL DEBUG: process.env.NEXT_RUNTIME in logger.ts:', process.env.NEXT_RUNTIME);
+console.error('CRITICAL DEBUG: isNodeJsRuntime in logger.ts:', isNodeJsRuntime);
 
-// Define log levels
-const levels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  http: 3,
-  debug: 4,
-};
-
-// Define log colors
-const colors = {
-  error: 'red',
-  warn: 'yellow',
-  info: 'green',
-  http: 'magenta',
-  debug: 'blue',
-};
-
-// Add colors to winston
-winston.addColors(colors);
-
-// Define the format for logs
-const format = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
-  winston.format.colorize({ all: true }),
-  winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}`,
-  ),
-);
-
-// Define which transports to use
-const transports: LoggerOptions['transports'] = [
-  // Console transport
-  new winston.transports.Console(),
+const logTransports: Transport[] = [
+  new transports.Console({
+    format: format.combine(
+      format.colorize(),
+      format.timestamp(),
+      format.printf(info => `[${info.timestamp}] ${info.level}: ${info.message} ${info.context ? JSON.stringify(info.context) : ''}`)
+    )
+  })
 ];
 
-// Conditionally add file transports for Node.js environment
-/*
-if (process.env.NEXT_RUNTIME === 'nodejs') {
-  transports.push(
-    // Error log file transport
-    new winston.transports.DailyRotateFile({
-      filename: `logs/error-%DATE%.log`,
-      datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
-      maxSize: '20m',
-      maxFiles: '14d',
-      level: 'error',
-    }),
-
-    // All logs file transport
-    new winston.transports.DailyRotateFile({
-      filename: `logs/combined-%DATE%.log`,
-      datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
-      maxSize: '20m',
-      maxFiles: '14d',
-    }),
-  );
-}
-*/
-
-// Create the logger instance
-export const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-  levels,
-  format,
-  transports,
-});
-
-// Custom Morgan token for request body
-morgan.token('body', (req: Request) => JSON.stringify(req.body));
-
-// Custom Morgan token for response body
-morgan.token('response-body', (req: Request, res: ResponseWithBody) => {
-  if (res.body) {
-    return JSON.stringify(res.body);
+// Add file transport only if in Node.js runtime
+if (isNodeJsRuntime) {
+  try {
+    logTransports.push(
+      new transports.DailyRotateFile({
+        filename: 'logs/application-%DATE%.log',
+        datePattern: 'YYYY-MM-DD',
+        zippedArchive: true,
+        maxSize: '20m',
+        maxFiles: '14d',
+        format: format.combine(
+          format.timestamp(),
+          format.json()
+        )
+      })
+    );
+    // console.log('File logging enabled.'); // Use console.log here to avoid circular dependency
+  } catch (err) {
+    console.error('Failed to initialize winston-daily-rotate-file:', err);
   }
-  return '';
-});
+}
 
-// Custom Morgan token for request headers
-morgan.token('headers', (req: Request) => {
-  const headers = { ...req.headers };
-  // Remove sensitive information
-  delete headers.authorization;
-  delete headers.cookie;
-  return JSON.stringify(headers);
-});
-
-// Custom Morgan format
-const morganFormat = ':remote-addr - :method :url :status :response-time ms\n' +
-  'Headers: :headers\n' +
-  'Request Body: :body\n' +
-  'Response Body: :response-body\n' +
-  '----------------------------------------';
-
-// Create Morgan middleware with custom format
-export const morganMiddleware = morgan(morganFormat, {
-  stream: {
-    write: (message) => {
-      // Filter out sensitive information
-      const filteredMessage = message
-        .replace(/password=([^&]*)/g, 'password=***')
-        .replace(/token=([^&]*)/g, 'token=***')
-        .replace(/authorization=([^&]*)/g, 'authorization=***');
-
-      // Log based on status code
-      if (message.includes(' 5')) {
-        logger.error(filteredMessage);
-      } else if (message.includes(' 4')) {
-        logger.warn(filteredMessage);
-      } else {
-        logger.http(filteredMessage);
-      }
-    },
-  },
-  skip: (req) => {
-    // Skip logging for static files and health checks
-    return req.url?.startsWith('/_next') || req.url === '/api/health';
-  },
+const _logger: WinstonLogger = createLogger({
+  level: 'info', // Default logging level
+  format: format.combine(
+    format.timestamp(),
+    format.errors({ stack: true }),
+    format.splat(),
+    format.json()
+  ),
+  transports: logTransports
 });
 
 // Helper functions for logging
-export const logError = (error: Error, context?: LogContext) => {
-  logger.error(`${error.message}\n${error.stack}`, { context });
+export const logError = async (error: Error, context?: LogContext) => {
+  _logger.error(error.message, { stack: error.stack, ...context });
 };
 
-export const logInfo = (message: string, context?: LogContext) => {
-  logger.info(message, { context });
+export const logInfo = async (message: string, context?: LogContext) => {
+  _logger.info(message, context);
 };
 
-export const logWarning = (message: string, context?: LogContext) => {
-  logger.warn(message, { context });
+export const logWarning = async (message: string, context?: LogContext) => {
+  _logger.warn(message, context);
 };
 
-export const logDebug = (message: string, context?: LogContext) => {
-  logger.debug(message, { context });
+export const logDebug = async (message: string, context?: LogContext) => {
+  _logger.debug(message, context);
 };
 
-export const logHttp = (message: string, context?: LogContext) => {
-  logger.http(message, { context });
+export const logHttp = async (message: string, context?: LogContext) => {
+  _logger.http(message, context);
 }; 

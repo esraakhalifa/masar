@@ -98,6 +98,12 @@ export default function EducationForm({ education, onChange }: EducationFormProp
       toast.error('Please enter a custom field of study');
       return;
     }
+    // Validate institution before adding
+    if (!validateInstitution(newEducation.institution || '')) {
+      toast.error('Please fix the institution field error');
+      return;
+    }
+
     if (newEducation.degree && newEducation.fieldOfStudy && newEducation.institution && newEducation.graduationYear) {
       const educationToAdd = {
         ...newEducation,

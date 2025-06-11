@@ -2,14 +2,6 @@
 
 import ProfileForm from '@/app/components/profile/ProfileForm';
 import Layout from '../../../components/Layout';
-// Removed unused imports: UserProfile, Skill, CareerPreference, validateStep, ValidationError, handleValidationError, handleProfileError, handleExportError
-// import type { UserProfile, Skill, CareerPreference } from '@/app/lib/types/profile';
-// import { validateStep, ValidationError } from '@/app/lib/validation/validation';
-// import { 
-//   handleValidationError, 
-//   handleProfileError, 
-//   handleExportError,
-// } from '@/app/lib/errors/clientError';
 
 export default function BuildProfilePage() {
   return (

@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { logError, logInfo } from './logger';
 
 // Email configuration
 const emailConfig = {
@@ -12,7 +13,24 @@ const emailConfig = {
 };
 
 // Create reusable transporter
-const transporter = nodemailer.createTransport(emailConfig);
+let transporter: nodemailer.Transporter;
+
+try {
+  logInfo('Attempting to create Nodemailer transporter with config:', emailConfig);
+  transporter = nodemailer.createTransport(emailConfig);
+  logInfo('Nodemailer transporter created successfully.');
+} catch (transporterError) {
+  logError(transporterError instanceof Error ? transporterError : new Error('Failed to create Nodemailer transporter'), {
+    context: 'Nodemailer Transporter Creation',
+    emailConfig: {
+      host: emailConfig.host,
+      port: emailConfig.port,
+      secure: emailConfig.secure,
+      user: emailConfig.auth.user ? '[REDACTED]' : 'N/A', // Redact password
+    }
+  });
+  throw transporterError; // Re-throw to ensure it's caught upstream
+}
 
 // Email templates
 const emailTemplates = {
@@ -44,12 +62,25 @@ export const emailService = {
     try {
       const { subject, html } = emailTemplates.contactForm(data);
       
+      logInfo('Attempting to send contact form email to admin', {
+        to: process.env.ADMIN_EMAIL,
+        from: process.env.EMAIL_USER,
+        subject,
+      });
+
       // Send email to admin
       await transporter.sendMail({
         from: `"Masar Contact Form" <${process.env.EMAIL_USER}>`,
         to: process.env.ADMIN_EMAIL,
         subject,
         html,
+      });
+      logInfo('Contact form email sent to admin successfully.');
+
+      logInfo('Attempting to send confirmation email to user', {
+        to: data.email,
+        from: process.env.EMAIL_USER,
+        subject: 'Thank you for contacting Masar',
       });
 
       // Send confirmation email to user
@@ -61,7 +92,7 @@ export const emailService = {
           <h2>Thank you for contacting Masar</h2>
           <p>Dear ${data.name},</p>
           <p>We have received your message and will get back to you as soon as possible.</p>
-          <p>Here's a copy of your message:</p>
+          <p>Here\'s a copy of your message:</p>
           <blockquote>
             <p><strong>Subject:</strong> ${data.subject}</p>
             <p>${data.message}</p>
@@ -69,10 +100,19 @@ export const emailService = {
           <p>Best regards,<br>The Masar Team</p>
         `,
       });
+      logInfo('Confirmation email sent to user successfully.');
 
       return true;
     } catch (error) {
-      console.error('Error sending email:', error);
+      logError(error instanceof Error ? error : new Error('Failed to send email'), {
+        context: 'Email Sending Failure',
+        data: {
+          name: data.name,
+          email: data.email,
+          subject: data.subject,
+          message: '[REDACTED]'
+        }
+      });
       throw new Error('Failed to send email');
     }
   },

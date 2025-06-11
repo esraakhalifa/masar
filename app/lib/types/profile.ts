@@ -30,6 +30,7 @@ export interface Experience {
 export interface UserProfile {
   fullName: string;
   email: string;
+  avatarUrl?: string;
   skills: Skill[];
   careerPreferences: CareerPreference;
   education: Education[];
