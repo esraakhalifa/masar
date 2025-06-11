@@ -4,9 +4,11 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { compare } from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import GoogleProvider from "next-auth/providers/google";
+import { NextAuthOptions } from "next-auth";
+
 const prisma = new PrismaClient();
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -58,6 +60,7 @@ const handler = NextAuth({
     error: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST }; 
