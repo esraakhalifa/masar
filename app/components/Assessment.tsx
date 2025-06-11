@@ -211,8 +211,8 @@ export default function Assessment({ role }: AssessmentProps) {
   const currentSkill = skills[currentSkillIndex];
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="w-full max-w-4xl mx-auto bg-gradient-to-br from-[#4040F2] via-[#5e5ef7] to-[#FF4A3D] rounded-xl shadow-lg p-8 text-white">
+    <div className="min-h-screen p-6">
+      <div className="w-full max-w-4xl mx-auto bg-black/30 rounded-xl shadow-lg p-8 text-white border border-white/10">
         <div className="mb-8">
           <div className="relative flex items-center mb-8">
             <div className="flex-1">
@@ -293,12 +293,12 @@ export default function Assessment({ role }: AssessmentProps) {
                           key={oIndex}
                           className={`flex items-center p-4 rounded-lg cursor-pointer transition-all duration-200 ${
                             !isAnswered
-                              ? "bg-white border-2 border-[#4040F2]/20 text-[#1A1A3D] hover:border-[#FF4A3D] hover:bg-[#FF4A3D]/5 hover:shadow-md"
+                              ? "bg-white border-2 border-[#2434B3] text-[#1A1A3D] hover:border-[#2434B3] hover:bg-[#2434B3]/5 hover:shadow-md"
                               : isCorrect
                               ? "bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-md"
                               : isSelected
                               ? "bg-gradient-to-r from-red-500 to-[#FF4A3D] text-white shadow-md"
-                              : "bg-white border-2 border-[#4040F2]/20 text-[#1A1A3D] opacity-50"
+                              : "bg-white border-2 border-[#2434B3] text-[#1A1A3D] opacity-50"
                           }`}
                           onClick={() => handleAnswerSelect(qIndex, oIndex)}
                         >
@@ -335,7 +335,7 @@ export default function Assessment({ role }: AssessmentProps) {
             onClick={() => moveToSkill(currentSkillIndex - 1)}
             disabled={currentSkillIndex === 0}
             className="px-6 py-3 rounded-lg disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed flex items-center gap-2 transition-all duration-200
-                     enabled:bg-gradient-to-r enabled:from-[#4040F2] enabled:to-[#FF4A3D] enabled:text-white enabled:hover:translate-x-[-4px] enabled:shadow-md"
+                     enabled:bg-[#FF4B36] enabled:text-white enabled:hover:translate-x-[-4px] enabled:shadow-md"
           >
             <FaArrowLeft /> Previous Skill
           </button>
@@ -346,7 +346,7 @@ export default function Assessment({ role }: AssessmentProps) {
               !isSkillComplete(skills[currentSkillIndex])
             }
             className="px-6 py-3 rounded-lg disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed flex items-center gap-2 transition-all duration-200
-                     enabled:bg-gradient-to-r enabled:from-[#4040F2] enabled:to-[#FF4A3D] enabled:text-white enabled:hover:translate-x-[4px] enabled:shadow-md"
+                     enabled:bg-[#FF4B36] enabled:text-white enabled:hover:translate-x-[4px] enabled:shadow-md"
           >
             Next Skill <FaArrowRight />
           </button>
@@ -385,9 +385,7 @@ export default function Assessment({ role }: AssessmentProps) {
                   }}
                   className={`px-8 py-4 rounded-lg hover:translate-y-[-2px] transition-all duration-200 flex items-center gap-2 font-medium text-white shadow-lg
                     ${
-                      calculateScore() >= 70
-                        ? "bg-gradient-to-r from-emerald-500 to-green-500"
-                        : "bg-gradient-to-r from-red-500 to-[#FF4A3D]"
+                      calculateScore() >= 70 ? "bg-emerald-500" : "bg-[#FF4B36]"
                     }`}
                 >
                   {currentSkillIndex < skills.length - 1 ? (
