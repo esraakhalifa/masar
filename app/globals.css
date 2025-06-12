@@ -2,6 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Custom Gradient Text */
+.gradient-text {
+  background: linear-gradient(to right, #2434b3, #ff4b36);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hover Effects */
+.hover-gradient:hover {
+  background: linear-gradient(to right, #2434b3, #ff4b36);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom Shadows */
+.shadow-gradient {
+  box-shadow: 0 4px 6px -1px rgba(36, 52, 179, 0.1),
+    0 2px 4px -1px rgba(255, 75, 54, 0.06);
+}
+
+.shadow-gradient:hover {
+  box-shadow: 0 10px 15px -3px rgba(36, 52, 179, 0.1),
+    0 4px 6px -2px rgba(255, 75, 54, 0.05);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -40,9 +94,12 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-code, pre {
-  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+code,
+pre {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
