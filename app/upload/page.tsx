@@ -19,7 +19,28 @@ interface UploadStatus {
 
 interface ParsedData {
   skills: string[];
-  rawData?: unknown; 
+  personalInfo: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    location?: string;
+  };
+  workExperience: Array<{
+    jobTitle?: string;
+    company?: string;
+    location?: string;
+    dates?: string;
+    description?: string;
+  }>;
+  education: Array<{
+    degree?: string;
+    institution?: string;
+    location?: string;
+    dates?: string;
+  }>;
+  certifications: string[];
+  languages: string[];
+  rawData?: unknown;
 }
 
 const MAX_WORDS = 100; // Maximum number of words allowed
@@ -86,8 +107,23 @@ export default function CVUploadPage() {
     setUploadStatus(null);
 
     try {
-      
-      
+      // Save the parsed data to the database
+      const saveResponse = await fetchWithCsrf('/api/save-resume-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...parsedData,
+          jobRole: data.jobRole,
+          additionalInfo: data.additionalInfo,
+        }),
+      });
+
+      if (!saveResponse.ok) {
+        throw new Error('Failed to save resume data');
+      }
+
       setUploadStatus({ 
         type: 'success', 
         message: 'CV processed successfully! Moving to next steps.....' 
@@ -98,6 +134,7 @@ export default function CVUploadPage() {
       }, 2000);
       
     } catch (error) {
+      console.error('Error saving resume data:', error);
       setUploadStatus({ 
         type: 'error', 
         message: 'Failed to process CV. Please try again.' 
@@ -136,6 +173,11 @@ export default function CVUploadPage() {
         if (result.success) {
           setParsedData({
             skills: result.data.skills || [],
+            personalInfo: result.data.personalInfo || {},
+            workExperience: result.data.workExperience || [],
+            education: result.data.education || [],
+            certifications: result.data.certifications || [],
+            languages: result.data.languages || [],
             rawData: result.data 
           });
 
