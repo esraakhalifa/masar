@@ -90,36 +90,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// PATCH /api/tasks/[id] - Partially update a task
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const data = await req.json();
 
-    const updatedTask = await prisma.task.update({
-      where: {
-        id: params.id,
-      },
-      data,
-    });
-
-    return NextResponse.json(updatedTask);
-  } catch (error) {
-    console.error('Error updating task:', error);
-
-    // Handle "not found" errors gracefully
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === 'P2025'
-    ) {
-      return NextResponse.json({ error: 'Task not found' }, { status: 404 });
-    }
-
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
-}
 
 
 // DELETE /api/tasks/[id] - Soft delete task
