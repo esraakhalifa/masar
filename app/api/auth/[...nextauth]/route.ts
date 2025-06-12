@@ -5,6 +5,7 @@ import { compare } from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
+import { logInfo, logError } from "@/app/lib/services/logger";
 
 const prisma = new PrismaClient();
 
@@ -43,21 +44,27 @@ export const authOptions: NextAuthOptions = {
   ],
   session: { strategy: "jwt" },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.firstName = user.firstName;
-        token.lastName = user.lastName;
-      }
-      return token;
+    async signIn({ user, account, profile, email, credentials }) {
+      logInfo("NextAuth signIn callback", { email: user?.email, provider: account?.provider });
+      return true;
     },
     async session({ session, token }) {
+      logInfo("NextAuth session callback", { email: session.user?.email });
       if (token?.id && session.user) {
         (session.user).id = token.id;
         session.user.firstName = token.firstName;
         session.user.lastName = token.lastName;
       }
       return session;
+    },
+    async jwt({ token, user }) {
+      logInfo("NextAuth jwt callback", { token, user });
+      if (user) {
+        token.id = user.id;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+      }
+      return token;
     },
   },
   pages: {
