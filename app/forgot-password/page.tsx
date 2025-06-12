@@ -1,16 +1,30 @@
 "use client";
 import { useState } from "react";
-import Header from "../components/Header";
+import Layout from "@/components/Layout";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({ email: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    const errors = { email: "" };
+    let hasError = false;
+
+    if (!email.trim()) {
+      errors.email = "Email is required";
+      hasError = true;
+    } else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      errors.email = "Invalid email address";
+      hasError = true;
+    }
+    setFieldErrors(errors);
+    if (hasError) return;
+
     let data;
     let res;
     try {
@@ -32,35 +46,40 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
-      <Header />
-      <main className="max-w-md mx-auto py-16 px-6">
-        <h1 className="text-4xl font-bold mb-6 text-center">Forgot Password</h1>
-        <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="w-full bg-gray-700 text-white p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300"
-                placeholder="Your Email"
-                required
-              />
+    <Layout>
+      <div className="min-h-screen flex items-center justify-center px-4 mt-4 bg-gradient-to-b from-purple-100 to-white">
+        <main className="flex flex-col items-center w-full max-w-lg px-2">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-purple-100 p-8">
+            <div className="flex flex-col items-center mb-6">
+              <h1 className="text-3xl font-bold text-gray-900 mb-1">Forgot Password</h1>
+              <p className="text-gray-500 text-sm text-center">Enter your email to receive a password reset link.</p>
             </div>
-            {error && <div className="text-red-400 text-center">{error}</div>}
-            {success && <div className="text-green-400 text-center">{success}</div>}
-            <button
-              type="submit"
-              className="w-full bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-500 transition-all duration-300 transform hover:scale-105"
-            >
-              Send Reset Link
-            </button>
-          </form>
-        </div>
-      </main>
-    </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-700">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="w-full bg-gray-100 text-gray-900 p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all duration-300"
+                  placeholder="Your Email"
+                />
+                {fieldErrors.email && <div className="text-red-500 text-xs mt-1">{fieldErrors.email}</div>}
+              </div>
+              {error && <div className="text-red-500 text-center">{error}</div>}
+              {success && <div className="text-green-500 text-center">{success}</div>}
+              <button
+                type="submit"
+                className="w-full text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                style={{background: 'linear-gradient(135deg, #2434B3 0%, #1a2a8a 100%)'}}
+              >
+                Send Reset Link
+              </button>
+            </form>
+          </div>
+        </main>
+      </div>
+    </Layout>
   );
 } 
