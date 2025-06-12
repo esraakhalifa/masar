@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import type { UserProfile, Skill, CareerPreference } from '@/app/lib/types/profile';
 import {
   createValidationError,
@@ -18,10 +19,12 @@ import CareerPreferences from './CareerPreferences';
 import EducationForm from './EducationForm';
 import ExperienceForm from './ExperienceForm';
 import { exportProfileToPdf } from '@/app/lib/services/pdfExport';
-import { generateCalendarEvents } from '@/app/lib/services/calendarExport';
+import { motion } from 'framer-motion';
+import { User, ClipboardList, Briefcase, GraduationCap, Heart } from 'lucide-react';
 
 export default function ProfileForm() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [step, setStep] = useState(1);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [careerPreferences, setCareerPreferences] = useState<CareerPreference>({
@@ -36,17 +39,39 @@ export default function ProfileForm() {
   const [isSaving, setIsSaving] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
 
-  // Initialize CSRF token
+  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<UserProfile>({
+    mode: 'onChange',
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+    }
+  });
+  const firstName = watch('firstName');
+  const lastName = watch('lastName');
+  const email = watch('email');
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
+  };
+
+  const stepIcons = [
+    { icon: User, name: 'Basic Info' },
+    { icon: ClipboardList, name: 'Skills' },
+    { icon: Heart, name: 'Preferences' },
+    { icon: GraduationCap, name: 'Education' },
+    { icon: Briefcase, name: 'Experience' },
+  ];
+
   useEffect(() => {
     const initializeCSRFToken = async () => {
       try {
-        // Get CSRF token from cookie
         const cookies = document.cookie.split(';');
         const csrfCookie = cookies.find(cookie => cookie.trim().startsWith(`${CSRF_COOKIE}=`));
         const storedToken = csrfCookie ? csrfCookie.split('=')[1] : null;
 
         if (!storedToken) {
-          // If no token exists, generate a new one
           const response = await fetch('/api/csrf', {
             method: 'GET',
             credentials: 'include',
@@ -70,30 +95,31 @@ export default function ProfileForm() {
     initializeCSRFToken();
   }, []);
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<UserProfile>({
-    mode: 'onChange',
-    defaultValues: {
-      fullName: '',
-      email: '',
+  useEffect(() => {
+    if (session?.user) {
+      setValue('firstName', session.user.firstName || '');
+      setValue('lastName', session.user.lastName || '');
+      setValue('email', session.user.email || '');
     }
-  });
-  const fullName = watch('fullName');
-  const email = watch('email');
+  }, [session, setValue]);
 
   const validateCurrentStep = () => {
-    // Check if there are any form errors first
     if (Object.keys(errors).length > 0) {
       console.warn('Please fix all errors before proceeding', { context: 'Form Navigation' });
       toast.error('Please fix all errors before proceeding');
       return false;
     }
 
-    // Validate required fields for each step
     switch (step) {
       case 1:
-        if (!fullName?.trim()) {
-          console.warn('Full name is required', { context: 'Step 1 Validation' });
-          toast.error('Full name is required');
+        if (!firstName?.trim()) {
+          console.warn('First name is required', { context: 'Step 1 Validation' });
+          toast.error('First name is required');
+          return false;
+        }
+        if (!lastName?.trim()) {
+          console.warn('Last name is required', { context: 'Step 1 Validation' });
+          toast.error('Last name is required');
           return false;
         }
         if (!email?.trim()) {
@@ -145,7 +171,6 @@ export default function ProfileForm() {
           toast.error('At least one education entry is required');
           return false;
         }
-        // Validate each education entry
         for (const edu of education) {
           if (!edu.institution?.trim()) {
             console.warn('Institution is required for all education entries', { context: 'Education Entry Validation' });
@@ -176,7 +201,6 @@ export default function ProfileForm() {
           toast.error('At least one experience entry is required');
           return false;
         }
-        // Validate each experience entry
         for (const exp of experience) {
           if (!exp.title?.trim()) {
             console.warn('Title is required for all experience entries', { context: 'Experience Entry Validation' });
@@ -211,15 +235,12 @@ export default function ProfileForm() {
     try {
       setIsSaving(true);
 
-      // Validate all required fields before submission
       if (!validateCurrentStep()) {
         console.warn('Form submission aborted due to validation errors.', { context: 'Form Submission' });
         return;
       }
 
-      // Check CSRF token
       if (!csrfToken) {
-        // Try to reinitialize CSRF token
         const response = await fetch('/api/csrf', {
           method: 'GET',
           credentials: 'include',
@@ -239,9 +260,9 @@ export default function ProfileForm() {
         }
       }
 
-      // Prepare the data for submission
       const formData = {
-        fullName: data.fullName.trim(),
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
         email: data.email.trim(),
         skills: skills.map(skill => ({
           name: skill.name.trim(),
@@ -269,10 +290,8 @@ export default function ProfileForm() {
         }))
       };
 
-      // Log the exact structure of the form data
       console.info('Form data structure:', { formData });
 
-      // Submit the form data
       const response = await fetch('/api/profile', {
         method: 'POST',
         headers: {
@@ -290,6 +309,11 @@ export default function ProfileForm() {
 
         if (response.status === 400 && errorData.errorType === 'ValidationError') {
           handleValidationError({ field: errorData.field || 'unknown', message: errorMessage });
+        } else if (response.status === 409) {
+          toast.success('Profile already exists. Redirecting to your profile page!');
+          localStorage.setItem('userEmail', data.email.trim());
+          router.push('/profile');
+          return;
         } else if (response.status === 403 && errorData.errorType === 'CSRFError') {
           toast.error('Security token mismatch. Please refresh and try again.');
         } else {
@@ -304,10 +328,8 @@ export default function ProfileForm() {
       const result = await response.json();
       console.info('Submission result:', { result });
       
-      // Store user email in localStorage for profile retrieval
       localStorage.setItem('userEmail', result.email);
 
-      // Navigate to the profile page after successful submission
       router.push('/profile');
     } catch (error) {
       setIsSaving(false);
@@ -324,7 +346,8 @@ export default function ProfileForm() {
     setIsExporting(true);
     try {
       const profileData: UserProfile = {
-        fullName: fullName,
+        firstName: firstName,
+        lastName: lastName,
         email: email,
         skills: skills,
         careerPreferences: careerPreferences,
@@ -342,61 +365,83 @@ export default function ProfileForm() {
     }
   };
 
-  const handleExportCalendar = () => {
-    try {
-      const profileData: UserProfile = {
-        fullName: fullName,
-        email: email,
-        skills: skills,
-        careerPreferences: careerPreferences,
-        education: education,
-        experience: experience,
-      };
-      generateCalendarEvents(profileData);
-      console.info('Calendar events generated successfully!', { context: 'Calendar Export' });
-      toast.success('Calendar events generated successfully!');
-    } catch (error) {
-      console.error(error as Error, { context: 'Calendar Export' });
-      toast.error('Failed to generate calendar events. Please try again later.');
-    }
-  };
-
   const renderStep = () => {
     switch (step) {
       case 1:
         return (
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+          <motion.div
+            key="step1"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={itemVariants}
+            className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+          >
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Basic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                  Full Name
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                  First Name
                 </label>
                 <input
                   type="text"
-                  id="fullName"
-                  {...register('fullName', { 
-                    required: 'Full name is required',
+                  id="firstName"
+                  {...register('firstName', {
+                    required: 'First name is required',
                     minLength: {
                       value: 3,
-                      message: 'Full name must be at least 3 characters long'
+                      message: 'First name must be at least 3 characters long'
                     },
                     maxLength: {
                       value: 50,
-                      message: 'Full name must be less than 50 characters'
+                      message: 'First name must be less than 50 characters'
                     },
                     pattern: {
                       value: /^[A-Za-z\s]+$/,
-                      message: 'Full name can only contain letters and spaces'
+                      message: 'First name can only contain letters and spaces'
                     }
                   })}
                   className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
-                    errors.fullName ? 'border-red-300' : 'border-gray-300'
+                    errors.firstName ? 'border-red-300' : 'border-gray-300'
                   }`}
-                  placeholder="Enter your full name"
+                  placeholder="Enter your first name"
+                  disabled={!!session?.user}
                 />
-                {errors.fullName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.fullName.message}</p>
+                {errors.firstName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  {...register('lastName', {
+                    required: 'Last name is required',
+                    minLength: {
+                      value: 3,
+                      message: 'Last name must be at least 3 characters long'
+                    },
+                    maxLength: {
+                      value: 50,
+                      message: 'Last name must be less than 50 characters'
+                    },
+                    pattern: {
+                      value: /^[A-Za-z\s]+$/,
+                      message: 'Last name can only contain letters and spaces'
+                    }
+                  })}
+                  className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
+                    errors.lastName ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter your last name"
+                  disabled={!!session?.user}
+                />
+                {errors.lastName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
                 )}
               </div>
 
@@ -407,7 +452,7 @@ export default function ProfileForm() {
                 <input
                   type="email"
                   id="email"
-                  {...register('email', { 
+                  {...register('email', {
                     required: 'Email is required',
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -418,41 +463,74 @@ export default function ProfileForm() {
                     errors.email ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Enter your email"
+                  disabled={!!session?.user}
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
                 )}
               </div>
             </div>
-          </div>
+          </motion.div>
         );
       case 2:
         return (
-          <SkillsAssessment
-            skills={skills}
-            onChange={setSkills}
-          />
+          <motion.div
+            key="step2"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={itemVariants}
+          >
+            <SkillsAssessment
+              skills={skills}
+              onChange={setSkills}
+            />
+          </motion.div>
         );
       case 3:
         return (
-          <CareerPreferences
-            preferences={careerPreferences}
-            onChange={setCareerPreferences}
-          />
+          <motion.div
+            key="step3"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={itemVariants}
+          >
+            <CareerPreferences
+              preferences={careerPreferences}
+              onChange={setCareerPreferences}
+            />
+          </motion.div>
         );
       case 4:
         return (
-          <EducationForm
-            education={education}
-            onChange={setEducation}
-          />
+          <motion.div
+            key="step4"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={itemVariants}
+          >
+            <EducationForm
+              education={education}
+              onChange={setEducation}
+            />
+          </motion.div>
         );
       case 5:
         return (
-          <ExperienceForm
-            experience={experience}
-            onChange={setExperience}
-          />
+          <motion.div
+            key="step5"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={itemVariants}
+          >
+            <ExperienceForm
+              experience={experience}
+              onChange={setExperience}
+            />
+          </motion.div>
         );
       default:
         return null;
@@ -461,7 +539,8 @@ export default function ProfileForm() {
 
   const isFormComplete = () => {
     return (
-      watch('fullName')?.trim() &&
+      watch('firstName')?.trim() &&
+      watch('lastName')?.trim() &&
       watch('email')?.trim() &&
       skills.length > 0 &&
       careerPreferences.industry?.trim() &&
@@ -482,120 +561,120 @@ export default function ProfileForm() {
         e.preventDefault();
         handleSubmit(onSubmit)(e);
       }} className="space-y-8">
-        {/* Progress Indicator */}
         <div className="flex justify-between mb-8">
-          {[1, 2, 3, 4, 5].map((stepNumber) => (
-            <div
-              key={stepNumber}
-              className={`flex-1 text-center ${
-                stepNumber < step
-                  ? 'text-green-600'
-                  : stepNumber === step
-                  ? 'text-purple-600 font-semibold'
-                  : 'text-gray-400'
-              }`}
-            >
-              <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center ${
-                stepNumber < step ? 'bg-green-600 text-white' :
-                stepNumber === step ? 'bg-purple-600 text-white' : 'bg-gray-200'
-              }`}>
-                {stepNumber}
-              </div>
-              <span className="text-sm mt-2 block">
-                {stepNumber === 1 ? 'Basic Info' : 
-                 stepNumber === 2 ? 'Skills' : 
-                 stepNumber === 3 ? 'Preferences' :
-                 stepNumber === 4 ? 'Education' : 'Experience'}
-              </span>
-            </div>
-          ))}
+          {[1, 2, 3, 4, 5].map((stepNumber) => {
+            const IconComponent = stepIcons[stepNumber - 1].icon;
+            return (
+              <motion.div
+                key={stepNumber}
+                className={`flex-1 text-center ${
+                  stepNumber < step
+                    ? 'text-green-600'
+                    : stepNumber === step
+                    ? 'text-purple-600 font-semibold'
+                    : 'text-gray-400'
+                }`}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: stepNumber * 0.1 }}
+              >
+                <motion.div
+                  className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-2 transition-all duration-300 ease-in-out ${
+                    stepNumber < step ? 'bg-green-600 text-white scale-110' :
+                    stepNumber === step ? 'bg-purple-600 text-white scale-110 shadow-lg' : 'bg-gray-200 text-gray-600'
+                  }`}
+                  whileHover={{ scale: 1.15 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <IconComponent className="w-5 h-5" />
+                </motion.div>
+                <span className="text-sm mt-2 block">
+                  {stepIcons[stepNumber - 1].name}
+                </span>
+              </motion.div>
+            );
+          })}
         </div>
 
         {renderStep()}
 
-        {/* Export Buttons */}
-        <div className="flex justify-end space-x-4 mt-8">
-          <button
-            type="button"
-            onClick={handleExportPDF}
-            disabled={isExporting || !isFormComplete()}
-            className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
-              isExporting || !isFormComplete() 
-                ? 'bg-red-400 cursor-not-allowed' 
-                : 'bg-red-600 hover:bg-red-700'
-            }`}
-          >
-            {isExporting ? 'Exporting...' : 'Export PDF'}
-          </button>
-          <button
-            type="button"
-            onClick={handleExportCalendar}
-            disabled={!isFormComplete()}
-            className={`px-4 py-2 text-sm font-medium text-white rounded-md ${
-              !isFormComplete()
-                ? 'bg-purple-400 cursor-not-allowed'
-                : 'bg-purple-600 hover:bg-purple-700'
-            }`}
-          >
-            Export Calendar
-          </button>
-        </div>
-
-        {/* Navigation Buttons */}
         <div className="flex justify-between">
           {step > 1 && (
-            <button
+            <motion.button
               type="button"
               onClick={() => setStep(step - 1)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-all duration-200"
               disabled={isSaving}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Previous
-            </button>
+            </motion.button>
           )}
-          {step < 5 ? (
-            <button
-              type="button"
-              onClick={handleNext}
-              className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700"
-              disabled={isSaving}
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={!isFormComplete() || isSaving}
-              className={`px-4 py-2 text-sm font-medium text-white rounded-md flex items-center space-x-2 ${
-                isFormComplete() && !isSaving
-                  ? 'bg-purple-600 hover:bg-purple-700'
-                  : 'bg-gray-400 cursor-not-allowed'
-              }`}
-            >
-              {isSaving ? (
-                <>
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Saving Profile...</span>
-                </>
-              ) : (
-                <span>{!isFormComplete() ? 'Complete All Fields' : 'Save Profile'}</span>
-              )}
-            </button>
-          )}
-        </div>
 
-        {/* Cancel Button */}
-        <div className="flex justify-end space-x-4 mt-8">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-          >
-            Cancel
-          </button>
+          <div className="flex space-x-4 ml-auto">
+            {step === 5 && (
+              <motion.button
+                type="button"
+                onClick={handleExportPDF}
+                disabled={isExporting || !isFormComplete()}
+                className={`px-6 py-3 text-sm font-medium text-white rounded-md ${
+                  isExporting || !isFormComplete()
+                    ? 'bg-red-400 cursor-not-allowed'
+                    : 'bg-red-600 hover:bg-red-700'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isExporting ? 'Exporting...' : 'Export PDF'}
+              </motion.button>
+            )}
+            <motion.button
+              type="button"
+              onClick={() => router.back()}
+              className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Cancel
+            </motion.button>
+            {step < 5 ? (
+              <motion.button
+                type="button"
+                onClick={handleNext}
+                className="px-6 py-3 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-all duration-200"
+                disabled={isSaving}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Next
+              </motion.button>
+            ) : (
+              <motion.button
+                type="submit"
+                disabled={!isFormComplete() || isSaving}
+                className={`px-6 py-3 text-sm font-medium text-white rounded-md flex items-center space-x-2 ${
+                  isFormComplete() && !isSaving
+                    ? 'bg-purple-600 hover:bg-purple-700'
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isSaving ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Saving Profile...</span>
+                  </>
+                ) : (
+                  <span>{!isFormComplete() ? 'Complete All Fields' : 'Save Profile'}</span>
+                )}
+              </motion.button>
+            )}
+          </div>
         </div>
       </form>
     </div>

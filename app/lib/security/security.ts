@@ -20,7 +20,8 @@ export const sanitizeInput = (input: string): string => {
 
 // Profile validation schema
 export const profileSchema = z.object({
-  fullName: z.string().min(1, 'Full name is required').max(100).transform(sanitizeInput),
+  firstName: z.string().min(1, 'First name is required').max(50).transform(sanitizeInput),
+  lastName: z.string().min(1, 'Last name is required').max(50).transform(sanitizeInput),
   email: z.string().email('Invalid email format'),
   skills: z.array(z.object({
     name: z.string().min(1, 'Skill name is required').max(50).transform(sanitizeInput),
