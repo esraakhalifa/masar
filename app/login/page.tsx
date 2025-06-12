@@ -11,12 +11,36 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({
+    email: "",
+    password: ""
+  });
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    const errors = {
+      email: "",
+      password: ""
+    };
+    let hasError = false;
+
+    if (!email.trim()) {
+      errors.email = "Email is required";
+      hasError = true;
+    } else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      errors.email = "Invalid email address";
+      hasError = true;
+    }
+    if (!password) {
+      errors.password = "Password is required";
+      hasError = true;
+    }
+    setFieldErrors(errors);
+    if (hasError) return;
+
     const res = await signIn("credentials", {
       email,
       password,
@@ -51,10 +75,9 @@ export default function Login() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
-                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your Email"
-                required
               />
+              {fieldErrors.email && <div className="text-red-500 text-xs mt-1">{fieldErrors.email}</div>}
             </div>
             
             <div>
@@ -65,10 +88,9 @@ export default function Login() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
-                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your Password"
-                required
               />
+              {fieldErrors.password && <div className="text-red-500 text-xs mt-1">{fieldErrors.password}</div>}
             </div>
             
             {error && <div className="text-red-500 text-center">{error}</div>}

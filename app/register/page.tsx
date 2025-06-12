@@ -13,6 +13,13 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
   const router = useRouter();
 
   const getCsrfToken = async (): Promise<string> => {
@@ -25,10 +32,40 @@ export default function Register() {
     e.preventDefault();
     setError("");
     setSuccess("");
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
+    let errors = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: ""
+    };
+    let hasError = false;
+
+    if (!firstName.trim()) {
+      errors.firstName = "First name is required";
+      hasError = true;
     }
+    if (!lastName.trim()) {
+      errors.lastName = "Last name is required";
+      hasError = true;
+    }
+    if (!email.trim()) {
+      errors.email = "Email is required";
+      hasError = true;
+    } else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      errors.email = "Invalid email address";
+      hasError = true;
+    }
+    if (!password) {
+      errors.password = "Password is required";
+      hasError = true;
+    }
+    if (password && password !== confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+      hasError = true;
+    }
+    setFieldErrors(errors);
+    if (hasError) return;
     const csrfToken = await getCsrfToken();
     const res = await fetch("/api/register", {
       method: "POST",
@@ -67,10 +104,9 @@ export default function Register() {
                 value={firstName}
                 onChange={e => setFirstName(e.target.value)}
                 className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
-                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your First Name"
-                required
               />
+              {fieldErrors.firstName && <div className="text-red-500 text-xs mt-1">{fieldErrors.firstName}</div>}
             </div>
             
             <div>
@@ -81,10 +117,9 @@ export default function Register() {
                 value={lastName}
                 onChange={e => setLastName(e.target.value)}
                 className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
-                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your Last Name"
-                required
               />
+              {fieldErrors.lastName && <div className="text-red-500 text-xs mt-1">{fieldErrors.lastName}</div>}
             </div>
             
             <div>
@@ -95,10 +130,9 @@ export default function Register() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
-                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your Email"
-                required
               />
+              {fieldErrors.email && <div className="text-red-500 text-xs mt-1">{fieldErrors.email}</div>}
             </div>
             
             <div>
@@ -109,10 +143,9 @@ export default function Register() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
-                style={{focusRingColor: '#2434B3'}}
                 placeholder="Your Password"
-                required
               />
+              {fieldErrors.password && <div className="text-red-500 text-xs mt-1">{fieldErrors.password}</div>}
             </div>
             
             <div>
@@ -123,10 +156,9 @@ export default function Register() {
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 className="w-full bg-blue-50 text-gray-900 p-3 rounded-md border border-blue-200 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300"
-                style={{focusRingColor: '#2434B3'}}
                 placeholder="Confirm Your Password"
-                required
               />
+              {fieldErrors.confirmPassword && <div className="text-red-500 text-xs mt-1">{fieldErrors.confirmPassword}</div>}
             </div>
             
             {error && <div className="text-red-500 text-center">{error}</div>}
