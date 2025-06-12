@@ -15,19 +15,6 @@ const nextConfig = {
         source: '/api/:path*',
         destination: '/api/:path*',
       },
-      {
-        source: '/build-profile',
-        destination: '/pages/build-profile',
-      },
-      {
-        source: '/contact',
-        destination: '/pages/contact',
-      },
-      {
-        source: '/profile',
-        destination: '/pages/profile',
-      },
-      
     ];
   },
 };
