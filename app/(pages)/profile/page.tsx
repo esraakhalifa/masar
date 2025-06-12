@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 import Layout from '../../../components/Layout';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { User, Mail, Award, Briefcase, GraduationCap, DollarSign, MapPin, Building2, TrendingUp, Handshake } from 'lucide-react';
 
 interface Profile {
   id: string;
@@ -24,7 +25,7 @@ interface Profile {
     preferredSalary: number;
     workType: string;
     location: string;
-  };
+  } | null;
   education: Array<{
     id: string;
     degree: string;
@@ -71,6 +72,7 @@ export default function ProfilePage() {
         throw new Error(`Failed to fetch profile: ${response.statusText}`);
       }
       const data: Profile = await response.json();
+      console.log('Fetched profile data:', data);
       setProfile(data);
       if (data.avatarUrl) {
         setAvatarPreviewUrl(data.avatarUrl);
@@ -246,8 +248,8 @@ export default function ProfilePage() {
               </label>
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{profile.fullName}</h1>
-              <p className="text-gray-600 text-lg">{profile.email}</p>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">{profile.firstName} {profile.lastName}</h1>
+              <p className="text-gray-600 text-lg flex items-center"><Mail className="w-5 h-5 mr-2 text-purple-500" />{profile.email}</p>
               {selectedAvatarFile && (
                 <button
                   onClick={handleAvatarUpload}
@@ -265,12 +267,15 @@ export default function ProfilePage() {
             variants={itemVariants}
             className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8"
           >
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Skills</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center"><Award className="w-7 h-7 mr-3 text-purple-600" />Skills</h2>
             <div className="flex flex-wrap gap-3">
               {profile.skills.map((skill) => (
                 <motion.span
                   key={skill.id}
                   whileHover={{ scale: 1.05 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                   className="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium shadow-sm"
                 >
                   {skill.name} ({(() => {
@@ -295,42 +300,59 @@ export default function ProfilePage() {
           </motion.div>
 
           {/* Career Preferences */}
-          <motion.div 
-            variants={itemVariants}
-            className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8"
-          >
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Career Preferences</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <p className="text-sm text-purple-600 font-medium">Industry</p>
-                <p className="text-lg text-gray-900 mt-1">{profile.preferences.industry}</p>
+          {profile.preferences && (
+            <motion.div 
+              variants={itemVariants}
+              className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8"
+            >
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center"><TrendingUp className="w-7 h-7 mr-3 text-purple-600" />Career Preferences</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <motion.div variants={itemVariants} className="bg-purple-50 p-4 rounded-lg flex items-center space-x-3">
+                  <Building2 className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-purple-600 font-medium">Industry</p>
+                    <p className="text-lg text-gray-900 mt-1">{profile.preferences.industry}</p>
+                  </div>
+                </motion.div>
+                <motion.div variants={itemVariants} className="bg-purple-50 p-4 rounded-lg flex items-center space-x-3">
+                  <MapPin className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-purple-600 font-medium">Location</p>
+                    <p className="text-lg text-gray-900 mt-1">{profile.preferences.location}</p>
+                  </div>
+                </motion.div>
+                <motion.div variants={itemVariants} className="bg-purple-50 p-4 rounded-lg flex items-center space-x-3">
+                  <Handshake className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-purple-600 font-medium">Work Type</p>
+                    <p className="text-lg text-gray-900 mt-1 capitalize">{profile.preferences.workType}</p>
+                  </div>
+                </motion.div>
+                <motion.div variants={itemVariants} className="bg-purple-50 p-4 rounded-lg flex items-center space-x-3">
+                  <DollarSign className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-purple-600 font-medium">Preferred Salary</p>
+                    <p className="text-lg text-gray-900 mt-1">EGP {profile.preferences.preferredSalary.toLocaleString()}</p>
+                  </div>
+                </motion.div>
               </div>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <p className="text-sm text-purple-600 font-medium">Location</p>
-                <p className="text-lg text-gray-900 mt-1">{profile.preferences.location}</p>
-              </div>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <p className="text-sm text-purple-600 font-medium">Work Type</p>
-                <p className="text-lg text-gray-900 mt-1 capitalize">{profile.preferences.workType}</p>
-              </div>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <p className="text-sm text-purple-600 font-medium">Preferred Salary</p>
-                <p className="text-lg text-gray-900 mt-1">EGP {profile.preferences.preferredSalary.toLocaleString()}</p>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          )}
 
           {/* Education */}
           <motion.div 
             variants={itemVariants}
             className="bg-white rounded-xl shadow-lg border border-purple-100 p-8 mb-8"
           >
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Education</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center"><GraduationCap className="w-7 h-7 mr-3 text-purple-600" />Education</h2>
             <div className="space-y-6">
               {profile.education.map((edu) => (
                 <motion.div 
                   key={edu.id} 
                   whileHover={{ scale: 1.02 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                   className="bg-purple-50 p-6 rounded-lg border border-purple-100"
                 >
                   <h3 className="text-xl font-medium text-gray-900">{edu.degree} in {edu.fieldOfStudy}</h3>
@@ -346,12 +368,15 @@ export default function ProfilePage() {
             variants={itemVariants}
             className="bg-white rounded-xl shadow-lg border border-purple-100 p-8"
           >
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Work Experience</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center"><Briefcase className="w-7 h-7 mr-3 text-purple-600" />Work Experience</h2>
             <div className="space-y-6">
               {profile.experience.map((exp) => (
                 <motion.div 
                   key={exp.id} 
                   whileHover={{ scale: 1.02 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                   className="bg-purple-50 p-6 rounded-lg border border-purple-100"
                 >
                   <h3 className="text-xl font-medium text-gray-900">{exp.title}</h3>

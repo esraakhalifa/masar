@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
         if (!user || !user.password) return null;
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) return null;
-        return { id: user.id, email: user.email, firstName: user.firstName };
+        return { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName };
       },
     }),
     GoogleProvider({
@@ -44,12 +44,18 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+      }
       return token;
     },
     async session({ session, token }) {
       if (token?.id && session.user) {
-        (session.user as any).id = token.id as string;
+        (session.user).id = token.id;
+        session.user.firstName = token.firstName;
+        session.user.lastName = token.lastName;
       }
       return session;
     },

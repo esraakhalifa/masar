@@ -11,8 +11,8 @@ model User {
   id               String              @id @default(cuid())
   email            String              @unique
   password         String?
-  firstName        String?
-  lastName         String?
+  firstName        String
+  lastName         String
   resumeText       String?             @map("resume_text")
   avatarUrl        String?
   emailVerified    DateTime?

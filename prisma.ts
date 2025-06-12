@@ -1,4 +1,4 @@
-import { PrismaClient } from '@/app/generated/prisma'; // ✅ matches output path
+import { PrismaClient } from '@/app/generated/prisma'; //  matches output path
 
 const globalForPrisma = global as unknown as { prisma?: PrismaClient };
 export const prisma =

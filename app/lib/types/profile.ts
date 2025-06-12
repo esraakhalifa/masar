@@ -28,7 +28,8 @@ export interface Experience {
 }
 
 export interface UserProfile {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   avatarUrl?: string;
   skills: Skill[];

@@ -37,7 +37,8 @@ export async function POST(request: NextRequest) {
 
     // Log the exact structure of the request body
     console.log('Request body structure:', {
-      fullName: body.fullName,
+      firstName: body.firstName,
+      lastName: body.lastName,
       email: body.email,
       skills: body.skills?.map((s: Skill) => ({ name: s.name, level: s.level, category: s.category })),
       careerPreferences: body.careerPreferences,
@@ -74,61 +75,9 @@ export async function POST(request: NextRequest) {
     // Sanitize profile data
     const sanitizedProfile = sanitizeObjectForSQL(validationResult.data);
 
-    // Check if profile already exists
-    const existingProfile = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
       where: { email: sanitizedProfile.email },
-    });
-
-    if (existingProfile) {
-      await logWarning('Profile already exists', {
-        email: sanitizedProfile.email,
-        ip: request.headers.get('x-forwarded-for') ?? 'unknown',
-      });
-      return NextResponse.json({ 
-        message: 'Profile already exists',
-        profile: existingProfile 
-      }, { status: 409 });
-    }
-
-    // Create profile with nested relations
-    const profile = await prisma.user.create({
-      data: {
-        fullName: sanitizedProfile.fullName,
-        email: sanitizedProfile.email,
-        skills: {
-          create: sanitizedProfile.skills.map((skill) => ({
-            name: skill.name,
-            level: skill.level || 1,
-            category: skill.category || 'General',
-          })),
-        },
-        preferences: {
-          create: {
-            industry: sanitizedProfile.careerPreferences.industry,
-            preferredSalary: sanitizedProfile.careerPreferences.preferredSalary || 0,
-            workType: sanitizedProfile.careerPreferences.workType,
-            location: sanitizedProfile.careerPreferences.location || '',
-          },
-        },
-        education: {
-          create: sanitizedProfile.education.map((edu) => ({
-            degree: edu.degree,
-            fieldOfStudy: edu.fieldOfStudy,
-            institution: edu.institution,
-            graduationYear: parseInt(edu.graduationYear.toString())
-          })),
-        },
-        experience: {
-          create: sanitizedProfile.experience.map((exp) => ({
-            title: exp.title,
-            company: exp.company,
-            startDate: new Date(exp.startDate),
-            endDate: exp.endDate ? new Date(exp.endDate) : null,
-            description: exp.description || '',
-          })),
-        },
-      },
-      include: {
+      include: { // Include existing relations to merge or replace them
         skills: true,
         preferences: true,
         education: true,
@@ -136,17 +85,141 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await logInfo('Profile created successfully', {
-      profileId: profile.id,
-      email: profile.email,
-      ip: request.headers.get('x-forwarded-for') ?? 'unknown',
-    });
+    let profile;
 
-    return NextResponse.json(profile, { status: 201 });
+    if (existingUser) {
+      // Update existing profile with new data
+      profile = await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          firstName: sanitizedProfile.firstName,
+          lastName: sanitizedProfile.lastName,
+          // Email should not be changed via profile update, it's the identifier
+          // Handle skills update: delete existing and create new ones
+          skills: {
+            deleteMany: {},
+            create: sanitizedProfile.skills.map((skill) => ({
+              name: skill.name,
+              level: skill.level || 1,
+              category: skill.category || 'General',
+            })),
+          },
+          // Handle preferences update: update existing or create if none
+          preferences: existingUser.preferences ? {
+            update: {
+              industry: sanitizedProfile.careerPreferences.industry,
+              preferredSalary: sanitizedProfile.careerPreferences.preferredSalary || 0,
+              workType: sanitizedProfile.careerPreferences.workType,
+              location: sanitizedProfile.careerPreferences.location || '',
+            },
+          } : {
+            create: {
+              industry: sanitizedProfile.careerPreferences.industry,
+              preferredSalary: sanitizedProfile.careerPreferences.preferredSalary || 0,
+              workType: sanitizedProfile.careerPreferences.workType,
+              location: sanitizedProfile.careerPreferences.location || '',
+            },
+          },
+          // Handle education update: delete existing and create new ones
+          education: {
+            deleteMany: {},
+            create: sanitizedProfile.education.map((edu) => ({
+              degree: edu.degree,
+              fieldOfStudy: edu.fieldOfStudy,
+              institution: edu.institution,
+              graduationYear: parseInt(edu.graduationYear.toString())
+            })),
+          },
+          // Handle experience update: delete existing and create new ones
+          experience: {
+            deleteMany: {},
+            create: sanitizedProfile.experience.map((exp) => ({
+              title: exp.title,
+              company: exp.company,
+              startDate: new Date(exp.startDate),
+              endDate: exp.endDate ? new Date(exp.endDate) : null,
+              description: exp.description || '',
+            })),
+          },
+        },
+        include: {
+          skills: true,
+          preferences: true,
+          education: true,
+          experience: true,
+        },
+      });
+
+      await logInfo('Profile updated successfully', {
+        profileId: profile.id,
+        email: profile.email,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        ip: request.headers.get('x-forwarded-for') ?? 'unknown',
+      });
+
+    } else {
+      // Create new profile
+      profile = await prisma.user.create({
+        data: {
+          firstName: sanitizedProfile.firstName,
+          lastName: sanitizedProfile.lastName,
+          email: sanitizedProfile.email,
+          skills: {
+            create: sanitizedProfile.skills.map((skill) => ({
+              name: skill.name,
+              level: skill.level || 1,
+              category: skill.category || 'General',
+            })),
+          },
+          preferences: {
+            create: {
+              industry: sanitizedProfile.careerPreferences.industry,
+              preferredSalary: sanitizedProfile.careerPreferences.preferredSalary || 0,
+              workType: sanitizedProfile.careerPreferences.workType,
+              location: sanitizedProfile.careerPreferences.location || '',
+            },
+          },
+          education: {
+            create: sanitizedProfile.education.map((edu) => ({
+              degree: edu.degree,
+              fieldOfStudy: edu.fieldOfStudy,
+              institution: edu.institution,
+              graduationYear: parseInt(edu.graduationYear.toString())
+            })),
+          },
+          experience: {
+            create: sanitizedProfile.experience.map((exp) => ({
+              title: exp.title,
+              company: exp.company,
+              startDate: new Date(exp.startDate),
+              endDate: exp.endDate ? new Date(exp.endDate) : null,
+              description: exp.description || '',
+            })),
+          },
+        },
+        include: {
+          skills: true,
+          preferences: true,
+          education: true,
+          experience: true,
+        },
+      });
+
+      await logInfo('Profile created successfully', {
+        profileId: profile.id,
+        email: profile.email,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        ip: request.headers.get('x-forwarded-for') ?? 'unknown',
+      });
+    }
+
+    return NextResponse.json(profile, { status: existingUser ? 200 : 201 });
 
   } catch (error) {
     await logError(error instanceof Error ? error : new Error('Unknown error'), {
-      context: 'Profile creation failed',
+      context: 'Profile creation/update failed',
       stack: error instanceof Error ? error.stack : undefined,
       ip: request.headers.get('x-forwarded-for') ?? 'unknown',
     });
@@ -173,13 +246,13 @@ export async function POST(request: NextRequest) {
       await logError(new Error('Prisma error details'), {
         code: prismaError.code,
         meta: prismaError.meta,
-        context: 'Prisma Error in Profile Creation',
+        context: 'Prisma Error in Profile Creation/Update',
       });
     }
 
     // Return a more detailed error response
     return NextResponse.json({ 
-      error: 'Failed to create profile',
+      error: 'Failed to create/update profile',
       details: error instanceof Error ? error.message : 'Unknown error',
       code: 'INTERNAL_SERVER_ERROR'
     }, { status: 500 });
@@ -212,6 +285,7 @@ export async function GET(request: Request) {
     // Format dates in the response
     const formattedUser = {
       ...user,
+      fullName: `${user.firstName} ${user.lastName}`,
       education: user.education.map(edu => ({
         ...edu,
         graduationYear: edu.graduationYear.toString()
