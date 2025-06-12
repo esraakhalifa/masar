@@ -3,9 +3,10 @@ import { MCQQuestion } from "../services/gemini";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { fetchWithCsrf } from "../lib/fetchWithCsrf";
 
-interface AssessmentProps {
+type AssessmentProps = {
   role: string;
-}
+  specialization: string;
+};
 
 interface AnswerState {
   selectedOption: number;
