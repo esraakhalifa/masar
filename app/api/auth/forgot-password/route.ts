@@ -2,13 +2,16 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { randomBytes } from "crypto";
 import nodemailer from "nodemailer";
+import { logInfo, logError, logWarning } from "@/app/lib/services/logger";
 
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
+    logInfo("Forgot password request received");
     const { email } = await req.json();
     if (!email) {
+      logWarning("Forgot password: Email is required");
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
     const user = await prisma.user.findUnique({ where: { email } });
@@ -39,11 +42,12 @@ export async function POST(req: Request) {
         subject: "Password Reset",
         html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
       });
+      logInfo(`Password reset email sent to ${email}`);
     }
     // Always return success for security
     return NextResponse.json({ message: "If an account with that email exists, a reset link has been sent." });
   } catch (error) {
-    console.error(error);
+    logError(error, { route: "forgot-password" });
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 } 
