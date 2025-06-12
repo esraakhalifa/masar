@@ -71,7 +71,7 @@ export default function StatisticsPage() {
   useEffect(() => {
     const fetchRoadmapData = async () => {
       try {
-        const userId = 'cmbsawz1n0000fpsjbsdiznnu';
+        const userId = 'cmbtb68ll0014fp90sry7mkie';
         const response = await fetch(`/api/users/${userId}/roadmaps`);
         if (!response.ok) throw new Error(`Failed to fetch roadmap data: ${response.statusText}`);
         const data: Roadmap[] = await response.json();

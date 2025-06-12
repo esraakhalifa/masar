@@ -1,18 +1,13 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Alert, Button, Menu, MenuItem, Snackbar, Typography, Checkbox, List, ListItem, ListItemText } from "@mui/material";
+import {
+  Box, CircularProgress, Alert, Button, Menu, MenuItem, Snackbar,
+  Typography, Checkbox, List, ListItem, ListItemText
+} from "@mui/material";
 import { motion, AnimatePresence } from 'framer-motion';
 import SchoolIcon from '@mui/icons-material/School';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
-interface Topic {
-  id: string;
-  title: string;
-  description: string | null;
-  order: number;
-  tasks?: Task[];
-}
 
 interface Task {
   id: string;
@@ -20,6 +15,14 @@ interface Task {
   description: string | null;
   order: number;
   isCompleted: boolean;
+}
+
+interface Topic {
+  id: string;
+  title: string;
+  description: string | null;
+  order: number;
+  tasks?: Task[];
 }
 
 interface Course {
@@ -58,12 +61,10 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchRoadmapData = async () => {
       try {
-        const userId = 'cmbsawz1n0000fpsjbsdiznnu';
+        const userId = 'cmbtb68ll0014fp90sry7mkie';
         const response = await fetch(`http://localhost:3000/api/users/${userId}/roadmaps`);
-        // console.log(response);
         if (!response.ok) throw new Error(`Failed to fetch roadmap data: ${response.statusText}`);
         const data: Roadmap[] = await response.json();
-        console.log(data);
         setRoadmaps(data);
         setSelectedRoadmap(data.length > 0 ? data[0] : null);
       } catch (err) {
@@ -92,13 +93,12 @@ export default function DashboardPage() {
     setToastSeverity('info');
 
     try {
-      const userId = 'cmbsawz1n0000fpsjbsdiznnu';
-      const response = await fetch('http://localhost:3000/api/career-roadmap', {
+      const userId = 'cmbtb68ll0014fp90sry7mkie';
+      const response = await fetch(`http://localhost:3000/api/career-roadmap`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, roadmapRole: jobRole }),
       });
-      
 
       if (!response.ok) throw new Error(`Failed to create roadmap: ${response.statusText}`);
       const newRoadmap: Roadmap = await response.json();
@@ -112,6 +112,46 @@ export default function DashboardPage() {
       console.error('Error creating roadmap:', err);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleToggleTaskCompletion = async (taskId: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isCompleted: !currentStatus }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update task status');
+
+      // Deep clone and update state
+      setRoadmaps(prev => {
+        if (!prev) return null;
+
+        const updated = prev.map((roadmap) => {
+          const newTopics = roadmap.topics.map((topic) => {
+            const newTasks = topic.tasks?.map((task) =>
+              task.id === taskId ? { ...task, isCompleted: !currentStatus } : task
+            );
+            return { ...topic, tasks: newTasks };
+          });
+          return { ...roadmap, topics: newTopics };
+        });
+
+        // Also update selectedRoadmap
+        const updatedSelected = updated.find(r => r.id === selectedRoadmap?.id) || null;
+        setSelectedRoadmap(updatedSelected);
+
+        return updated;
+      });
+
+      setToastMessage(`Task marked as ${!currentStatus ? 'completed' : 'uncompleted'} ✅`);
+      setToastSeverity('success');
+    } catch (err) {
+      console.error('Error updating task status:', err);
+      setToastMessage('Failed to update task status');
+      setToastSeverity('error');
     }
   };
 
@@ -140,11 +180,12 @@ export default function DashboardPage() {
       <Box className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <Box>
           <Typography variant="h4" className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <SchoolIcon className="text-coral-500" /> 
+            <SchoolIcon className="text-coral-500" />
             {selectedRoadmap ? `${selectedRoadmap.roadmapRole} Journey` : 'Your Learning Adventure'}
           </Typography>
           <Typography className="text-gray-600 mt-2">Let’s master new skills with fun and ease! 🌟</Typography>
         </Box>
+
         {!roadmaps || roadmaps.length === 0 ? (
           <Box className="mt-4 md:mt-0">
             <Button
@@ -170,7 +211,7 @@ export default function DashboardPage() {
         ) : null}
       </Box>
 
-      {roadmaps && roadmaps.length > 0 && selectedRoadmap ? (
+      {roadmaps && selectedRoadmap ? (
         <Box className="space-y-6">
           <Typography variant="h5" className="text-2xl font-semibold text-teal-600">
             Your Topics
@@ -187,7 +228,6 @@ export default function DashboardPage() {
               >
                 <Box className="flex-1">
                   <Typography className="card-header">{topic.title}</Typography>
-                  {/* <Typography className="text-gray-600 mt-1">Topic {topic.order} in your journey</Typography> */}
                   {topic.description && (
                     <Typography className="text-gray-500 text-sm mt-2">{topic.description}</Typography>
                   )}
@@ -199,7 +239,7 @@ export default function DashboardPage() {
                       <ListItem key={task.id} className="flex items-center">
                         <Checkbox
                           checked={task.isCompleted}
-                          disabled
+                          onChange={() => handleToggleTaskCompletion(task.id, task.isCompleted)}
                           icon={<CheckCircleIcon className="text-gray-300" />}
                           checkedIcon={<CheckCircleIcon className="text-teal-500" />}
                         />
