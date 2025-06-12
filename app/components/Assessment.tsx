@@ -212,8 +212,8 @@ export default function Assessment({ role }: AssessmentProps) {
   const currentSkill = skills[currentSkillIndex];
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="w-full max-w-4xl mx-auto bg-black/30 rounded-xl shadow-lg p-8 text-white border border-white/10">
+    <div className="min-h-screen p-6 ">
+      <div className="w-full max-w-4xl mx-auto bg-gradient-to-br from-[#2434B3] via-[#1e29a3] to-[#FF4B36] rounded-xl shadow-lg p-8 text-white border border-white/10">
         <div className="mb-8">
           <div className="relative flex items-center mb-8">
             <div className="flex-1">
@@ -403,5 +403,6 @@ export default function Assessment({ role }: AssessmentProps) {
         )}
       </div>
     </div>
+
   );
 }

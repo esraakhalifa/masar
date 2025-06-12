@@ -130,7 +130,7 @@ export default function CVUploadPage() {
       });
       
       setTimeout(() => {
-        window.location.href = '/test';
+        window.location.href = `/assessment?role=${encodeURIComponent(data.jobRole)}`;
       }, 2000);
       
     } catch (error) {
