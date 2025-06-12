@@ -2,3 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-coral: #FF6B6B;
+  --secondary-teal: #4ECDC4;
+  --accent-yellow: #FFE66D;
+  --lavender: #C3BFFA;
+  --bg-gradient: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+}
+
+body {
+  @apply bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen;
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
+}
+
+.card-header {
+  @apply text-xl font-bold text-gray-800;
+}
+
+.btn-primary {
+  @apply bg-gradient-to-r from-pink-500 to-pink-400 text-white font-semibold py-2 px-4 rounded-full hover:from-pink-600 hover:to-pink-600 transition-all duration-300;
+}
