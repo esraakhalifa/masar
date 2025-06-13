@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/prisma";
+import { prisma } from "@/app/lib/prisma";
 
 // Get a specific skill for a user
 export async function GET(

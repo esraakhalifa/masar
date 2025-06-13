@@ -3,16 +3,16 @@ import { writeFile, unlink } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { CSRF_HEADER } from '@/app/lib/security/csrf';
-import { logger } from '@/app/lib/services/logger';
+import { logInfo, logWarning, logError } from '@/app/lib/services/logger';
 import prisma from '@/app/lib/database/db';
 
 export async function POST(request: NextRequest) {
   try {
-    logger.info('Avatar upload request received');
+    await logInfo('Avatar upload request received');
 
     const csrfToken = request.headers.get(CSRF_HEADER);
     if (!csrfToken) {
-      logger.warn('CSRF token missing during avatar upload');
+      await logWarning('CSRF token missing during avatar upload');
       return NextResponse.json({ error: 'CSRF token missing' }, { status: 403 });
     }
 
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const userEmail = formData.get('email') as string;
 
     if (!file) {
-      logger.warn('No file provided for avatar upload');
+      await logWarning('No file provided for avatar upload');
       return NextResponse.json(
         { error: 'No file provided' },
         { status: 400 }
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!userEmail) {
-      logger.warn('User email not provided for avatar upload');
+      await logWarning('User email not provided for avatar upload');
       return NextResponse.json(
         { error: 'User email is required' },
         { status: 400 }
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const tempFilePath = join(tmpdir(), tempFileName);
 
     await writeFile(tempFilePath, buffer);
-    logger.info(`Temporary avatar file saved at: ${tempFilePath}`);
+    await logInfo(`Temporary avatar file saved at: ${tempFilePath}`);
 
     // Simulate a public URL (replace with actual cloud storage URL)
     const mockAvatarUrl = `/uploads/avatars/${tempFileName}`; // This path won't actually serve the image
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     // Clean up the temporary file (in a real scenario, this would be after successful cloud upload)
     await unlink(tempFilePath);
-    logger.info(`Temporary avatar file deleted: ${tempFilePath}`);
+    await logInfo(`Temporary avatar file deleted: ${tempFilePath}`);
 
     return NextResponse.json({
       message: 'Avatar uploaded and profile updated successfully',
@@ -71,8 +71,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    logger.error('Error during avatar upload:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    await logError(error instanceof Error ? error : new Error('Unknown error'), {
       stack: error instanceof Error ? error.stack : undefined,
     });
     return NextResponse.json(
