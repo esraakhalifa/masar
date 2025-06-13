@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Roboto_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 import SessionProviderWrapper from "./SessionProviderWrapper";
 import { SessionProvider } from "next-auth/react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: 'swap',
   preload: true,
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const robotoMono = Roboto_Mono({
+  variable: "--font-roboto-mono",
   subsets: ["latin"],
   display: 'swap',
   preload: true,
@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
       <body className="antialiased" suppressHydrationWarning>
           <SessionProviderWrapper>
             <Toaster position="top-right" />
