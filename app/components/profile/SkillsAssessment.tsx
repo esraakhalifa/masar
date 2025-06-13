@@ -8,25 +8,46 @@ interface SkillsAssessmentProps {
   onChange: (skills: Skill[]) => void;
 }
 
-const SKILL_CATEGORIES = ['technical', 'soft', 'language'] as const;
+const SKILL_CATEGORIES = [
+  'Technical',
+  'Soft Skills',
+  'Languages',
+  'Tools',
+  'Frameworks',
+  'Databases',
+  'Cloud',
+  'DevOps',
+  'Design',
+  'Other'
+] as const;
+
 const SKILL_LEVELS = [
   { value: 1, label: 'Beginner' },
-  { value: 3, label: 'Intermediate' },
-  { value: 5, label: 'Expert' }
+  { value: 2, label: 'Intermediate' },
+  { value: 3, label: 'Advanced' },
+  { value: 4, label: 'Expert' }
 ] as const;
 
 export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentProps) {
-  const [newSkill, setNewSkill] = useState<Partial<Skill>>({
+  const [newSkill, setNewSkill] = useState<Skill>({
     name: '',
     level: 1,
-    category: 'technical'
+    category: 'Technical'
   });
+  const [error, setError] = useState<string | null>(null);
 
   const addSkill = () => {
-    if (newSkill.name && newSkill.level && newSkill.category) {
-      onChange([...skills, newSkill as Skill]);
-      setNewSkill({ name: '', level: 1, category: 'technical' });
+    if (!newSkill.name.trim()) {
+      setError('Please enter a skill name');
+      return;
     }
+    setError(null);
+    onChange([...skills, newSkill]);
+    setNewSkill({
+      name: '',
+      level: 1,
+      category: 'Technical'
+    });
   };
 
   const removeSkill = (index: number) => {
@@ -35,11 +56,8 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">User Skills</h2>
-      
-      {/* Add New Skill */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
         <div>
           <label htmlFor="skillName" className="block text-sm font-medium text-gray-700">
             Skill Name
@@ -48,10 +66,18 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             type="text"
             id="skillName"
             value={newSkill.name}
-            onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 placeholder-gray-400"
+            onChange={(e) => {
+              setNewSkill({ ...newSkill, name: e.target.value });
+              if (error) setError(null);
+            }}
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900 placeholder-gray-400 ${
+              error ? 'border-red-300' : ''
+            }`}
             placeholder="Enter skill name"
           />
+          {error && (
+            <p className="mt-1 text-sm text-red-600">{error}</p>
+          )}
         </div>
 
         <div>
@@ -62,11 +88,11 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             id="skillCategory"
             value={newSkill.category}
             onChange={(e) => setNewSkill({ ...newSkill, category: e.target.value as Skill['category'] })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900"
           >
             {SKILL_CATEGORIES.map((category) => (
               <option key={category} value={category}>
-                {category.charAt(0).toUpperCase() + category.slice(1)}
+                {category}
               </option>
             ))}
           </select>
@@ -80,7 +106,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             id="skillLevel"
             value={newSkill.level}
             onChange={(e) => setNewSkill({ ...newSkill, level: Number(e.target.value) as Skill['level'] })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900"
           >
             {SKILL_LEVELS.map((level) => (
               <option key={level.value} value={level.value}>
@@ -90,11 +116,11 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
           </select>
         </div>
 
-        <div className="flex items-end">
+        <div>
           <button
             type="button"
             onClick={addSkill}
-            className="w-full px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700"
+            className="w-full h-[38px] px-4 text-sm font-medium text-white bg-[#FF4B36] rounded-md hover:bg-[#FF4B36]/90 transition-colors"
           >
             Add Skill
           </button>

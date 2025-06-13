@@ -38,6 +38,11 @@ export default function ProfileForm() {
   const [isExporting, setIsExporting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingSkills, setIsEditingSkills] = useState(false);
+  const [isEditingExperience, setIsEditingExperience] = useState(false);
+  const [isEditingEducation, setIsEditingEducation] = useState(false);
+  
 
   const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<UserProfile>({
     mode: 'onChange',
@@ -377,7 +382,16 @@ export default function ProfileForm() {
             variants={itemVariants}
             className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
           >
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Basic Information</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-[#2434B3]">Personal Information</h2>
+              <button
+                type="button"
+                onClick={() => setIsEditing(!isEditing)}
+                className="text-[#FF4B36] hover:text-[#FF4B36]/80 transition-colors"
+              >
+                {isEditing ? 'Cancel' : 'Edit'}
+              </button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
@@ -481,6 +495,16 @@ export default function ProfileForm() {
             exit="hidden"
             variants={itemVariants}
           >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-[#2434B3]">Skills</h2>
+              <button
+                type="button"
+                onClick={() => setIsEditingSkills(!isEditingSkills)}
+                className="text-[#FF4B36] hover:text-[#FF4B36]/80 transition-colors"
+              >
+                {isEditingSkills ? 'Cancel' : 'Edit'}
+              </button>
+            </div>
             <SkillsAssessment
               skills={skills}
               onChange={setSkills}
@@ -496,6 +520,16 @@ export default function ProfileForm() {
             exit="hidden"
             variants={itemVariants}
           >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-[#2434B3]">Preferences</h2>
+              <button
+                type="button"
+                onClick={() => setIsEditing(!isEditing)}
+                className="text-[#FF4B36] hover:text-[#FF4B36]/80 transition-colors"
+              >
+                {isEditing ? 'Cancel' : 'Edit'}
+              </button>
+            </div>
             <CareerPreferences
               preferences={careerPreferences}
               onChange={setCareerPreferences}
@@ -511,6 +545,16 @@ export default function ProfileForm() {
             exit="hidden"
             variants={itemVariants}
           >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-[#2434B3]">Education</h2>
+              <button
+                type="button"
+                onClick={() => setIsEditingEducation(!isEditingEducation)}
+                className="text-[#FF4B36] hover:text-[#FF4B36]/80 transition-colors"
+              >
+                {isEditingEducation ? 'Cancel' : 'Edit'}
+              </button>
+            </div>
             <EducationForm
               education={education}
               onChange={setEducation}
@@ -526,6 +570,16 @@ export default function ProfileForm() {
             exit="hidden"
             variants={itemVariants}
           >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-[#2434B3]">Experience</h2>
+              <button
+                type="button"
+                onClick={() => setIsEditingExperience(!isEditingExperience)}
+                className="text-[#FF4B36] hover:text-[#FF4B36]/80 transition-colors"
+              >
+                {isEditingExperience ? 'Cancel' : 'Edit'}
+              </button>
+            </div>
             <ExperienceForm
               experience={experience}
               onChange={setExperience}
@@ -571,7 +625,7 @@ export default function ProfileForm() {
                   stepNumber < step
                     ? 'text-green-600'
                     : stepNumber === step
-                    ? 'text-purple-600 font-semibold'
+                    ? 'text-[#FF4B36] font-semibold'
                     : 'text-gray-400'
                 }`}
                 initial={{ opacity: 0, y: -20 }}
@@ -581,7 +635,7 @@ export default function ProfileForm() {
                 <motion.div
                   className={`w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-2 transition-all duration-300 ease-in-out ${
                     stepNumber < step ? 'bg-green-600 text-white scale-110' :
-                    stepNumber === step ? 'bg-purple-600 text-white scale-110 shadow-lg' : 'bg-gray-200 text-gray-600'
+                    stepNumber === step ? 'bg-[#FF4B36] text-white scale-110 shadow-lg' : 'bg-gray-200 text-gray-600'
                   }`}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.95 }}
@@ -642,7 +696,7 @@ export default function ProfileForm() {
               <motion.button
                 type="button"
                 onClick={handleNext}
-                className="px-6 py-3 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-all duration-200"
+                className="px-6 py-3 text-sm font-medium text-white bg-[#FF4B36] rounded-md hover:bg-[#FF4B36]/90 transition-all duration-200"
                 disabled={isSaving}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -655,7 +709,7 @@ export default function ProfileForm() {
                 disabled={!isFormComplete() || isSaving}
                 className={`px-6 py-3 text-sm font-medium text-white rounded-md flex items-center space-x-2 ${
                   isFormComplete() && !isSaving
-                    ? 'bg-purple-600 hover:bg-purple-700'
+                    ? 'bg-[#FF4B36] hover:bg-[#FF4B36]/90'
                     : 'bg-gray-400 cursor-not-allowed'
                 }`}
                 whileHover={{ scale: 1.05 }}

@@ -191,7 +191,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
             id="title"
             value={(JOB_TITLES as readonly string[]).includes(newExperience.title as string) ? newExperience.title : 'Other'}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 ${
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900 ${
               errors.title ? 'border-red-300' : ''
             }`}
           >
@@ -211,7 +211,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
                 setNewExperience({ ...newExperience, title: e.target.value });
               }}
               placeholder="Enter custom job title"
-              className={`mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 ${
+              className={`mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900 ${
                 errors.title ? 'border-red-300' : ''
               }`}
             />
@@ -229,7 +229,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
             id="company"
             value={(COMPANIES as readonly string[]).includes(newExperience.company as string) ? newExperience.company : 'Other'}
             onChange={(e) => handleCompanyChange(e.target.value)}
-            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 ${
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900 ${
               errors.company ? 'border-red-300' : ''
             }`}
           >
@@ -249,7 +249,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
                 setNewExperience({ ...newExperience, company: e.target.value });
               }}
               placeholder="Enter custom company name"
-              className={`mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 ${
+              className={`mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900 ${
                 errors.company ? 'border-red-300' : ''
               }`}
             />
@@ -268,7 +268,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
             id="startDate"
             value={newExperience.startDate}
             onChange={(e) => setNewExperience({ ...newExperience, startDate: e.target.value })}
-            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 ${
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900 ${
               errors.startDate ? 'border-red-300' : ''
             }`}
           />
@@ -286,7 +286,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
             id="endDate"
             value={newExperience.endDate ?? ''}
             onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
-            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 ${
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900 ${
               errors.endDate ? 'border-red-300' : ''
             }`}
           />
@@ -314,7 +314,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
             id="description"
             value={newExperience.description}
             onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
-            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900 ${
+            className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900 ${
               errors.description ? 'border-red-300' : ''
             }`}
             rows={3}
@@ -329,7 +329,7 @@ export default function ExperienceForm({ experience, onChange }: ExperienceFormP
           <button
             type="button"
             onClick={addExperience}
-            className="w-full px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700"
+            className="w-full bg-[#FF4B36] text-white py-2 px-4 rounded-md hover:bg-[#FF4B36]/90 focus:outline-none focus:ring-2 focus:ring-[#FF4B36] focus:ring-offset-2 transition-colors mb-6"
           >
             Add Experience
           </button>
