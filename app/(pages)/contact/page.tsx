@@ -258,15 +258,9 @@ export default function ContactPage() {
                   <motion.button
                     type="submit"
                     disabled={isSubmitting}
-                    whileHover={{ scale: 1.05, boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4)' }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-base font-semibold text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 ease-in-out ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className="px-8 py-3 bg-[#FF4B36] text-white rounded-lg font-semibold shadow-md hover:bg-[#FF4B36] transition-colors text-lg"
                   >
-                    {isSubmitting ? (
-                      <><svg className="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Sending...</>
-                    ) : (
-                      <><Send className="w-5 h-5 mr-2" />Send Message</>
-                    )}
+                    Send Message
                   </motion.button>
                 </form>
               )}
@@ -282,21 +276,21 @@ export default function ContactPage() {
 
               <div className="space-y-6">
                 <motion.div variants={itemVariants} className="flex items-start space-x-4 bg-purple-50 p-4 rounded-lg shadow-sm border border-purple-100">
-                  <Mail className="flex-shrink-0 w-7 h-7 text-purple-700" />
+                  <Mail className="flex-shrink-0 w-7 h-7 text-[#2434B3]" />
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800">Email Us</h3>
                     <p className="text-gray-600 mt-1">ITIinfo@iti.gov.eg</p>
                   </div>
                 </motion.div>
                 <motion.div variants={itemVariants} className="flex items-start space-x-4 bg-purple-50 p-4 rounded-lg shadow-sm border border-purple-100">
-                  <Phone className="flex-shrink-0 w-7 h-7 text-purple-700" />
+                  <Phone className="flex-shrink-0 w-7 h-7 text-[#2434B3]" />
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800">Call Us</h3>
                     <p className="text-gray-600 mt-1">(+20) 235355690</p>
                   </div>
                 </motion.div>
                 <motion.div variants={itemVariants} className="flex items-start space-x-4 bg-purple-50 p-4 rounded-lg shadow-sm border border-purple-100">
-                  <MapPin className="flex-shrink-0 w-7 h-7 text-purple-700" />
+                  <MapPin className="flex-shrink-0 w-7 h-7 text-[#2434B3]" />
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800">Visit Us</h3>
                     <p className="text-gray-600 mt-1">Information Technology Institute (Knowledge City)</p>
