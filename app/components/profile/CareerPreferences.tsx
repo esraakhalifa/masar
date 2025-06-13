@@ -148,7 +148,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
                 setCustomIndustryError(''); // Clear error if not 'Other'
               }
             }}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900"
           >
             <option value="">Select an industry</option>
             {INDUSTRIES.map((industry) => (
@@ -164,7 +164,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
                 value={customIndustry}
                 onChange={(e) => handleCustomIndustryChange(e.target.value)}
                 onBlur={(e) => validateCustomIndustry(e.target.value)} // Validate on blur
-                className={`mt-2 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
+                className={`mt-2 block w-full rounded-md shadow-sm focus:ring-[#FF4B36] focus:border-[#FF4B36] bg-white text-gray-900 placeholder-gray-400 ${
                   customIndustryError ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter custom industry"
@@ -185,7 +185,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
             id="location"
             value={preferences.location}
             onChange={handleLocationChange}
-            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
+            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-[#FF4B36] focus:border-[#FF4B36] bg-white text-gray-900 placeholder-gray-400 ${
               locationError ? 'border-red-300' : 'border-gray-300'
             }`}
             placeholder="Enter your preferred location"
@@ -203,7 +203,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
             id="workType"
             value={preferences.workType}
             onChange={(e) => onChange({ ...preferences, workType: e.target.value as CareerPreference['workType'] })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 bg-white text-gray-900"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900"
           >
             {WORK_TYPES.map((type) => (
               <option key={type} value={type}>
@@ -222,7 +222,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
             id="salary"
             value={preferences.preferredSalary || ''}
             onChange={handleSalaryChange}
-            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white text-gray-900 placeholder-gray-400 ${
+            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-[#FF4B36] focus:border-[#FF4B36] bg-white text-gray-900 placeholder-gray-400 ${
               salaryError ? 'border-red-300' : 'border-gray-300'
             }`}
             placeholder="Enter your preferred salary"
