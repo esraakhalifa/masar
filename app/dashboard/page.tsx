@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Box, CircularProgress, Alert, Button, Menu, MenuItem, Snackbar,
   Typography, Checkbox, List, ListItem, ListItemText
@@ -8,6 +9,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import SchoolIcon from '@mui/icons-material/School';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RoadmapDiagram from '@/app/components/RoadmapDiagram';
 
 interface Task {
   id: string;
@@ -43,9 +45,10 @@ interface Roadmap {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [roadmaps, setRoadmaps] = useState<Roadmap[] | null>(null);
+  const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
   const [selectedRoadmap, setSelectedRoadmap] = useState<Roadmap | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -59,23 +62,28 @@ export default function DashboardPage() {
   ];
 
   useEffect(() => {
-    const fetchRoadmapData = async () => {
+    const fetchRoadmap = async () => {
       try {
-        const userId = 'cmbtb68ll0014fp90sry7mkie';
-        const response = await fetch(`http://localhost:3000/api/users/${userId}/roadmaps`);
-        if (!response.ok) throw new Error(`Failed to fetch roadmap data: ${response.statusText}`);
-        const data: Roadmap[] = await response.json();
-        setRoadmaps(data);
-        setSelectedRoadmap(data.length > 0 ? data[0] : null);
+        const userId = 'cmbxgjycw0000fptltstn83z3'; // TODO: Get from auth context
+        const response = await fetch(`/api/users/${userId}/roadmaps`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch roadmap');
+        }
+        
+        const data = await response.json();
+        if (data && data.length > 0) {
+          setRoadmap(data[0]); // Get the first roadmap
+          setSelectedRoadmap(data[0]);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
-        console.error('Error fetching roadmap:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRoadmapData();
+    fetchRoadmap();
   }, []);
 
   const handleCreateRoadmapClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -93,7 +101,7 @@ export default function DashboardPage() {
     setToastSeverity('info');
 
     try {
-      const userId = 'cmbtb68ll0014fp90sry7mkie';
+      const userId = 'cmbxgjycw0000fptltstn83z3';
       const response = await fetch(`http://localhost:3000/api/career-roadmap`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -102,7 +110,7 @@ export default function DashboardPage() {
 
       if (!response.ok) throw new Error(`Failed to create roadmap: ${response.statusText}`);
       const newRoadmap: Roadmap = await response.json();
-      setRoadmaps([newRoadmap]);
+      setRoadmap(newRoadmap);
       setSelectedRoadmap(newRoadmap);
       setToastMessage(`Roadmap for ${jobRole} created successfully! 🎉`);
       setToastSeverity('success');
@@ -126,22 +134,17 @@ export default function DashboardPage() {
       if (!response.ok) throw new Error('Failed to update task status');
 
       // Deep clone and update state
-      setRoadmaps(prev => {
+      setRoadmap(prev => {
         if (!prev) return null;
 
-        const updated = prev.map((roadmap) => {
-          const newTopics = roadmap.topics.map((topic) => {
-            const newTasks = topic.tasks?.map((task) =>
-              task.id === taskId ? { ...task, isCompleted: !currentStatus } : task
-            );
-            return { ...topic, tasks: newTasks };
-          });
-          return { ...roadmap, topics: newTopics };
-        });
+        const updated = { ...prev, topics: prev.topics.map((topic) => {
+          const newTasks = topic.tasks?.map((task) =>
+            task.id === taskId ? { ...task, isCompleted: !currentStatus } : task
+          );
+          return { ...topic, tasks: newTasks };
+        }) };
 
-        // Also update selectedRoadmap
-        const updatedSelected = updated.find(r => r.id === selectedRoadmap?.id) || null;
-        setSelectedRoadmap(updatedSelected);
+        setSelectedRoadmap(updated);
 
         return updated;
       });
@@ -157,6 +160,10 @@ export default function DashboardPage() {
 
   const handleCloseToast = () => {
     setToastMessage(null);
+  };
+
+  const handleTopicClick = (topicId: string) => {
+    router.push(`/dashboard/tasks/${topicId}`);
   };
 
   if (loading) {
@@ -175,18 +182,45 @@ export default function DashboardPage() {
     );
   }
 
+  if (!roadmap) {
+    return (
+      <Box className="p-4">
+        <Alert severity="info" className="rounded-lg">
+          No roadmap found. Please create a roadmap to get started.
+        </Alert>
+      </Box>
+    );
+  }
+
   return (
-    <Box className="max-w-7xl mx-auto">
+    <Box className="max-w-7xl mx-auto p-4">
+      <Typography 
+        variant="h4" 
+        sx={{ 
+          mb: 4, 
+          color: '#2d3748',
+          fontWeight: 600,
+          textAlign: 'center'
+        }}
+      >
+        {roadmap.roadmapRole} Learning Path
+      </Typography>
+      
+      <RoadmapDiagram
+        topics={roadmap.topics}
+        onTopicClick={handleTopicClick}
+      />
+
       <Box className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <Box>
           <Typography variant="h4" className="text-3xl font-bold text-gray-800 flex items-center gap-2">
             <SchoolIcon className="text-coral-500" />
             {selectedRoadmap ? `${selectedRoadmap.roadmapRole} Journey` : 'Your Learning Adventure'}
           </Typography>
-          <Typography className="text-gray-600 mt-2">Let’s master new skills with fun and ease! 🌟</Typography>
+          <Typography className="text-gray-600 mt-2">Let's master new skills with fun and ease! 🌟</Typography>
         </Box>
 
-        {!roadmaps || roadmaps.length === 0 ? (
+        {!roadmap || roadmap.topics.length === 0 ? (
           <Box className="mt-4 md:mt-0">
             <Button
               onClick={handleCreateRoadmapClick}
@@ -211,7 +245,7 @@ export default function DashboardPage() {
         ) : null}
       </Box>
 
-      {roadmaps && selectedRoadmap ? (
+      {roadmap && selectedRoadmap ? (
         <Box className="space-y-6">
           <Typography variant="h5" className="text-2xl font-semibold text-teal-600">
             Your Topics
