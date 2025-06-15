@@ -16,6 +16,27 @@ interface JobSearchOptions {
   country?: string;
 }
 
+interface UserContext {
+  careerPreference: {
+    industry: string;
+    preferredSalary: number;
+    workType: string;
+    location: string;
+    jobRole: string;
+  };
+  skills: Array<{
+    name: string;
+    level: number | null;
+    jobRole: string;
+  }>;
+  education: Array<{
+    degree: string;
+    fieldOfStudy: string;
+    institution: string;
+    graduationYear: number;
+  }>;
+}
+
 
 
 class RoadmapService {
@@ -76,7 +97,29 @@ class RoadmapService {
     return chunks;
   }
 
-  private createPrompt(jobMarketData: unknown, jobTitle: string): string {
+  private createPrompt(jobMarketData: unknown, jobTitle: string, userContext?: UserContext): string {
+    const skillLevels = userContext?.skills.reduce((acc, skill) => {
+      acc[skill.name.toLowerCase()] = skill.level;
+      return acc;
+    }, {} as Record<string, number | null>) || {};
+
+    const educationInfo = userContext?.education.map(edu => 
+      `${edu.degree} in ${edu.fieldOfStudy} from ${edu.institution} (${edu.graduationYear})`
+    ).join(', ') || 'Not specified';
+
+    const careerPreferences = userContext?.careerPreference ? `
+Career Preferences:
+- Industry: ${userContext.careerPreference.industry}
+- Preferred Salary: $${userContext.careerPreference.preferredSalary}
+- Work Type: ${userContext.careerPreference.workType}
+- Location: ${userContext.careerPreference.location}
+` : '';
+
+    const skillsInfo = userContext?.skills ? `
+Current Skills and Levels:
+${userContext.skills.map(skill => `- ${skill.name}: ${skill.level || 'Not assessed'}`).join('\n')}
+` : '';
+
     return `
 You are to return structured JSON for a software engineering roadmap that matches the following structure exactly:
 
@@ -122,11 +165,29 @@ You are to return structured JSON for a software engineering roadmap that matche
 4. Use real, existing courses from major platforms
 5. Do not include null, empty, or placeholder values
 
+🔍 User Context:
+${careerPreferences}
+${skillsInfo}
+Education: ${educationInfo}
+
+📊 Skill Level Requirements:
+${Object.entries(skillLevels).map(([skill, level]) => {
+  if (level === null || level >= 6) {
+    return `- For ${skill}: Focus on intermediate and advanced topics only`;
+  } else {
+    return `- For ${skill}: Include topics from beginner to advanced`;
+  }
+}).join('\n')}
+
 Here is the job market data to analyze:
 ${JSON.stringify(jobMarketData, null, 2)}`;
   }
 
-  public async generateAndSaveRoadmap(userId: string, jobTitle: string) {
+  public async generateAndSaveRoadmap(
+    userId: string,
+    jobTitle: string,
+    userContext?: UserContext
+  ) {
     try {
       // Get job market data
       const jobMarketData = await this.getJobMarketData(jobTitle);
@@ -155,7 +216,7 @@ ${JSON.stringify(jobMarketData, null, 2)}`;
       
       for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
-        const prompt = this.createPrompt(chunk, jobTitle);
+        const prompt = this.createPrompt(chunk, jobTitle, userContext);
         
         try {
           const response = await axios.post(
@@ -197,16 +258,22 @@ ${JSON.stringify(jobMarketData, null, 2)}`;
           if (parsed?.roadmap?.courses) {
             for (const course of parsed.roadmap.courses) {
               if (!allCourses.has(course.courseLink)) {
-                const savedCourse = await prisma.course.create({
-                  data: {
-                    roadmapId: roadmap.id,
-                    title: course.title,
-                    description: course.description,
-                    instructors: course.instructors,
-                    courseLink: course.courseLink,
-                  },
-                });
-                allCourses.set(course.courseLink, savedCourse);
+                try {
+                  const savedCourse = await prisma.course.create({
+                    data: {
+                      roadmapId: roadmap.id,
+                      title: `${course.title} (${allCourses.size + 1})`,
+                      description: course.description,
+                      instructors: course.instructors,
+                      courseLink: course.courseLink,
+                    },
+                  });
+                  allCourses.set(course.courseLink, savedCourse);
+                } catch (error) {
+                  console.error('Error creating course:', error);
+                  // Skip this course and continue with the next one
+                  continue;
+                }
               }
             }
           }

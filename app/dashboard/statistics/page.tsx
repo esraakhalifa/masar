@@ -43,7 +43,7 @@ export default function StatisticsPage() {
   useEffect(() => {
     const fetchProgressData = async () => {
       try {
-        const userId = 'cmbxgjycw0000fptltstn83z3'; // TODO: Get from auth context
+        const userId = 'cmby26o8v0000fp5nbmuzfc4f'; // TODO: Get from auth context
         console.log('Fetching progress data for user:', userId);
         
         const response = await fetch(`/api/users/${userId}/progress`, {

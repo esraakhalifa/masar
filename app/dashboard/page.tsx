@@ -64,7 +64,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchRoadmap = async () => {
       try {
-        const userId = 'cmbxgjycw0000fptltstn83z3'; // TODO: Get from auth context
+        const userId = 'cmby26o8v0000fp5nbmuzfc4f'; // TODO: Get from auth context
         const response = await fetch(`/api/users/${userId}/roadmaps`);
         
         if (!response.ok) {
