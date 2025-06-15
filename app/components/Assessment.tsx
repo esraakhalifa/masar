@@ -190,6 +190,35 @@ export default function Assessment({ role }: AssessmentProps) {
     return Math.round((correctAnswers / skillQuestions.length) * 100);
   };
 
+  const saveAssessmentResults = async () => {
+    const score = calculateScore();
+    const maxScore = 100;
+    const currentSkill = skills[currentSkillIndex];
+
+    try {
+      const response = await fetchWithCsrf("/api/save-assessment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          skillName: currentSkill,
+          score,
+          maxScore,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to save assessment results");
+      }
+
+      console.log("Assessment results saved successfully");
+    } catch (error) {
+      console.error("Error saving assessment results:", error);
+    }
+  };
+
   if (loading && !skills.length) {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
@@ -380,6 +409,7 @@ export default function Assessment({ role }: AssessmentProps) {
               <div className="flex justify-center">
                 <button
                   onClick={() => {
+                    saveAssessmentResults();
                     setShowResults(false);
                     if (currentSkillIndex < skills.length - 1) {
                       moveToSkill(currentSkillIndex + 1);
@@ -404,6 +434,5 @@ export default function Assessment({ role }: AssessmentProps) {
         )}
       </div>
     </div>
-
   );
 }

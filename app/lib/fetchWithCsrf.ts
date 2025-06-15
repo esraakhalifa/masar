@@ -1,5 +1,7 @@
+import { CSRF_HEADER } from "./security/csrf";
+
 export const getCsrfToken = async (): Promise<string> => {
-  const res = await fetch('/api/csrf', { credentials: 'include' });
+  const res = await fetch("/api/csrf", { credentials: "include" });
   const data = await res.json();
   return data.token;
 };
@@ -9,14 +11,14 @@ export const fetchWithCsrf = async (
   init: RequestInit = {}
 ): Promise<Response> => {
   // Only add CSRF token for non-GET requests
-  if (init.method && init.method.toUpperCase() !== 'GET') {
+  if (init.method && init.method.toUpperCase() !== "GET") {
     const csrfToken = await getCsrfToken();
     console.log("Sending CSRF token:", csrfToken);
     init.headers = {
       ...(init.headers || {}),
-      'x-csrf-token': csrfToken,
+      [CSRF_HEADER]: csrfToken,
     };
-    init.credentials = 'include'; // Ensure cookies are sent
+    init.credentials = "include"; // Ensure cookies are sent
   }
   return fetch(input, init);
 };
