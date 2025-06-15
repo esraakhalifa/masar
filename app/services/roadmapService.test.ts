@@ -1,5 +1,5 @@
-import { roadmapService } from './roadmapService';
-import { PrismaClient } from '../generated/prisma';
+const { roadmapService } = require('./roadmapService');
+const { PrismaClient } = require('../generated/prisma');
 
 const prisma = new PrismaClient();
 
@@ -45,32 +45,37 @@ async function testRoadmapGeneration() {
         CareerPreference: {
           create: {
             industry: 'Technology',
-            preferredSalary: 80000,
-            workType: 'Remote',
+            preferredSalary: 90000,
+            workType: 'Hybrid',
             location: 'United States',
-            jobRole: 'Software Engineer'
+            jobRole: 'Business Development Manager'
           }
         },
         skills: {
           create: [
             {
-              jobRole: 'Software Engineer',
-              name: 'JavaScript',
-              level: 8
-            },
-            {
-              jobRole: 'Software Engineer',
-              name: 'React',
+              jobRole: 'Business Development Manager',
+              name: 'Sales Strategy',
               level: 7
             },
             {
-              jobRole: 'Software Engineer',
-              name: 'Node.js',
+              jobRole: 'Business Development Manager',
+              name: 'Market Analysis',
+              level: 8
+            },
+            {
+              jobRole: 'Business Development Manager',
+              name: 'Negotiation',
+              level: 6
+            },
+            {
+              jobRole: 'Business Development Manager',
+              name: 'CRM Software',
               level: 4
             },
             {
-              jobRole: 'Software Engineer',
-              name: 'Python',
+              jobRole: 'Business Development Manager',
+              name: 'Business Intelligence',
               level: null
             }
           ]
@@ -78,10 +83,10 @@ async function testRoadmapGeneration() {
         Education: {
           create: [
             {
-              degree: 'Bachelor of Science',
-              fieldOfStudy: 'Computer Science',
+              degree: 'Master of Business Administration',
+              fieldOfStudy: 'Business Administration',
               institution: 'Test University',
-              graduationYear: 2022
+              graduationYear: 2021
             }
           ]
         }
@@ -101,14 +106,14 @@ async function testRoadmapGeneration() {
     // Generate roadmap with user context
     const result = await roadmapService.generateAndSaveRoadmap(
       testUser.id,
-      testUser.CareerPreference?.jobRole || 'Software Engineer',
+      testUser.CareerPreference?.jobRole || 'Business Development Manager',
       {
         careerPreference: testUser.CareerPreference || {
           industry: 'Technology',
-          preferredSalary: 80000,
-          workType: 'Remote',
+          preferredSalary: 90000,
+          workType: 'Hybrid',
           location: 'United States',
-          jobRole: 'Software Engineer'
+          jobRole: 'Business Development Manager'
         },
         skills: testUser.skills,
         education: testUser.Education
@@ -170,6 +175,8 @@ async function testRoadmapGeneration() {
     console.log('Courses count matches:', savedRoadmap.courses.length === result.courses.length);
     console.log('Topics count matches:', savedRoadmap.topics.length === result.topics.length);
 
+    // Comment out cleanup to keep test data
+    /*
     // Clean up test data
     console.log('\nCleaning up test data...');
     
@@ -225,8 +232,12 @@ async function testRoadmapGeneration() {
         id: testUser.id
       }
     });
+    */
 
     console.log('✅ Test completed successfully');
+    console.log('Test data preserved for inspection:');
+    console.log('User ID:', testUser.id);
+    console.log('Roadmap ID:', savedRoadmap.id);
   } catch (error) {
     console.error('❌ Test failed:', error);
     throw error;

@@ -39,7 +39,7 @@ export default function CoursesPage() {
 
   const fetchCourses = async () => {
     try {
-      const userId = 'cmby26o8v0000fp5nbmuzfc4f'; // TODO: Get from auth context
+      const userId = 'cmby62pnx0000fp9vbb9hgc6h'; // TODO: Get from auth context
       const response = await fetch(`/api/users/${userId}/roadmaps`);
       
       if (!response.ok) {

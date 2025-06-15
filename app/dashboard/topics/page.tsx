@@ -21,7 +21,7 @@ export default function TopicsPage() {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const userId = 'cmby1pcum0000fp5biqny28w3'; // TODO: Get from auth context
+        const userId = 'cmby26o8v0000fp5nbmuzfc4f'; // TODO: Get from auth context
         const response = await fetch(`/api/users/${userId}/roadmaps`);
         if (!response.ok) {
           throw new Error('Failed to fetch topics');
