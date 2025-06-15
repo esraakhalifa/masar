@@ -42,34 +42,74 @@ export async function GET(
 
 
 // POST /api/certificates - Create new certificate
-export async function POST(req: Request) {
+export async function POST(request: Request) {
+  console.log('API Route: Certificate creation endpoint hit');
+  
   try {
-    const body = await req.json();
-    const { title, provider, issueDate, fileUrl, courseId, userId } = body;
+    const body = await request.json();
+    console.log('Received certificate data:', body);
+    
+    const { title, provider, issueDate, fileUrl, courseId } = body;
 
+    // Validate required fields
+    if (!title || !provider || !issueDate || !fileUrl || !courseId) {
+      console.error('Missing required fields:', { title, provider, issueDate, fileUrl, courseId });
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Get the course to verify it exists and get the userId
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: {
+        roadmap: true,
+      },
+    });
+
+    if (!course) {
+      console.error('Course not found:', courseId);
+      return NextResponse.json(
+        { error: 'Course not found' },
+        { status: 404 }
+      );
+    }
+
+    console.log('Found course:', {
+      id: course.id,
+      title: course.title,
+      roadmapId: course.roadmapId,
+      userId: course.roadmap.userId
+    });
+
+    // Create the certificate
     const certificate = await prisma.certificate.create({
       data: {
-        course: {
-          connect: {
-            id: courseId
-          }
-        },
-        user: {
-          connect: {
-            id: userId
-          }
-        },
         title,
         provider,
-        issueDate,
-        fileUrl
-      }
+        issueDate: new Date(issueDate),
+        fileUrl,
+        courseId,
+        userId: course.roadmap.userId,
+      },
+    });
+
+    console.log('Certificate created successfully:', {
+      id: certificate.id,
+      title: certificate.title,
+      provider: certificate.provider,
+      courseId: certificate.courseId,
+      userId: certificate.userId
     });
 
     return NextResponse.json(certificate);
   } catch (error) {
     console.error('Error creating certificate:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
   }
 }
 
