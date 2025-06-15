@@ -9,37 +9,58 @@ datasource db {
 }
 
 model User {
-  id               String         @id @default(cuid())
+  id               String            @id @default(cuid())
   firstName        String?
   lastName         String?
-  email            String         @unique
+  email            String            @unique
   emailVerified    DateTime?
   image            String?
   password         String?
-  resumeText       String?        @map("resume_text")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  deletedAt        DateTime?      @map("deleted_at")
-  additionalInfo   String?        @map("additional_info")
-  stripeCustomerId String?        @map("stripe_customer_id")
-  preferences      Json?
+  createdAt        DateTime          @default(now()) @map("created_at")
+  deletedAt        DateTime?         @map("deleted_at")
+  additionalInfo   String?           @map("additional_info")
+  stripeCustomerId String?           @map("stripe_customer_id")
   careerRoadmap    CareerRoadmap?
   certificates     Certificate[]
   payments         Payment[]
   skills           Skill[]
+  CareerPreference CareerPreference?
+  Education        Education[]
 
   @@map("users")
 }
 
 model Skill {
-  id          String       @id @default(cuid())
-  userId      String       @map("user_id")
-  jobRole     String       @map("job_role")
-  name        String       @map("skill_name")
-  level       Int?
-  deletedAt   DateTime?    @map("deleted_at")
-  user        User         @relation(fields: [userId], references: [id])
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  jobRole   String    @map("job_role")
+  name      String    @map("skill_name")
+  level     Int?
+  deletedAt DateTime? @map("deleted_at")
+  user      User      @relation(fields: [userId], references: [id])
 
   @@map("skills")
+}
+
+model CareerPreference {
+  id              String @id @default(uuid())
+  industry        String
+  preferredSalary Int
+  workType        String
+  location        String
+  jobRole         String @map("job_role")
+  userId          String @unique
+  user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Education {
+  id             String @id @default(uuid())
+  degree         String
+  fieldOfStudy   String
+  institution    String
+  graduationYear Int
+  userId         String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CareerRoadmap {
@@ -68,10 +89,9 @@ model RoadmapTopic {
   tasks          Task[]
   roadmap        CareerRoadmap @relation(fields: [roadmapId], references: [id])
 
-  @@map("roadmap_topics")
   @@unique([roadmapId, title]) //
+  @@map("roadmap_topics")
 }
-
 
 model Course {
   id           String        @id @default(cuid())
@@ -85,10 +105,9 @@ model Course {
   deleted_at   DateTime?     @map("deleted_at")
   roadmap      CareerRoadmap @relation(fields: [roadmapId], references: [id])
   certificates Certificate[]
+
   @@unique([roadmapId, title]) // Ensures course titles are unique within the same roadmap
 }
-
-
 
 model Certificate {
   id        String    @id @default(cuid())
@@ -105,7 +124,6 @@ model Certificate {
 
   @@map("certificates")
 }
-
 
 model Task {
   id          String       @id @default(cuid())
