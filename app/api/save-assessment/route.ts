@@ -64,6 +64,7 @@ export async function POST(request: Request) {
           level: Math.round((score / maxScore) * 4), // Convert score to 1-4 scale
           category: "NA",
           userId: user.id,
+          updatedAt: new Date(),
         },
       });
     } else {
@@ -72,6 +73,7 @@ export async function POST(request: Request) {
         where: { id: skill.id },
         data: {
           level: Math.round((score / maxScore) * 4), // Convert score to 1-4 scale
+          updatedAt: new Date(),
         },
       });
     }
@@ -84,6 +86,7 @@ export async function POST(request: Request) {
         title: `${skillName} Assessment`,
         score: score,
         maxScore: maxScore,
+        createdAt: new Date(),
       },
     });
 
