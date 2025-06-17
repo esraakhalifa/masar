@@ -1,7 +1,7 @@
 // app/api/parse-resume/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-const RESUME_PARSER_API_KEY = '4db1qewFdSYC7CKgOmw7WmevgRNQNWOw';
+const RESUME_PARSER_API_KEY = process.env.APILAYER_API_KEY;
 const RESUME_PARSER_API_URL = 'https://api.apilayer.com/resume_parser/upload';
 
 // Updated interface to match the actual API response

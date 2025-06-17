@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { PrismaClient } from '@prisma/client';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import crypto from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
                 name: skill,
                 category: 'Technical', // You might want to categorize skills
                 userId: session.user.id,
+                updatedAt: new Date(),
               },
             })
           )
@@ -100,6 +102,7 @@ export async function POST(request: NextRequest) {
 
             return tx.experience.create({
               data: {
+                id: crypto.randomUUID(),
                 title: exp.jobTitle || 'Not specified',
                 company: exp.company || 'Not specified',
                 startDate,
