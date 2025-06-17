@@ -39,6 +39,7 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
   const [locationError, setLocationError] = useState<string>('');
   const [salaryError, setSalaryError] = useState<string>('');
   const [customIndustryError, setCustomIndustryError] = useState<string>('');
+  const [jobRoleError, setJobRoleError] = useState<string>('');
 
   // Initialize customIndustry when preferences.industry is not in INDUSTRIES
   useEffect(() => {
@@ -112,6 +113,23 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
       return false;
     }
     setCustomIndustryError('');
+    return true;
+  };
+
+  const validateJobRole = (jobRole: string): boolean => {
+    if (!jobRole.trim()) {
+      setJobRoleError('Job role is required');
+      return false;
+    }
+    if (jobRole.trim().length < 3) {
+      setJobRoleError('Job role must be at least 3 characters long');
+      return false;
+    }
+    if (!/^[A-Za-z\s]+$/.test(jobRole)) {
+      setJobRoleError('Job role can only contain letters and spaces');
+      return false;
+    }
+    setJobRoleError('');
     return true;
   };
 
@@ -205,12 +223,36 @@ export default function CareerPreferences({ preferences, onChange }: CareerPrefe
             onChange={(e) => onChange({ ...preferences, workType: e.target.value as CareerPreference['workType'] })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#FF4B36] focus:ring-[#FF4B36] bg-white text-gray-900"
           >
+            <option value="">Select work type</option>
             {WORK_TYPES.map((type) => (
               <option key={type} value={type}>
                 {type.charAt(0).toUpperCase() + type.slice(1)}
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label htmlFor="jobRole" className="block text-sm font-medium text-gray-700">
+            Job Role
+          </label>
+          <input
+            type="text"
+            id="jobRole"
+            value={preferences.jobRole || ''}
+            onChange={(e) => {
+              onChange({ ...preferences, jobRole: e.target.value });
+              validateJobRole(e.target.value);
+            }}
+            onBlur={(e) => validateJobRole(e.target.value)} // Validate on blur
+            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-[#FF4B36] focus:border-[#FF4B36] bg-white text-gray-900 placeholder-gray-400 ${
+              jobRoleError ? 'border-red-300' : 'border-gray-300'
+            }`}
+            placeholder="e.g., Software Engineer, Data Scientist"
+          />
+          {jobRoleError && (
+            <p className="mt-1 text-sm text-red-600">{jobRoleError}</p>
+          )}
         </div>
 
         <div>

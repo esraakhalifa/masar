@@ -9,6 +9,7 @@ export interface CareerPreference {
   preferredSalary?: number;
   workType: 'remote' | 'hybrid' | 'onsite';
   location?: string;
+  jobRole?: string;
 }
 
 export interface Education {

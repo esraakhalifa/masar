@@ -35,6 +35,7 @@ export const profileSchema = z.object({
       errorMap: () => ({ message: 'Work type must be remote, onsite, or hybrid' })
     }),
     location: z.string().max(100).transform(sanitizeInput).optional(),
+    jobRole: z.string().max(100).optional(),
   }).strict(),
   education: z.array(z.object({
     institution: z.string().min(1, 'Institution is required').max(100).transform(sanitizeInput),
