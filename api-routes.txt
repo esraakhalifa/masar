@@ -1,0 +1,41 @@
+API Routes Documentation
+
+1. User Routes
+GET /api/users
+GET /api/users/[id]
+POST /api/users
+PUT /api/users/[id]
+
+2. User-specific Routes
+GET /api/users/[userId]/roadmaps
+GET /api/users/[userId]/progress
+GET /api/users/[userId]/job-market
+
+3. Career Roadmap Routes
+GET /api/career-roadmap
+POST /api/career-roadmap
+PUT /api/career-roadmap/[id]
+
+4. Course Routes
+GET /api/courses
+GET /api/courses/[id]
+POST /api/courses/[id]
+DELETE /api/courses/[id]
+
+5. Topic Routes
+GET /api/topics
+GET /api/topics/[id]
+POST /api/topics
+PUT /api/topics/[id]
+DELETE /api/topics/[id]
+GET /api/topics/[topicId]
+
+6. Certificate Routes
+GET /api/certificates
+GET /api/certificates/[id]
+POST /api/certificates
+
+7. Skills Routes
+GET /api/skills
+GET /api/skills/[id]
+POST /api/skills 

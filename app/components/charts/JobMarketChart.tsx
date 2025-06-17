@@ -1,4 +1,4 @@
-import { Box, Typography, CircularProgress, Alert } from '@mui/material';
+import { Box, Typography, CircularProgress, Alert, LinearProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
   BarChart,
@@ -9,31 +9,57 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { motion } from 'framer-motion';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TimelineIcon from '@mui/icons-material/Timeline';
 
 interface JobMarketData {
   currentOpenings: number;
   projectedOpenings: number;
-  growthRate: string;
+  growthRate: number;
   averageSalary: {
     amount: number;
     currency: string;
-    source: string;
   };
   demandTrend: string;
   requiredSkills: string[];
   marketInsights: {
-    trends: string[];
-    challenges: string[];
-    opportunities: string[];
-  };
+    title: string;
+    description: string;
+  }[];
 }
 
-export default function JobMarketChart() {
-  const [loading, setLoading] = useState(true);
+interface JobMarketChartProps {
+  data?: JobMarketData | null;
+  isLoading?: boolean;
+}
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+export default function JobMarketChart({ data: propData, isLoading: propLoading = false }: JobMarketChartProps) {
+  const [data, setData] = useState<JobMarketData | null>(propData || null);
+  const [loading, setLoading] = useState(!propData);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<JobMarketData | null>(null);
 
   useEffect(() => {
+    if (propData) {
+      setData(propData);
+      setLoading(false);
+      return;
+    }
+
     const fetchJobMarketData = async () => {
       try {
         const response = await fetch('/api/job-market');
@@ -50,19 +76,38 @@ export default function JobMarketChart() {
     };
 
     fetchJobMarketData();
-  }, []);
+  }, [propData]);
 
-  if (loading) {
+  if (propLoading || loading) {
     return (
-      <Box className="flex items-center justify-center h-[300px]">
-        <CircularProgress className="text-teal-500" />
+      <Box className="w-full bg-white rounded-lg shadow-sm p-6">
+        <Box className="flex items-center space-x-4 mb-4">
+          <TimelineIcon className="text-[#4ECDC4] text-2xl" />
+          <Typography variant="h6" className="text-gray-700">
+            Analyzing Market Trends
+          </Typography>
+        </Box>
+        <LinearProgress 
+          className="mb-4" 
+          sx={{ 
+            height: 4,
+            borderRadius: 2,
+            backgroundColor: 'rgba(78, 205, 196, 0.1)',
+            '& .MuiLinearProgress-bar': {
+              backgroundColor: '#4ECDC4',
+            },
+          }} 
+        />
+        <Typography variant="body2" className="text-gray-500">
+          Processing market data and generating insights...
+        </Typography>
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box className="p-4">
+      <Box className="w-full p-4">
         <Alert severity="error" className="rounded-lg">
           {error}
         </Alert>
@@ -72,7 +117,7 @@ export default function JobMarketChart() {
 
   if (!data) {
     return (
-      <Box className="p-4">
+      <Box className="w-full p-4">
         <Alert severity="info" className="rounded-lg">
           No job market data available
         </Alert>
@@ -92,101 +137,157 @@ export default function JobMarketChart() {
   ];
 
   return (
-    <Box className="h-full">
-      <Typography variant="h6" className="mb-4 text-gray-800">
-        Job Market Insights
-      </Typography>
-      
-      <Box className="h-[200px] mb-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="openings" fill="#9F7AEA" />
-          </BarChart>
-        </ResponsiveContainer>
-      </Box>
-
-      <Box className="space-y-4">
-        <Box>
+    <Box className="space-y-6">
+      <Box className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Box className="bg-white p-4 rounded-lg shadow-sm">
           <Typography variant="subtitle2" className="text-gray-600">
-            Growth Rate
+            Current Openings
           </Typography>
-          <Typography className="text-lg font-semibold text-teal-600">
-            {data.growthRate}
+          <Typography variant="h6" className="text-[#4ECDC4]">
+            {data.currentOpenings.toLocaleString()}
           </Typography>
         </Box>
-
-        <Box>
+        <Box className="bg-white p-4 rounded-lg shadow-sm">
+          <Typography variant="subtitle2" className="text-gray-600">
+            Projected Openings
+          </Typography>
+          <Typography variant="h6" className="text-[#4ECDC4]">
+            {data.projectedOpenings.toLocaleString()}
+          </Typography>
+        </Box>
+        <Box className="bg-white p-4 rounded-lg shadow-sm">
           <Typography variant="subtitle2" className="text-gray-600">
             Average Salary
           </Typography>
-          <Typography className="text-lg font-semibold text-teal-600">
+          <Typography variant="h6" className="text-[#4ECDC4]">
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
-              currency: data.averageSalary.currency,
-            }).format(data.averageSalary.amount)}
+              currency: data.averageSalary?.currency || 'USD',
+            }).format(data.averageSalary?.amount || 0)}
           </Typography>
-          <Typography variant="caption" className="text-gray-500">
-            Source: {data.averageSalary.source}
-          </Typography>
-        </Box>
-
-        <Box>
-          <Typography variant="subtitle2" className="text-gray-600">
-            Demand Trend
-          </Typography>
-          <Typography className="text-lg font-semibold text-teal-600">
-            {data.demandTrend}
-          </Typography>
-        </Box>
-
-        <Box>
-          <Typography variant="subtitle2" className="text-gray-600 mb-2">
-            Top Required Skills
-          </Typography>
-          <Box className="flex flex-wrap gap-2">
-            {data.requiredSkills.map((skill, index) => (
-              <Box
-                key={index}
-                className="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm"
-              >
-                {skill}
-              </Box>
-            ))}
-          </Box>
-        </Box>
-
-        <Box>
-          <Typography variant="subtitle2" className="text-gray-600 mb-2">
-            Market Insights
-          </Typography>
-          <Box className="space-y-2">
-            <Box>
-              <Typography variant="caption" className="text-gray-500">
-                Trends
-              </Typography>
-              <ul className="list-disc list-inside text-sm text-gray-700">
-                {data.marketInsights.trends.map((trend, index) => (
-                  <li key={index}>{trend}</li>
-                ))}
-              </ul>
-            </Box>
-            <Box>
-              <Typography variant="caption" className="text-gray-500">
-                Opportunities
-              </Typography>
-              <ul className="list-disc list-inside text-sm text-gray-700">
-                {data.marketInsights.opportunities.map((opportunity, index) => (
-                  <li key={index}>{opportunity}</li>
-                ))}
-              </ul>
-            </Box>
-          </Box>
         </Box>
       </Box>
+
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="flex flex-col md:flex-row gap-6"
+      >
+        <motion.div variants={fadeInUp} className="flex-1">
+          <Box className="flex items-center space-x-2 mb-4">
+            <TrendingUpIcon className="text-[#4ECDC4]" />
+            <Typography variant="h6">Job Market Trends</Typography>
+          </Box>
+          
+          <Box className="h-[250px] mb-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                <XAxis 
+                  dataKey="name" 
+                  stroke="#2D3748"
+                  tick={{ fill: '#2D3748' }}
+                />
+                <YAxis 
+                  stroke="#2D3748"
+                  tick={{ fill: '#2D3748' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    border: '1px solid #4ECDC4',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+                <Bar 
+                  dataKey="openings" 
+                  fill="#4ECDC4"
+                  radius={[4, 4, 0, 0]}
+                  activeBar={{ fill: '#FF6B3D' }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </Box>
+        </motion.div>
+
+        <motion.div variants={fadeInUp} className="flex-1 space-y-4">
+          <Box className="grid grid-cols-2 gap-4">
+            <Box className="bg-gray-50 p-4 rounded-lg">
+              <Typography variant="subtitle2" className="text-[#4ECDC4] mb-1">
+                Growth Rate
+              </Typography>
+              <Typography variant="h6" className="text-gray-700">
+                {data.growthRate}
+              </Typography>
+            </Box>
+
+            <Box className="bg-gray-50 p-4 rounded-lg">
+              <Typography variant="subtitle2" className="text-[#4ECDC4] mb-1">
+                Demand Trend
+              </Typography>
+              <Typography variant="h6" className="text-gray-700">
+                {data.demandTrend}
+              </Typography>
+            </Box>
+
+            <Box className="bg-gray-50 p-4 rounded-lg">
+              <Typography variant="subtitle2" className="text-[#4ECDC4] mb-1">
+                Required Skills
+              </Typography>
+              <Box className="flex flex-wrap gap-1">
+                {data.requiredSkills.slice(0, 3).map((skill, index) => (
+                  <motion.div
+                    key={skill}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Box
+                      className="px-2 py-0.5 rounded-full text-xs"
+                      sx={{
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                        color: '#4ECDC4'
+                      }}
+                    >
+                      {skill}
+                    </Box>
+                  </motion.div>
+                ))}
+              </Box>
+            </Box>
+          </Box>
+
+          <Box className="bg-gray-50 p-4 rounded-lg">
+            <Typography variant="subtitle2" className="text-[#4ECDC4] mb-2">
+              Market Insights
+            </Typography>
+            <Box className="grid grid-cols-2 gap-4">
+              <Box>
+                <Typography variant="caption" className="text-gray-500 block mb-1">
+                  Trends
+                </Typography>
+                <ul className="list-disc list-inside text-sm text-gray-700">
+                  {data.marketInsights.slice(0, 2).map((insight, index) => (
+                    <li key={index}>{insight.title}</li>
+                  ))}
+                </ul>
+              </Box>
+              <Box>
+                <Typography variant="caption" className="text-gray-500 block mb-1">
+                  Opportunities
+                </Typography>
+                <ul className="list-disc list-inside text-sm text-gray-700">
+                  {data.marketInsights.slice(0, 2).map((insight, index) => (
+                    <li key={index}>{insight.description}</li>
+                  ))}
+                </ul>
+              </Box>
+            </Box>
+          </Box>
+        </motion.div>
+      </motion.div>
     </Box>
   );
 } 

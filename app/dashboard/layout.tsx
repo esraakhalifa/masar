@@ -1,35 +1,101 @@
 "use client";
 
 import { useState } from 'react';
-import { Box, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { 
+  Box, 
+  Drawer, 
+  IconButton, 
+  List, 
+  ListItem, 
+  ListItemButton, 
+  ListItemIcon,
+  ListItemText, 
+  Typography,
+  useTheme,
+  AppBar,
+  Toolbar
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import SchoolIcon from '@mui/icons-material/School';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import Link from 'next/link';
+import { styled } from '@mui/material/styles';
 import '../globals.css';
+
+const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
+  py: 2,
+  px: 3,
+  transition: 'all 0.3s ease-in-out',
+  '&:hover': {
+    backgroundColor: 'rgba(255, 127, 80, 0.1)',
+    '& .MuiListItemIcon-root': {
+      color: '#E65C2E', // Darker coral orange
+    },
+    '& .MuiListItemText-primary': {
+      color: '#E65C2E', // Darker coral orange
+    },
+  },
+}));
+
+const StyledListItemIcon = styled(ListItemIcon)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  minWidth: 40,
+  transition: 'color 0.3s ease-in-out',
+}));
+
+const StyledListItemText = styled(ListItemText)(({ theme }) => ({
+  '& .MuiListItemText-primary': {
+    fontWeight: 500,
+    color: theme.palette.text.primary,
+    transition: 'color 0.3s ease-in-out',
+  },
+}));
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const theme = useTheme();
 
   const handleToggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const menuItems = [
+    { text: 'Dashboard', icon: <DashboardIcon />, href: '/dashboard' },
+    { text: 'Courses', icon: <SchoolIcon />, href: '/dashboard/courses' },
+    { text: 'Statistics', icon: <BarChartIcon />, href: '/dashboard/statistics' },
+  ];
+
   const SidebarContent = () => (
-    <Box className="bg-gradient-to-b from-teal-500 to-blue-600 h-full text-white">
-      <Box className="p-4">
-        <Typography variant="h5" className="font-bold text-white flex items-center gap-2">
-          🚀 Masar
+    <Box sx={{ 
+      width: 280,
+      height: '100%',
+      background: 'white',
+      borderRight: `1px solid ${theme.palette.divider}`,
+    }}>
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h5" sx={{ 
+          fontWeight: 600,
+          color: theme.palette.primary.main,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}>
+          Masar
         </Typography>
       </Box>
       <List>
-        {['Dashboard', 'Courses', 'Statistics'].map((text) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton
+        {menuItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <StyledListItemButton
               component={Link}
-              href={text === 'Dashboard' ? '/dashboard' : `/dashboard/${text.toLowerCase()}`}
-              className="text-white hover:bg-teal-700 transition-colors duration-200 py-3 px-4"
+              href={item.href}
             >
-              <ListItemText primary={text} />
-            </ListItemButton>
+              <StyledListItemIcon>
+                {item.icon}
+              </StyledListItemIcon>
+              <StyledListItemText primary={item.text} />
+            </StyledListItemButton>
           </ListItem>
         ))}
       </List>
@@ -39,46 +105,64 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <html lang="en">
       <body>
-        <Box className="flex">
-          {/* Persistent Sidebar for Desktop */}
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+          {/* App Bar */}
+          <AppBar 
+            position="fixed" 
+            sx={{ 
+              zIndex: (theme) => theme.zIndex.drawer + 1,
+              backgroundColor: 'white',
+              boxShadow: 'none',
+              borderBottom: `1px solid ${theme.palette.divider}`,
+            }}
+          >
+            <Toolbar>
+              <IconButton
+                onClick={handleToggleSidebar}
+                sx={{ 
+                  color: theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 127, 80, 0.1)',
+                    color: '#E65C2E',
+                  },
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+
+          {/* Sidebar */}
           <Drawer
-            variant="permanent"
+            variant="temporary"
+            open={sidebarOpen}
+            onClose={handleToggleSidebar}
+            ModalProps={{
+              keepMounted: true,
+            }}
             sx={{
-              width: 240,
-              flexShrink: 0,
-              '& .MuiDrawer-paper': { width: 240, boxSizing: 'border-box', border: 'none' },
-              display: { xs: 'none', md: 'block' },
+              '& .MuiDrawer-paper': {
+                boxSizing: 'border-box',
+                border: 'none',
+              },
             }}
           >
             <SidebarContent />
           </Drawer>
 
           {/* Main Content */}
-          <Box className="flex-grow p-4 md:p-8">
-            <IconButton
-              onClick={handleToggleSidebar}
-              className="md:hidden mb-4 text-teal-600"
-              aria-label="open sidebar"
-            >
-              <MenuIcon />
-            </IconButton>
-            {children}
-          </Box>
-
-          {/* Temporary Sidebar for Mobile */}
-          <Drawer
-            variant="temporary"
-            open={sidebarOpen}
-            onClose={handleToggleSidebar}
+          <Box
+            component="main"
             sx={{
-              width: 240,
-              flexShrink: 0,
-              '& .MuiDrawer-paper': { width: 240, boxSizing: 'border-box', border: 'none' },
-              display: { xs: 'block', md: 'none' },
+              flexGrow: 1,
+              p: 3,
+              width: '100%',
+              backgroundColor: theme.palette.background.default,
             }}
           >
-            <SidebarContent />
-          </Drawer>
+            <Toolbar />
+            {children}
+          </Box>
         </Box>
       </body>
     </html>

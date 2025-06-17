@@ -1,7 +1,8 @@
 const { roadmapService } = require('./roadmapService');
-const { PrismaClient } = require('../generated/prisma');
+// const { PrismaClient } = require('../generated/prisma');
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 interface Course {
   id: string;
@@ -132,7 +133,7 @@ async function testRoadmapGeneration() {
     // Log sample courses
     console.log('\nSample Courses:');
     if (result.courses.length > 0) {
-      result.courses.slice(0, 2).forEach(course => {
+      result.courses.slice(0, 2).forEach((course: Course) => {
         console.log(`- ${course.title}`);
         console.log(`  Description: ${course.description}`);
         console.log(`  Link: ${course.courseLink}`);
@@ -144,7 +145,7 @@ async function testRoadmapGeneration() {
     // Log sample topics
     console.log('\nSample Topics:');
     if (result.topics.length > 0) {
-      result.topics.slice(0, 2).forEach(topic => {
+      result.topics.slice(0, 2).forEach((topic: Topic) => {
         console.log(`- ${topic.title}`);
         console.log(`  Description: ${topic.description}`);
         console.log(`  Tasks: ${topic.tasks?.length || 0}`);

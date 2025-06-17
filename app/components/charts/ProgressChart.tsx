@@ -21,7 +21,7 @@ export default function ProgressChart({ completed, total, percentage }: Progress
     datasets: [
       {
         data: [completed, total - completed],
-        backgroundColor: ['#4ECDC4', '#FFE4C4'],
+        backgroundColor: ['#4ECDC4', '#FF6B3D'],
         borderWidth: 0,
       },
     ],
@@ -33,6 +33,12 @@ export default function ProgressChart({ completed, total, percentage }: Progress
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+          color: '#2D3748',
+          font: {
+            weight: 'normal' as const,
+          },
+        },
       },
       tooltip: {
         callbacks: {
