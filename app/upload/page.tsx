@@ -575,7 +575,9 @@ export default function CVUploadPage() {
                 <textarea
                   {...register('additionalInfo', {
                     validate: (value) => {
-                      const words = value?.trim().split(/\s+/).filter(word => word.length > 0) || [];
+                      // Sanitize input by removing potentially harmful characters
+                      const sanitizedValue = value?.replace(/[<>]/g, '') || '';
+                      const words = sanitizedValue.trim().split(/\s+/).filter(word => word.length > 0) || [];
                       return words.length <= MAX_WORDS || `Maximum ${MAX_WORDS} words allowed`;
                     }
                   })}
@@ -597,6 +599,8 @@ export default function CVUploadPage() {
                       e.target.style.boxShadow = 'none';
                     }
                   }}
+                  // Add maxLength to prevent extremely long inputs
+                  maxLength={5000}
                 />
                 <div className="absolute bottom-2 right-2 text-sm text-gray-500">
                   {wordCount}/{MAX_WORDS} words
@@ -605,7 +609,8 @@ export default function CVUploadPage() {
               {errors.additionalInfo && (
                 <p className="mt-2 text-sm flex items-center" style={{color: '#FF4B36'}}>
                   <AlertCircle className="w-4 h-4 mr-1" />
-                  {errors.additionalInfo.message}
+                  {/* Sanitize error message display */}
+                  {typeof errors.additionalInfo.message === 'string' ? errors.additionalInfo.message : 'Invalid input'}
                 </p>
               )}
             </div>
