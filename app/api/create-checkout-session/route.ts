@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
             product_data: {
               name: productName,
             },
-            unit_amount: price * 100, // Convert to cents
+            unit_amount: price, // Convert to cents
           },
           quantity: 1,
         },
