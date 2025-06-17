@@ -207,7 +207,8 @@ export default function PaymentPage() {
             style={{
               background: loading 
                 ? '#9ca3af' 
-                : 'linear-gradient(to right, #2434B3, #FF4B36)'
+                : 'linear-gradient(to right, #2434B3, #FF4B36)',
+              borderRadius: '15px'
             }}
             onMouseEnter={(e) => {
               const target = e.target as HTMLButtonElement;

@@ -128,8 +128,8 @@ export function RoadmapTopicCard({
             variant="outlined"
             size="small"
             onClick={handleExpandClick}
-            sx={{ 
-              color: textColor,
+            sx={{
+              borderRadius: '15px',
               borderColor: buttonBorderColor,
               '&:hover': { borderColor: textColor, bgcolor: buttonHoverBgColor }
             }}

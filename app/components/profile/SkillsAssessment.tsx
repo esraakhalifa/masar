@@ -140,7 +140,7 @@ export default function SkillsAssessment({ skills, onChange }: SkillsAssessmentP
             <button
               type="button"
               onClick={() => removeSkill(index)}
-              className="text-red-600 hover:text-red-700"
+              className="text-red-600 hover:text-red-700 rounded-md"
             >
               Remove
             </button>

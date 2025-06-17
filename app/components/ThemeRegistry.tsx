@@ -43,6 +43,7 @@ const theme = createTheme({
     button: {
       textTransform: 'none',
       fontWeight: 500,
+      borderRadius: '8px',
     },
   },
   components: {

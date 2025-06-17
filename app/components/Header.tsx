@@ -11,10 +11,10 @@ const Header = () => {
         <Link href="/about" className="hover:text-purple-400 transition-colors duration-300">About</Link>
         <Link href="/contact" className="hover:text-purple-400 transition-colors duration-300">Contact</Link>
         <Link href="/login">
-          <button className="text-white hover:text-purple-400 transition-colors duration-300">Login</button>
+          <button className="text-white hover:text-purple-400 transition-colors duration-300 rounded-md">Login</button>
         </Link>
         <Link href="/register">
-          <button className="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-500 transition-all duration-300 transform hover:scale-105">
+          <button className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-500 transition-all duration-300 transform hover:scale-105">
             Sign Up
           </button>
         </Link>
