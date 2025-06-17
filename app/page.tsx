@@ -235,7 +235,7 @@ export default function HomePage() {
 
           <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-4">
             <div 
-              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-shake"
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
               data-aos="fade-up"
               data-aos-delay="300"
             >
@@ -251,7 +251,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-shake"
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
               data-aos="fade-up"
               data-aos-delay="400"
             >
@@ -267,7 +267,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-shake"
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105"
               data-aos="fade-up"
               data-aos-delay="500"
             >
@@ -283,7 +283,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-shake"
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 "
               data-aos="fade-up"
               data-aos-delay="600"
             >
@@ -323,7 +323,7 @@ export default function HomePage() {
 
           <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             <div 
-              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300"
               data-aos="fade-up"
               data-aos-delay="300"
             >
@@ -343,7 +343,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300"
               data-aos="fade-up"
               data-aos-delay="400"
             >
@@ -363,7 +363,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300"
               data-aos="fade-up"
               data-aos-delay="500"
             >
@@ -383,7 +383,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300"
               data-aos="fade-up"
               data-aos-delay="600"
             >
@@ -403,7 +403,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300"
               data-aos="fade-up"
               data-aos-delay="700"
             >
@@ -423,7 +423,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300"
               data-aos="fade-up"
               data-aos-delay="800"
             >
