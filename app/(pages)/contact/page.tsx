@@ -258,9 +258,13 @@ export default function ContactPage() {
                   <motion.button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-8 py-3 bg-[#FF4B36] text-white rounded-lg font-semibold shadow-md hover:bg-[#FF4B36] transition-colors text-lg"
+                    className="px-8 py-3 bg-[#FF4B36] text-white rounded-lg font-semibold shadow-md hover:bg-[#FF4B36] transition-colors text-lg flex items-center justify-center gap-2"
                   >
-                    Send Message
+                    {isSubmitting ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    ) : (
+                      'Send Message'
+                    )}
                   </motion.button>
                 </form>
               )}
