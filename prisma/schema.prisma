@@ -10,35 +10,46 @@ datasource db {
 
 model User {
   id               String            @id @default(cuid())
-  firstName        String?
-  lastName         String?
   email            String            @unique
-  emailVerified    DateTime?
-  image            String?
   password         String?
+  firstName        String
+  lastName         String
+  resume_text      String?
+  avatarUrl        String?
+  emailVerified    DateTime?
   createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime
   deletedAt        DateTime?         @map("deleted_at")
   additionalInfo   String?           @map("additional_info")
   stripeCustomerId String?           @map("stripe_customer_id")
+  image            String?
+  Account          Account[]
+  CareerPreference CareerPreference?
+  Education        Education[]
+  Experience       Experience[]
+  Session          Session[]
   careerRoadmap    CareerRoadmap?
   certificates     Certificate[]
   payments         Payment[]
   skills           Skill[]
-  CareerPreference CareerPreference?
-  Education        Education[]
 
   @@map("users")
 }
 
 model Skill {
   id        String    @id @default(cuid())
-  userId    String    @map("user_id")
-  jobRole   String    @map("job_role")
   name      String    @map("skill_name")
   level     Int?
+  category  String?
+  jobRole   String?   @map("job_role")
+  userId    String    @map("user_id")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
   deletedAt DateTime? @map("deleted_at")
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, name])
+  @@index([userId])
   @@map("skills")
 }
 
@@ -48,7 +59,6 @@ model CareerPreference {
   preferredSalary Int
   workType        String
   location        String
-  jobRole         String @map("job_role")
   userId          String @unique
   user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -70,8 +80,8 @@ model CareerRoadmap {
   roadmapDetails Json           @map("roadmap_details")
   createdAt      DateTime       @default(now()) @map("created_at")
   deletedAt      DateTime?      @map("deleted_at")
-  courses        Course[]
   user           User           @relation(fields: [userId], references: [id])
+  courses        courses[]
   topics         RoadmapTopic[]
 
   @@map("career_roadmaps")
@@ -89,24 +99,8 @@ model RoadmapTopic {
   tasks          Task[]
   roadmap        CareerRoadmap @relation(fields: [roadmapId], references: [id])
 
-  @@unique([roadmapId, title]) //
+  @@unique([roadmapId, title])
   @@map("roadmap_topics")
-}
-
-model Course {
-  id           String        @id @default(cuid())
-  title        String
-  description  String?
-  instructors  String?
-  courseLink   String        @map("course_link")
-  roadmapId    String        @map("roadmap_id")
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  deleted_at   DateTime?     @map("deleted_at")
-  roadmap      CareerRoadmap @relation(fields: [roadmapId], references: [id])
-  certificates Certificate[]
-
-  @@unique([roadmapId, title]) // Ensures course titles are unique within the same roadmap
 }
 
 model Certificate {
@@ -119,9 +113,11 @@ model Certificate {
   fileUrl   String    @map("file_url")
   createdAt DateTime  @default(now()) @map("created_at")
   deletedAt DateTime? @map("deleted_at")
-  course    Course    @relation(fields: [courseId], references: [id])
+  course    courses   @relation(fields: [courseId], references: [id])
   user      User      @relation(fields: [userId], references: [id])
 
+  @@index([courseId])
+  @@index([userId])
   @@map("certificates")
 }
 
@@ -168,4 +164,68 @@ model Payment {
   user                  User             @relation(fields: [userId], references: [id])
 
   @@map("payments")
+}
+
+model Account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  users             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Experience {
+  id          String    @id
+  title       String
+  company     String
+  startDate   DateTime
+  endDate     DateTime?
+  description String?
+  userId      String
+  users       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  users        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id         String   @id
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model courses {
+  id              String        @id
+  title           String
+  description     String?
+  instructors     String?
+  course_link     String
+  roadmap_id      String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime
+  deleted_at      DateTime?
+  certificates    Certificate[]
+  career_roadmaps CareerRoadmap @relation(fields: [roadmap_id], references: [id])
+
+  @@unique([roadmap_id, title])
+  @@index([createdAt])
+  @@index([roadmap_id])
 }

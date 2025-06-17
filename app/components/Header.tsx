@@ -1,40 +1,26 @@
-"use client"
+import Link from 'next/link';
 
-import { Search, Menu, ShoppingCart } from "lucide-react"
-
-export function Header() {
+const Header = () => {
   return (
-    <header className="w-full bg-white border-b border-gray-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold text-gray-900">
-              M<span className="text-red-500">.</span>ASAR
-            </h1>
-          </div>
-
-          {/* Navigation Menu */}
-          <nav className="hidden md:flex space-x-8">
-            <a href="#" className="text-gray-900 hover:text-red-500 px-3 py-2 text-sm font-medium">
-              Home
-            </a>
-            <a href="#" className="text-gray-700 hover:text-red-500 px-3 py-2 text-sm font-medium">
-              About us
-            </a>
-            <a href="#" className="text-gray-700 hover:text-red-500 px-3 py-2 text-sm font-medium">
-              Contact us
-            </a>
-          </nav>
-
-          {/* Right side icons */}
-          <div className="flex items-center space-x-4">
-            <button className="bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 flex items-center justify-center transition-colors">
-              <Menu className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
+    <header className="bg-gray-900 text-white py-4 px-6 flex items-center shadow-lg">
+      <div className="text-xl font-bold tracking-wide">
+        <Link href="/">Masar</Link>
       </div>
+      <div className="flex-grow"></div>
+      <nav className="flex items-center space-x-6 text-sm font-medium">
+        <Link href="/about" className="hover:text-purple-400 transition-colors duration-300">About</Link>
+        <Link href="/contact" className="hover:text-purple-400 transition-colors duration-300">Contact</Link>
+        <Link href="/login">
+          <button className="text-white hover:text-purple-400 transition-colors duration-300">Login</button>
+        </Link>
+        <Link href="/register">
+          <button className="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-500 transition-all duration-300 transform hover:scale-105">
+            Sign Up
+          </button>
+        </Link>
+      </nav>
     </header>
-  )
-} 
+  );
+};
+
+export default Header;

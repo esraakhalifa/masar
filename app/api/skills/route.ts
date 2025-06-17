@@ -1,70 +1,24 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// GET /api/courses or /api/courses/[id]
-export async function GET(
-  req: Request,
-  { params }: { params?: { id?: string } } = {}
-) {
+// GET /api/skills - Get all skills (no GET by ID)
+export async function GET() {
   try {
-    if (params?.id) {
-      // Get specific course by ID
-      const course = await prisma.course.findUnique({
-        where: {
-          id: params.id,
-          deleted_at: null,
-        },
-        include: {
-          roadmap: {
-            select: {
-              roadmapRole: true,
-              user: {
-                select: {
-                  email: true,
-                },
-              },
-            },
-          },
-          certificates: true,
-        },
-      });
+    const skills = await prisma.skill.findMany({
+      where: { deletedAt: null },
+      include: {
+        user: true,
+      },
+    });
 
-      if (!course) {
-        return NextResponse.json({ error: 'Course not found' }, { status: 404 });
-      }
-
-      return NextResponse.json(course);
-    } else {
-      // Get all courses
-      const courses = await prisma.course.findMany({
-        where: {
-          deleted_at: null,
-        },
-        include: {
-          roadmap: {
-            select: {
-              roadmapRole: true,
-              user: {
-                select: {
-                  email: true,
-                },
-              },
-            },
-          },
-          certificates: true,
-        },
-      });
-
-      return NextResponse.json(courses);
-    }
+    return NextResponse.json(skills);
   } catch (error) {
-    console.error('Error fetching course(s):', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to fetch skills' },
+      { status: 500 }
+    );
   }
 }
-
 
 // POST /api/skills - Create new skill
 export async function POST(req: Request) {
@@ -72,19 +26,10 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { userId, jobRole, name, level } = body;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+    if (!userId || !jobRole || !name) {
+      return NextResponse.json({ error: 'userId, jobRole, and name are required' }, { status: 400 });
     }
 
-    if (!jobRole) {
-      return NextResponse.json({ error: 'jobRole is required' }, { status: 400 });
-    }
-
-    if (!name) {
-      return NextResponse.json({ error: 'name is required' }, { status: 400 });
-    }
-
-    // First verify the user exists
     const user = await prisma.user.findUnique({
       where: { id: userId }
     });
@@ -93,24 +38,36 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    const existingSkill = await prisma.skill.findFirst({
+      where: {
+        name,
+        userId,
+        deletedAt: null,
+      },
+    });
+
+    if (existingSkill) {
+      return NextResponse.json(
+        { error: "Skill already exists for this user" },
+        { status: 400 }
+      );
+    }
+
     const skill = await prisma.skill.create({
       data: {
-        user: {
-          connect: { id: userId }
-        },
+        userId,
         jobRole,
         name,
-        level
+        level,
       }
     });
 
-    return NextResponse.json(skill);
+    return NextResponse.json(skill, { status: 201 });
   } catch (error) {
-    console.error('Error creating skill:', error);
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to create skill' },
+      { status: 500 }
+    );
   }
 }
 
@@ -122,16 +79,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const skill = await prisma.skill.update({
       where: { id: params.id },
-      data: {
-        jobRole,
-        name,
-        level
-      }
+      data: { jobRole, name, level }
     });
 
     return NextResponse.json(skill);
   } catch (error) {
-    console.error('Error updating skill:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -144,12 +96,11 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       data: { deletedAt: new Date() }
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Skill soft-deleted successfully',
       deletedSkill: skill
     });
   } catch (error) {
-    console.error('Error deleting skill:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

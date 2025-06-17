@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import process from 'process';
 import { prisma } from '@/lib/prisma';
 import { Prisma, RoadmapTopic } from '../generated/prisma';
+import crypto from 'crypto';
 
 
 dotenv.config();
@@ -34,6 +35,24 @@ interface UserContext {
     fieldOfStudy: string;
     institution: string;
     graduationYear: number;
+  }>;
+}
+
+interface Course {
+  title: string;
+  description: string | null;
+  instructors: string | null;
+  course_link: string;
+}
+
+interface Topic {
+  title: string;
+  description: string | null;
+  order: number;
+  tasks: Array<{
+    title: string;
+    description: string | null;
+    order: number;
   }>;
 }
 
@@ -130,18 +149,18 @@ You are to return structured JSON for a software engineering roadmap that matche
         "title": "Course title",
         "description": "Course description",
         "instructors": "Course instructors",
-        "courseLink": "Course URL"
+        "course_link": "Course URL"
       }
     ],
     "topics": [
       {
         "title": "Topic title",
         "description": "Topic description",
+        "order": 1,
         "tasks": [
           {
             "title": "Task title",
             "description": "Task description",
-            "isCompleted": false,
             "order": 1
           }
         ]
@@ -249,95 +268,97 @@ ${JSON.stringify(jobMarketData, null, 2)}`;
                 continue; // Skip this chunk if parsing fails
               }
             } else {
-              console.error('[ERROR] Response was not valid JSON or was empty:', text);
-              continue; // Skip this chunk if no JSON found
+              console.error('[ERROR] No JSON found in response');
+              continue;
             }
           }
 
-          // Process and save courses from this chunk
-          if (parsed?.roadmap?.courses) {
+          // Process courses
+          if (parsed.roadmap?.courses) {
             for (const course of parsed.roadmap.courses) {
-              if (!allCourses.has(course.courseLink)) {
-                try {
-                  const savedCourse = await prisma.course.create({
-                    data: {
-                      roadmapId: roadmap.id,
-                      title: `${course.title} (${allCourses.size + 1})`,
-                      description: course.description,
-                      instructors: course.instructors,
-                      courseLink: course.courseLink,
-                    },
-                  });
-                  allCourses.set(course.courseLink, savedCourse);
-                } catch (error) {
-                  console.error('Error creating course:', error);
-                  // Skip this course and continue with the next one
-                  continue;
-                }
+              if (!allCourses.has(course.title)) {
+                allCourses.set(course.title, course);
               }
             }
           }
 
-          // Process and save topics and tasks from this chunk
-          if (parsed?.roadmap?.topics) {
+          // Process topics
+          if (parsed.roadmap?.topics) {
             for (const topic of parsed.roadmap.topics) {
               if (!allTopics.has(topic.title)) {
-                const savedTopic = await prisma.roadmapTopic.create({
-                  data: {
-                    roadmapId: roadmap.id,
-                    title: topic.title,
-                    description: topic.description,
-                    order: allTopics.size + 1,
-                    totalTasks: topic.tasks?.length || 0,
-                    completedTasks: 0,
-                    tasks: {
-                      create: topic.tasks.map((task: any, taskIndex: number) => ({
-                        title: task.title,
-                        description: task.description || '',
-                        order: taskIndex + 1,
-                      })),
-                    },
-                  },
-                });
-                allTopics.set(topic.title, savedTopic);
+                allTopics.set(topic.title, topic);
               }
             }
           }
-
-        } catch (error: any) {
-          console.error(`Error processing chunk ${i + 1}:`, error.response?.data || error.message);
-          // Continue with next chunk instead of failing completely
+        } catch (error) {
+          console.error(`Error processing chunk ${i + 1}:`, error);
           continue;
         }
       }
 
-      // Update roadmap details with final combined data
-      const finalRoadmap = await prisma.careerRoadmap.update({
+      // Save courses
+      const courses = Array.from(allCourses.values());
+      for (const course of courses) {
+        await prisma.courses.create({
+          data: {
+            id: crypto.randomUUID(),
+            title: course.title,
+            description: course.description,
+            instructors: course.instructors,
+            course_link: course.course_link,
+            roadmap_id: roadmap.id,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        });
+      }
+
+      // Save topics and tasks
+      const topics = Array.from(allTopics.values());
+      for (const topic of topics) {
+        const savedTopic = await prisma.roadmapTopic.create({
+          data: {
+            id: crypto.randomUUID(),
+            roadmapId: roadmap.id,
+            title: topic.title,
+            description: topic.description,
+            order: topic.order,
+            totalTasks: topic.tasks.length,
+            completedTasks: 0
+          }
+        });
+
+        // Save tasks for this topic
+        for (const task of topic.tasks) {
+          await prisma.task.create({
+            data: {
+              id: crypto.randomUUID(),
+              title: task.title,
+              description: task.description,
+              isCompleted: false,
+              topicId: savedTopic.id,
+              order: task.order,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            }
+          });
+        }
+      }
+
+      // Update roadmap details
+      await prisma.careerRoadmap.update({
         where: { id: roadmap.id },
         data: {
           roadmapDetails: {
-            courses: Array.from(allCourses.values()),
-            topics: Array.from(allTopics.values()),
-          }
-        },
-        include: {
-          courses: true,
-          topics: {
-            include: {
-              tasks: true
-            }
+            courses: courses,
+            topics: topics
           }
         }
       });
 
-      return {
-        roadmap: finalRoadmap,
-        courses: Array.from(allCourses.values()),
-        topics: Array.from(allTopics.values()),
-      };
-
+      return roadmap;
     } catch (error) {
-      console.error('Error generating and saving roadmap:', error);
+      console.error('Error generating roadmap:', error);
       throw error;
     }
   }
