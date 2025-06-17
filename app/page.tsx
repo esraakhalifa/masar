@@ -3,6 +3,9 @@
 import Layout from "../components/Layout";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Upload,
@@ -18,11 +21,31 @@ import {
 
 export default function HomePage() {
   const { data: session } = useSession();
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+      offset: 100,
+      easing: 'ease-in-out',
+    });
+
+    // Toggle icon visibility every 2 seconds
+    const interval = setInterval(() => {
+      setIsVisible(prev => !prev);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Layout>
       {/* Hero Section with Animated Background */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#2434B3] to-[#1a237e] text-white pt-12">
+      <div 
+        className="relative overflow-hidden bg-gradient-to-br from-[#2434B3] to-[#1a237e] text-white pt-12"
+        data-aos="fade-down"
+      >
         {/* Animated Background Shapes */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute w-96 h-96 -top-48 -left-48 bg-[#FF4B36] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
@@ -33,17 +56,25 @@ export default function HomePage() {
         {/* Hero Content */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
           <div className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+            <h1 
+              className="text-4xl md:text-5xl font-extrabold tracking-tight animate-fade-in"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
               {session ? (
-                <>Welcome back to Masar</>
+                <span className="inline-block animate-tremble">Welcome back to Masar</span>
               ) : (
                 <>
                   Shape Your Career Path with{" "}
-                  <span className="text-[#FF4B36]">AI</span>
+                  <span className="text-[#FF4B36] animate-float">AI</span>
                 </>
               )}
             </h1>
-            <p className="mt-4 text-lg md:text-xl max-w-3xl mx-auto text-blue-100">
+            <p 
+              className="mt-4 text-lg md:text-xl max-w-3xl mx-auto text-blue-100 animate-slide-up"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               {session ? (
                 <>
                   Ready to continue your career development journey? Upload your
@@ -57,22 +88,26 @@ export default function HomePage() {
                 </>
               )}
             </p>
-            <div className="mt-6 flex justify-center space-x-4 mb-8">
+            <div 
+              className="mt-6 flex justify-center space-x-4 mb-8"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
               {session ? (
                 <Link
                   href="/upload"
-                  className="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-lg text-white bg-[#FF4B36] hover:bg-[#ff634f] transition-all duration-200 transform hover:scale-105"
+                  className="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-lg text-white bg-[#FF4B36] hover:bg-[#ff634f] "
                 >
                   Upload Your CV
-                  <Upload className="ml-2 -mr-1 w-4 h-4" />
+                  <Upload className="ml-2 -mr-1 w-4 h-4 animate-bounce" />
                 </Link>
               ) : (
                 <Link
                   href="/register"
-                  className="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-lg text-white bg-[#FF4B36] hover:bg-[#ff634f] transition-all duration-200 transform hover:scale-105"
+                  className="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-lg text-white bg-[#FF4B36] hover:bg-[#ff634f] transition-all duration-200 transform hover:scale-105 hover:rotate-1 animate-wiggle"
                 >
                   Get Started
-                  <ArrowRight className="ml-2 -mr-1 w-4 h-4" />
+                  <ArrowRight className="ml-2 -mr-1 w-4 h-4 animate-bounce " />
                 </Link>
               )}
             </div>
@@ -97,13 +132,21 @@ export default function HomePage() {
       </div>
 
       {/* Features Section */}
-      <div className="pb-20 bg-white">
+      <div className="pb-20 bg-white" data-aos="fade-up">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">
+            <h2 
+              className="text-2xl md:text-3xl font-extrabold text-gray-900 animate-slide-down"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
               {session ? "Your Career Development Tools" : "Why Choose Masar?"}
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p 
+              className="mt-4 text-lg text-gray-600 animate-slide-up"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               {session
                 ? "Access powerful tools to advance your career"
                 : "Empowering your career journey with AI-driven insights"}
@@ -111,9 +154,13 @@ export default function HomePage() {
           </div>
 
           <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow">
+            <div 
+              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
               <div className="text-[#2434B3]">
-                <Target className="w-6 h-6" />
+                <Target className={`w-6 h-6 ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <h3 className="mt-2 text-lg font-semibold text-gray-900">
                 {session ? "CV Analysis" : "Smart Career Planning"}
@@ -125,9 +172,13 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow">
+            <div 
+              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
               <div className="text-[#FF4B36]">
-                <Brain className="w-6 h-6" />
+                <Brain className={`w-6 h-6 ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <h3 className="mt-2 text-lg font-semibold text-gray-900">
                 {session ? "Skill Analysis" : "Skill Development"}
@@ -139,9 +190,13 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow">
+            <div 
+              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="500"
+            >
               <div className="text-[#2434B3]">
-                <LineChart className="w-6 h-6" />
+                <LineChart className={`w-6 h-6 ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <h3 className="mt-2 text-lg font-semibold text-gray-900">
                 {session ? "Progress Tracking" : "Career Analytics"}
@@ -157,13 +212,21 @@ export default function HomePage() {
       </div>
 
       {/* Career Development Process */}
-      <div className="py-16 bg-gray-50">
+      <div className="py-16 bg-gray-50" data-aos="fade-up">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">
+            <h2 
+              className="text-2xl md:text-3xl font-extrabold text-gray-900 animate-slide-down"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
               {session ? "Your Career Journey" : "How Masar Works"}
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p 
+              className="mt-4 text-lg text-gray-600 animate-slide-up"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               {session
                 ? "Track your progress through these key stages"
                 : "Your path to career success"}
@@ -171,8 +234,12 @@ export default function HomePage() {
           </div>
 
           <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-4">
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <Upload className="w-5 h-5 text-[#2434B3]" />
+            <div 
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-shake"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <Upload className={`w-5 h-5 text-[#2434B3] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               <h3 className="mt-2 text-base font-semibold text-gray-900">
                 Step 1
               </h3>
@@ -183,8 +250,12 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <Brain className="w-5 h-5 text-[#2434B3]" />
+            <div 
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-shake"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
+              <Brain className={`w-5 h-5 text-[#2434B3] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               <h3 className="mt-2 text-base font-semibold text-gray-900">
                 Step 2
               </h3>
@@ -195,8 +266,12 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <Target className="w-5 h-5 text-[#2434B3]" />
+            <div 
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-shake"
+              data-aos="fade-up"
+              data-aos-delay="500"
+            >
+              <Target className={`w-5 h-5 text-[#2434B3] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               <h3 className="mt-2 text-base font-semibold text-gray-900">
                 Step 3
               </h3>
@@ -207,8 +282,12 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <LineChart className="w-5 h-5 text-[#2434B3]" />
+            <div 
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-shake"
+              data-aos="fade-up"
+              data-aos-delay="600"
+            >
+              <LineChart className={`w-5 h-5 text-[#2434B3] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               <h3 className="mt-2 text-base font-semibold text-gray-900">
                 Step 4
               </h3>
@@ -221,13 +300,21 @@ export default function HomePage() {
       </div>
 
       {/* Benefits Section */}
-      <div className="py-16 bg-white">
+      <div className="py-16 bg-white" data-aos="fade-up">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">
+            <h2 
+              className="text-2xl md:text-3xl font-extrabold text-gray-900 animate-slide-down"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
               {session ? "Your Career Benefits" : "What You'll Gain"}
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p 
+              className="mt-4 text-lg text-gray-600 animate-slide-up"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               {session
                 ? "Make the most of your premium features"
                 : "Transform your career with Masar"}
@@ -235,9 +322,13 @@ export default function HomePage() {
           </div>
 
           <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            <div className="flex items-start space-x-3">
+            <div 
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
               <div className="flex-shrink-0">
-                <Award className="w-5 h-5 text-[#FF4B36]" />
+                <Award className={`w-5 h-5 text-[#FF4B36] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <div>
                 <h3 className="text-base font-semibold text-gray-900">
@@ -251,9 +342,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-start space-x-3">
+            <div 
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
               <div className="flex-shrink-0">
-                <Briefcase className="w-5 h-5 text-[#2434B3]" />
+                <Briefcase className={`w-5 h-5 text-[#2434B3] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <div>
                 <h3 className="text-base font-semibold text-gray-900">
@@ -267,9 +362,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-start space-x-3">
+            <div 
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="500"
+            >
               <div className="flex-shrink-0">
-                <GraduationCap className="w-5 h-5 text-[#FF4B36]" />
+                <GraduationCap className={`w-5 h-5 text-[#FF4B36] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <div>
                 <h3 className="text-base font-semibold text-gray-900">
@@ -283,9 +382,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-start space-x-3">
+            <div 
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="600"
+            >
               <div className="flex-shrink-0">
-                <Users className="w-5 h-5 text-[#2434B3]" />
+                <Users className={`w-5 h-5 text-[#2434B3] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <div>
                 <h3 className="text-base font-semibold text-gray-900">
@@ -299,9 +402,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-start space-x-3">
+            <div 
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="700"
+            >
               <div className="flex-shrink-0">
-                <Target className="w-5 h-5 text-[#FF4B36]" />
+                <Target className={`w-5 h-5 text-[#FF4B36] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <div>
                 <h3 className="text-base font-semibold text-gray-900">
@@ -315,9 +422,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex items-start space-x-3">
+            <div 
+              className="flex items-start space-x-3 hover:scale-105 transition-all duration-300 animate-float"
+              data-aos="fade-up"
+              data-aos-delay="800"
+            >
               <div className="flex-shrink-0">
-                <BookOpen className="w-5 h-5 text-[#2434B3]" />
+                <BookOpen className={`w-5 h-5 text-[#2434B3] ${isVisible ? 'animate-pop-in' : 'animate-pop-out'}`} />
               </div>
               <div>
                 <h3 className="text-base font-semibold text-gray-900">
@@ -335,24 +446,37 @@ export default function HomePage() {
       </div>
 
       {/* Call to Action */}
-      <div className="py-16  bg-gradient-to-br from-[#2434B3] to-[#1a237e] text-white">
+      <div 
+        className="py-16 bg-gradient-to-br from-[#2434B3] to-[#1a237e] text-white"
+        data-aos="fade-up"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          <h2 
+            className="text-2xl md:text-3xl font-bold mb-4 animate-slide-down"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
             {session
               ? "Ready to Update Your Career Profile?"
               : "Start Your Career Journey Today"}
           </h2>
-          <p className="text-lg text-blue-100 mb-6">
+          <p 
+            className="text-lg text-blue-100 mb-6 animate-slide-up"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
             {session
               ? "Keep your profile current to get the best recommendations"
               : "Join thousands of professionals advancing their careers with AI"}
           </p>
           <Link
             href={session ? "/upload" : "/register"}
-            className="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-lg text-[#2434B3] bg-white hover:bg-gray-100 transition-all duration-200"
+            className="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-lg text-[#2434B3] bg-white hover:bg-gray-100"
+            data-aos="fade-up"
+            data-aos-delay="300"
           >
             {session ? "Upload New CV" : "Create Free Account"}
-            <ArrowRight className="ml-2 -mr-1 w-4 h-4" />
+            <ArrowRight className="ml-2 -mr-1 w-4 h-4 animate-bounce" />
           </Link>
         </div>
       </div>
