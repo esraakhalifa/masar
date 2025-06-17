@@ -43,7 +43,12 @@ export const exportProfileToPdf = async (profile: UserProfile): Promise<void> =>
     pdf.text(`Work Type: ${profile.careerPreferences.workType}`, margin, yOffset);
     yOffset += 7;
     pdf.text(`Preferred Salary: $${profile.careerPreferences.preferredSalary}`, margin, yOffset);
-    yOffset += 15;
+    yOffset += 7;
+    if (profile.careerPreferences.jobRole) {
+      pdf.text(`Job Role: ${profile.careerPreferences.jobRole}`, margin, yOffset);
+      yOffset += 7;
+    }
+    yOffset += 8;
   }
 
   if (profile.education && profile.education.length > 0) {

@@ -31,7 +31,8 @@ export default function ProfileForm() {
     industry: '',
     preferredSalary: 0,
     workType: 'remote',
-    location: ''
+    location: '',
+    jobRole: '',
   });
   const [education, setEducation] = useState<UserProfile['education']>([]);
   const [experience, setExperience] = useState<UserProfile['experience']>([]);
@@ -278,7 +279,8 @@ export default function ProfileForm() {
           industry: careerPreferences.industry.trim(),
           preferredSalary: careerPreferences.preferredSalary || 0,
           workType: careerPreferences.workType,
-          location: careerPreferences.location?.trim() || ''
+          location: careerPreferences.location?.trim() || '',
+          jobRole: careerPreferences.jobRole || '',
         },
         education: education.map(edu => ({
           institution: edu.institution.trim(),
@@ -353,12 +355,16 @@ export default function ProfileForm() {
       const profileData: UserProfile = {
         firstName: firstName,
         lastName: lastName,
+        fullName: `${firstName} ${lastName}`.trim(),
         email: email,
         skills: skills,
-        careerPreferences: careerPreferences,
+        careerPreferences: {
+          ...careerPreferences,
+          jobRole: careerPreferences.jobRole || '',
+        },
         education: education,
         experience: experience,
-      };
+      } as any;
       await exportProfileToPdf(profileData);
       console.info('Profile exported to PDF successfully!', { context: 'PDF Export' });
       toast.success('Profile exported to PDF successfully!');
