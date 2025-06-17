@@ -91,6 +91,7 @@ model CareerPreference {
   preferredSalary Int
   workType        String
   location        String
+  jobRole         String?
   userId          String @unique
   user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
