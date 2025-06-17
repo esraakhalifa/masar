@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -18,7 +17,7 @@ model User {
   avatarUrl        String?
   emailVerified    DateTime?
   createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime
+  updatedAt        DateTime          @default(now())
   deletedAt        DateTime?         @map("deleted_at")
   additionalInfo   String?           @map("additional_info")
   stripeCustomerId String?           @map("stripe_customer_id")
@@ -173,11 +172,11 @@ model Account {
   provider          String
   providerAccountId String
   refresh_token     String?
-  access_token      String?
+  access_token      String @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
   users             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
