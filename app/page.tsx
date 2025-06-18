@@ -155,7 +155,7 @@ export default function HomePage() {
 
           <div className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             <div 
-              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-float"
+              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 "
               data-aos="fade-up"
               data-aos-delay="300"
             >
@@ -173,7 +173,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-float"
+              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
               data-aos="fade-up"
               data-aos-delay="400"
             >
@@ -191,7 +191,7 @@ export default function HomePage() {
             </div>
 
             <div 
-              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-float"
+              className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
               data-aos="fade-up"
               data-aos-delay="500"
             >

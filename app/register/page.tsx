@@ -80,8 +80,8 @@ export default function Register() {
     if (!res.ok) {
       setError(data.error || "Registration failed");
     } else {
-      setSuccess("Registration successful! Redirecting to login...");
-      setTimeout(() => router.push("/login"), 1500);
+      setSuccess("Registration successful! Please check your email for verification code.");
+      setTimeout(() => router.push(`/verify-email?email=${encodeURIComponent(email)}`), 2000);
     }
   };
 
