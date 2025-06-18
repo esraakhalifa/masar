@@ -1,4 +1,4 @@
-import { PrismaClient, User, CareerPreference, Skill, Education } from '../generated/prisma';
+import { PrismaClient, User, CareerPreference, Skill, Education } from '@/prisma/client';
 import { roadmapService } from './roadmapService';
 
 const prisma = new PrismaClient();

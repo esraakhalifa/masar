@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  
 }
 
 model User {
@@ -17,15 +18,15 @@ model User {
   avatarUrl        String?
   emailVerified    DateTime?
   createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   deletedAt        DateTime?         @map("deleted_at")
   additionalInfo   String?           @map("additional_info")
   stripeCustomerId String?           @map("stripe_customer_id")
   image            String?
   Account          Account[]
-  CareerPreference CareerPreference?
-  Education        Education[]
-  Experience       Experience[]
+  careerPreference CareerPreference?
+  education        Education[]
+  experience       Experience[]
   Session          Session[]
   careerRoadmap    CareerRoadmap?
   certificates     Certificate[]
@@ -43,7 +44,7 @@ model Skill {
   jobRole   String?   @map("job_role")
   userId    String    @map("user_id")
   createdAt DateTime  @default(now())
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? @map("deleted_at")
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -58,6 +59,7 @@ model CareerPreference {
   preferredSalary Int
   workType        String
   location        String
+  jobRole         String?
   userId          String @unique
   user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -191,7 +193,7 @@ model Experience {
   endDate     DateTime?
   description String?
   userId      String
-  users       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
@@ -219,7 +221,7 @@ model courses {
   course_link     String
   roadmap_id      String
   createdAt       DateTime      @default(now())
-  updatedAt       DateTime
+  updatedAt       DateTime      @updatedAt
   deleted_at      DateTime?
   certificates    Certificate[]
   career_roadmaps CareerRoadmap @relation(fields: [roadmap_id], references: [id])

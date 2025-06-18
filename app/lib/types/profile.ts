@@ -4,13 +4,6 @@ export interface Skill {
   category?: string;
 }
 
-export interface CareerPreference {
-  industry: string;
-  preferredSalary?: number;
-  workType: 'remote' | 'hybrid' | 'onsite';
-  location?: string;
-}
-
 export interface Education {
   institution: string;
   degree: string;
@@ -33,7 +26,6 @@ export interface UserProfile {
   email: string;
   avatarUrl?: string;
   skills: Skill[];
-  careerPreferences: CareerPreference;
   education: Education[];
   experience: Experience[];
 } 

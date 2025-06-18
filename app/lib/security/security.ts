@@ -28,14 +28,6 @@ export const profileSchema = z.object({
     level: z.number().min(1).max(5).optional(),
     category: z.string().max(50).optional(),
   })).min(1, 'At least one skill is required'),
-  careerPreferences: z.object({
-    industry: z.string().min(1, 'Industry is required').max(100).transform(sanitizeInput),
-    preferredSalary: z.number().min(0).optional(),
-    workType: z.enum(['remote', 'onsite', 'hybrid'], {
-      errorMap: () => ({ message: 'Work type must be remote, onsite, or hybrid' })
-    }),
-    location: z.string().max(100).transform(sanitizeInput).optional(),
-  }).strict(),
   education: z.array(z.object({
     institution: z.string().min(1, 'Institution is required').max(100).transform(sanitizeInput),
     degree: z.string().min(1, 'Degree is required').max(100).transform(sanitizeInput),

@@ -29,12 +29,6 @@ interface Profile {
     category: string;
     level: number;
   }>;
-  preferences?: {
-    industry: string;
-    location: string;
-    workType: string;
-    preferredSalary: number;
-  };
   education: Array<{
     id: string;
     degree: string;
@@ -277,7 +271,6 @@ export default function ProfilePage() {
   const isIncompleteProfile =
     profile &&
     (!profile.skills || profile.skills.length === 0) &&
-    (!profile.preferences || !profile.preferences.industry) &&
     (!profile.education || profile.education.length === 0) &&
     (!profile.experience || profile.experience.length === 0);
 
@@ -405,42 +398,6 @@ export default function ProfilePage() {
               ))}
             </div>
           </motion.div>
-
-          {/* Career Preferences */}
-          {profile.preferences && (
-            <motion.div 
-              variants={itemVariants}
-              className="bg-white rounded-xl shadow-lg border border-[#2434B3]/10 p-8 mb-8"
-            >
-              <motion.h2 
-                variants={itemVariants}
-                className="text-2xl font-semibold text-[#2434B3] mb-6 flex items-center"
-              >
-                <TrendingUp className="w-7 h-7 mr-3 text-[#2434B3]" />Career Preferences
-              </motion.h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  { icon: Building2, label: 'Industry', value: profile.preferences.industry },
-                  { icon: MapPin, label: 'Location', value: profile.preferences.location },
-                  { icon: Handshake, label: 'Work Type', value: profile.preferences.workType },
-                  { icon: DollarSign, label: 'Preferred Salary', value: `$${profile.preferences.preferredSalary.toLocaleString()}` }
-                ].map((item, index) => (
-                  <motion.div
-                    key={index}
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02 }}
-                    className="bg-[#2434B3]/5 p-4 rounded-lg flex items-center space-x-3"
-                  >
-                    <item.icon className="w-5 h-5 text-[#2434B3]" />
-                    <div>
-                      <p className="text-sm text-[#2434B3] font-medium">{item.label}</p>
-                      <p className="text-lg text-gray-900 mt-1 capitalize">{item.value}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
 
           {/* Education */}
           <motion.div 

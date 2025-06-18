@@ -9,20 +9,14 @@ const JOB_TITLES = [
   'Software Engineer',
   'Senior Software Engineer',
   'Lead Software Engineer',
-  'Principal Software Engineer',
-  'Software Architect',
   // Frontend
   'Frontend Developer',
   'Senior Frontend Developer',
   'UI Developer',
-  'JavaScript Developer',
-  'React Developer',
   // Backend
   'Backend Developer',
   'Senior Backend Developer',
   'API Developer',
-  'Node.js Developer',
-  'Python Developer',
   // Full Stack
   'Full Stack Developer',
   'Senior Full Stack Developer',
@@ -36,14 +30,10 @@ const JOB_TITLES = [
   'Data Scientist',
   'Machine Learning Engineer',
   'AI Engineer',
-  'Data Engineer',
-  'Business Intelligence Developer',
   // Management
   'Engineering Manager',
   'Technical Lead',
   'Product Manager',
-  'Project Manager',
-  'Scrum Master',
   // Design
   'UI/UX Designer',
   'Product Designer',
@@ -57,10 +47,10 @@ const JOB_TITLES = [
 ] as const;
 
 const COMPANIES = [
-  'vodafone',
-  'voice',
-  'fixedsulotion',
-  'etisalat',
+  'Vodafone',
+  'Vois',
+  'Fixed Solutions',
+  'Etisalat',
   'IBM',
   // Other
   'Other'

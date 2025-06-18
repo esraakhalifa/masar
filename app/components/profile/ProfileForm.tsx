@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import type { UserProfile, Skill, CareerPreference } from '@/app/lib/types/profile';
+import type { UserProfile, Skill } from '@/app/lib/types/profile';
 import {
   createValidationError,
   createServerError,
@@ -15,24 +15,18 @@ import {
 } from '@/app/lib/errors/clientError';
 import { CSRF_HEADER, CSRF_COOKIE } from '@/app/lib/security/csrf';
 import SkillsAssessment from './SkillsAssessment';
-import CareerPreferences from './CareerPreferences';
 import EducationForm from './EducationForm';
 import ExperienceForm from './ExperienceForm';
 import { exportProfileToPdf } from '@/app/lib/services/pdfExport';
 import { motion } from 'framer-motion';
-import { User, ClipboardList, Briefcase, GraduationCap, Heart } from 'lucide-react';
+import { User, ClipboardList, Briefcase, GraduationCap } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ProfileForm() {
   const router = useRouter();
   const { data: session } = useSession();
   const [step, setStep] = useState(1);
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [careerPreferences, setCareerPreferences] = useState<CareerPreference>({
-    industry: '',
-    preferredSalary: 0,
-    workType: 'remote',
-    location: ''
-  });
   const [education, setEducation] = useState<UserProfile['education']>([]);
   const [experience, setExperience] = useState<UserProfile['experience']>([]);
   const [isExporting, setIsExporting] = useState(false);
@@ -42,6 +36,7 @@ export default function ProfileForm() {
   const [isEditingSkills, setIsEditingSkills] = useState(false);
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [isEditingEducation, setIsEditingEducation] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   
 
   const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<UserProfile>({
@@ -64,7 +59,6 @@ export default function ProfileForm() {
   const stepIcons = [
     { icon: User, name: 'Basic Info' },
     { icon: ClipboardList, name: 'Skills' },
-    { icon: Heart, name: 'Preferences' },
     { icon: GraduationCap, name: 'Education' },
     { icon: Briefcase, name: 'Experience' },
   ];
@@ -138,7 +132,6 @@ export default function ProfileForm() {
           return false;
         }
         break;
-
       case 2:
         if (!skills.length) {
           console.warn('At least one skill is required', { context: 'Step 2 Validation' });
@@ -146,33 +139,9 @@ export default function ProfileForm() {
           return false;
         }
         break;
-
       case 3:
-        if (!careerPreferences.industry?.trim()) {
-          console.warn('Industry is required', { context: 'Step 3 Validation' });
-          toast.error('Industry is required');
-          return false;
-        }
-        if (!careerPreferences.workType) {
-          console.warn('Work type is required', { context: 'Step 3 Validation' });
-          toast.error('Work type is required');
-          return false;
-        }
-        if (!careerPreferences.location?.trim()) {
-          console.warn('Location is required', { context: 'Step 3 Validation' });
-          toast.error('Location is required');
-          return false;
-        }
-        if (!careerPreferences.preferredSalary || careerPreferences.preferredSalary === 0) {
-          console.warn('Preferred salary is required and must be greater than zero', { context: 'Step 3 Validation' });
-          toast.error('Preferred salary is required and must be greater than zero');
-          return false;
-        }
-        break;
-
-      case 4:
         if (!education.length) {
-          console.warn('At least one education entry is required', { context: 'Step 4 Validation' });
+          console.warn('At least one education entry is required', { context: 'Step 3 Validation' });
           toast.error('At least one education entry is required');
           return false;
         }
@@ -199,10 +168,9 @@ export default function ProfileForm() {
           }
         }
         break;
-
-      case 5:
+      case 4:
         if (!experience.length) {
-          console.warn('At least one experience entry is required', { context: 'Step 5 Validation' });
+          console.warn('At least one experience entry is required', { context: 'Step 4 Validation' });
           toast.error('At least one experience entry is required');
           return false;
         }
@@ -239,32 +207,26 @@ export default function ProfileForm() {
   const onSubmit = async (data: UserProfile) => {
     try {
       setIsSaving(true);
-
       if (!validateCurrentStep()) {
-        console.warn('Form submission aborted due to validation errors.', { context: 'Form Submission' });
+        setIsSaving(false);
         return;
       }
-
       if (!csrfToken) {
         const response = await fetch('/api/csrf', {
           method: 'GET',
           credentials: 'include',
         });
-        
         if (!response.ok) {
-          console.error(new Error('Failed to initialize CSRF token during submission'), { context: 'Form Submission' });
+          setIsSaving(false);
           throw createValidationError('csrf', 'Failed to initialize security token. Please refresh the page.');
         }
-        
         const { token } = await response.json();
         setCsrfToken(token);
-        
         if (!token) {
-          console.error(new Error('Security token missing during submission'), { context: 'Form Submission' });
+          setIsSaving(false);
           throw createValidationError('csrf', 'Security token missing. Please refresh the page and try again.');
         }
       }
-
       const formData = {
         firstName: data.firstName.trim(),
         lastName: data.lastName.trim(),
@@ -274,12 +236,6 @@ export default function ProfileForm() {
           level: skill.level || 1,
           category: skill.category || 'General'
         })),
-        careerPreferences: {
-          industry: careerPreferences.industry.trim(),
-          preferredSalary: careerPreferences.preferredSalary || 0,
-          workType: careerPreferences.workType,
-          location: careerPreferences.location?.trim() || ''
-        },
         education: education.map(edu => ({
           institution: edu.institution.trim(),
           degree: edu.degree.trim(),
@@ -294,9 +250,6 @@ export default function ProfileForm() {
           description: exp.description?.trim() || ''
         }))
       };
-
-      console.info('Form data structure:', { formData });
-
       const response = await fetch('/api/profile', {
         method: 'POST',
         headers: {
@@ -305,19 +258,16 @@ export default function ProfileForm() {
         },
         body: JSON.stringify(formData),
       });
-
       if (!response.ok) {
+        setIsSaving(false);
         const errorData = await response.json();
         const errorMessage = errorData.message || 'An unexpected error occurred.';
-
-        console.error(new Error(errorMessage), { context: 'Profile Submission', response: errorData });
-
         if (response.status === 400 && errorData.errorType === 'ValidationError') {
           handleValidationError({ field: errorData.field || 'unknown', message: errorMessage });
         } else if (response.status === 409) {
           toast.success('Profile already exists. Redirecting to your profile page!');
           localStorage.setItem('userEmail', data.email.trim());
-          router.push('/profile');
+          setShowSuccessModal(true);
           return;
         } else if (response.status === 403 && errorData.errorType === 'CSRFError') {
           toast.error('Security token mismatch. Please refresh and try again.');
@@ -326,19 +276,12 @@ export default function ProfileForm() {
         }
         return;
       }
-
-      console.info('Profile saved successfully!', { context: 'Profile Submission' });
-      toast.success('Profile saved successfully!');
-
       const result = await response.json();
-      console.info('Submission result:', { result });
-      
       localStorage.setItem('userEmail', result.email);
-
-      router.push('/profile');
+      setShowSuccessModal(true);
+      setIsSaving(false);
     } catch (error) {
       setIsSaving(false);
-      console.error(error as Error, { context: 'Profile Form Submission General Error' });
       if (error instanceof ClientError && error.code === ErrorCodes.VALIDATION_ERROR) {
         handleValidationError({ field: (error as ClientError).field || 'unknown', message: error.message });
       } else {
@@ -353,12 +296,12 @@ export default function ProfileForm() {
       const profileData: UserProfile = {
         firstName: firstName,
         lastName: lastName,
+        fullName: `${firstName} ${lastName}`.trim(),
         email: email,
         skills: skills,
-        careerPreferences: careerPreferences,
         education: education,
         experience: experience,
-      };
+      } as any;
       await exportProfileToPdf(profileData);
       console.info('Profile exported to PDF successfully!', { context: 'PDF Export' });
       toast.success('Profile exported to PDF successfully!');
@@ -521,31 +464,6 @@ export default function ProfileForm() {
             variants={itemVariants}
           >
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-[#2434B3]">Preferences</h2>
-              <button
-                type="button"
-                onClick={() => setIsEditing(!isEditing)}
-                className="text-[#FF4B36] hover:text-[#FF4B36]/80 transition-colors"
-              >
-                {isEditing ? 'Cancel' : 'Edit'}
-              </button>
-            </div>
-            <CareerPreferences
-              preferences={careerPreferences}
-              onChange={setCareerPreferences}
-            />
-          </motion.div>
-        );
-      case 4:
-        return (
-          <motion.div
-            key="step4"
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            variants={itemVariants}
-          >
-            <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-[#2434B3]">Education</h2>
               <button
                 type="button"
@@ -561,10 +479,10 @@ export default function ProfileForm() {
             />
           </motion.div>
         );
-      case 5:
+      case 4:
         return (
           <motion.div
-            key="step5"
+            key="step4"
             initial="hidden"
             animate="visible"
             exit="hidden"
@@ -597,8 +515,6 @@ export default function ProfileForm() {
       watch('lastName')?.trim() &&
       watch('email')?.trim() &&
       skills.length > 0 &&
-      careerPreferences.industry?.trim() &&
-      careerPreferences.location?.trim() &&
       education.length > 0 &&
       experience.length > 0
     );
@@ -606,6 +522,19 @@ export default function ProfileForm() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-lg w-full text-center">
+            <h2 className="text-2xl font-bold text-green-600 mb-4">Profile Created!</h2>
+            <p className="mb-6 text-lg text-gray-700">Your profile has been created!<br/>Please go to the <span className="font-semibold text-[#2434B3]">Upload CV</span> page. You can check your profile after uploading your CV.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/upload" className="flex-1 px-6 py-3 bg-[#2434B3] text-white rounded-lg font-semibold hover:bg-[#2434B3]/90 transition">Go to Upload CV</Link>
+              <Link href="/profile" className="flex-1 px-6 py-3 bg-gray-200 text-[#2434B3] rounded-lg font-semibold hover:bg-gray-300 transition">Check Profile</Link>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Build Your Profile</h1>
         <p className="mt-2 text-gray-600">Let&apos;s create your professional profile to help us generate your career roadmap.</p>
@@ -616,7 +545,7 @@ export default function ProfileForm() {
         handleSubmit(onSubmit)(e);
       }} className="space-y-8">
         <div className="flex justify-between mb-8">
-          {[1, 2, 3, 4, 5].map((stepNumber) => {
+          {[1, 2, 3, 4].map((stepNumber) => {
             const IconComponent = stepIcons[stepNumber - 1].icon;
             return (
               <motion.div
@@ -667,7 +596,7 @@ export default function ProfileForm() {
           )}
 
           <div className="flex space-x-4 ml-auto">
-            {step === 5 && (
+            {step === 4 && (
               <motion.button
                 type="button"
                 onClick={handleExportPDF}
@@ -692,7 +621,7 @@ export default function ProfileForm() {
             >
               Cancel
             </motion.button>
-            {step < 5 ? (
+            {step < 4 ? (
               <motion.button
                 type="button"
                 onClick={handleNext}
