@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
 
     // Sanitize profile data
     const sanitizedProfile = sanitizeObjectForSQL(validationResult.data);
+    console.log('DEBUG sanitizedProfile:', JSON.stringify(sanitizedProfile, null, 2));
 
     const existingUser = await prisma.user.findUnique({
       where: { email: sanitizedProfile.email },
@@ -112,6 +113,14 @@ export async function POST(request: NextRequest) {
       });
 
     } else if (!existingUser) {
+      console.log('DEBUG about to create user with data:', JSON.stringify({
+        firstName: sanitizedProfile.firstName,
+        lastName: sanitizedProfile.lastName,
+        email: sanitizedProfile.email,
+        skills: sanitizedProfile.skills,
+        education: sanitizedProfile.education,
+        experience: sanitizedProfile.experience,
+      }, null, 2));
       profile = await prisma.user.create({
         data: {
           firstName: sanitizedProfile.firstName,
@@ -148,6 +157,7 @@ export async function POST(request: NextRequest) {
           experience: true,
         },
       });
+      console.log('DEBUG created user profile:', JSON.stringify(profile, null, 2));
 
       await logInfo('Profile created successfully', {
         profileId: profile.id,
@@ -161,6 +171,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(profile, { status: existingUser ? 200 : 201 });
 
   } catch (error) {
+    console.error('DEBUG Prisma error:', error);
     await logError(error instanceof Error ? error : new Error('Unknown error'), {
       context: 'Profile creation/update failed',
       stack: error instanceof Error ? error.stack : undefined,
