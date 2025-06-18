@@ -354,7 +354,7 @@ export default function CVUploadPage() {
 
           setParsedData(parsedData);
           setUploadedFile(file);
-          setUploadStatus({ type: 'success', message: 'CV parsed successfully! Validating skills...' });
+          setUploadStatus({ type: 'success', message: 'CV parsed successfully!' });
           
           // Validate skills with Gemini
           setIsValidatingSkills(true);
