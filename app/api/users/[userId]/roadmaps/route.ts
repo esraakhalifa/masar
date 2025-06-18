@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { PrismaClient } from '@/app/generated/prisma';
+
+const prisma = new PrismaClient();
 
 export async function GET(
   request: Request,
@@ -10,20 +12,13 @@ export async function GET(
   console.log('User ID from params:', params.userId);
 
   try {
-    // First, check if we can connect to the database
-    try {
-      await prisma.$connect();
-      console.log('Successfully connected to database');
-    } catch (dbError) {
-      console.error('Database connection error:', dbError);
-      throw new Error('Failed to connect to database');
-    }
+    // Connect to the database
+    await prisma.$connect();
+    console.log('Successfully connected to database');
 
+    // Get user by ID
     const user = await prisma.user.findUnique({
-      where: {
-        id: params.userId,
-        deletedAt: null,
-      },
+      where: { id: params.userId },
     });
 
     if (!user) {
@@ -33,32 +28,17 @@ export async function GET(
 
     console.log('User found:', user.email);
 
+    // Get user's roadmaps
     const roadmaps = await prisma.careerRoadmap.findMany({
-      where: {
-        userId: params.userId,
-        deletedAt: null,
-      },
+      where: { userId: params.userId },
       include: {
-        courses: {
-          where: {
-            deleted_at: null,
-          },
-          include: {
-            certificates: true,
-          },
-        },
+        courses: true,
         topics: {
-          where: {
-            deletedAt: null,
-          },
           include: {
-            tasks: true,
-          },
-          orderBy: {
-            order: 'asc',
-          },
-        },
-      },
+            tasks: true
+          }
+        }
+      }
     });
 
     console.log('Found roadmaps:', roadmaps.length);

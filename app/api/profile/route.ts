@@ -77,11 +77,12 @@ export async function POST(request: NextRequest) {
 
     const existingUser = await prisma.user.findUnique({
       where: { email: sanitizedProfile.email },
-      include: { // Include existing relations to merge or replace them
+      include: {
         skills: true,
-        preferences: true,
-        education: true,
-        experience: true,
+        CareerPreference: true,
+        Education: true,
+        Experience: true,
+        payments: true,
       },
     });
 
@@ -94,8 +95,7 @@ export async function POST(request: NextRequest) {
         data: {
           firstName: sanitizedProfile.firstName,
           lastName: sanitizedProfile.lastName,
-          // Email should not be changed via profile update, it's the identifier
-          // Handle skills update: delete existing and create new ones
+          email: sanitizedProfile.email,
           skills: {
             deleteMany: {},
             create: sanitizedProfile.skills.map((skill) => ({
@@ -104,24 +104,25 @@ export async function POST(request: NextRequest) {
               category: skill.category || 'General',
             })),
           },
-          // Handle preferences update: update existing or create if none
-          preferences: existingUser.preferences ? {
-            update: {
-              industry: sanitizedProfile.careerPreferences.industry,
-              preferredSalary: sanitizedProfile.careerPreferences.preferredSalary || 0,
-              workType: sanitizedProfile.careerPreferences.workType,
-              location: sanitizedProfile.careerPreferences.location || '',
-            },
-          } : {
-            create: {
-              industry: sanitizedProfile.careerPreferences.industry,
-              preferredSalary: sanitizedProfile.careerPreferences.preferredSalary || 0,
-              workType: sanitizedProfile.careerPreferences.workType,
-              location: sanitizedProfile.careerPreferences.location || '',
-            },
+          CareerPreference: {
+            upsert: {
+              create: {
+                industry: sanitizedProfile.careerPreferences.industry,
+                location: sanitizedProfile.careerPreferences.location,
+                preferredSalary: sanitizedProfile.careerPreferences.preferredSalary,
+                workType: sanitizedProfile.careerPreferences.workType,
+                job_role: sanitizedProfile.careerPreferences.job_role
+              },
+              update: {
+                industry: sanitizedProfile.careerPreferences.industry,
+                location: sanitizedProfile.careerPreferences.location,
+                preferredSalary: sanitizedProfile.careerPreferences.preferredSalary,
+                workType: sanitizedProfile.careerPreferences.workType,
+                job_role: sanitizedProfile.careerPreferences.job_role
+              }
+            }
           },
-          // Handle education update: delete existing and create new ones
-          education: {
+          Education: {
             deleteMany: {},
             create: sanitizedProfile.education.map((edu) => ({
               degree: edu.degree,
@@ -130,8 +131,7 @@ export async function POST(request: NextRequest) {
               graduationYear: parseInt(edu.graduationYear.toString())
             })),
           },
-          // Handle experience update: delete existing and create new ones
-          experience: {
+          Experience: {
             deleteMany: {},
             create: sanitizedProfile.experience.map((exp) => ({
               title: exp.title,
@@ -144,9 +144,10 @@ export async function POST(request: NextRequest) {
         },
         include: {
           skills: true,
-          preferences: true,
-          education: true,
-          experience: true,
+          CareerPreference: true,
+          Education: true,
+          Experience: true,
+          payments: true,
         },
       });
 
@@ -172,15 +173,16 @@ export async function POST(request: NextRequest) {
               category: skill.category || 'General',
             })),
           },
-          preferences: {
+          CareerPreference: {
             create: {
               industry: sanitizedProfile.careerPreferences.industry,
-              preferredSalary: sanitizedProfile.careerPreferences.preferredSalary || 0,
+              location: sanitizedProfile.careerPreferences.location,
+              preferredSalary: sanitizedProfile.careerPreferences.preferredSalary,
               workType: sanitizedProfile.careerPreferences.workType,
-              location: sanitizedProfile.careerPreferences.location || '',
+              job_role: sanitizedProfile.careerPreferences.job_role
             },
           },
-          education: {
+          Education: {
             create: sanitizedProfile.education.map((edu) => ({
               degree: edu.degree,
               fieldOfStudy: edu.fieldOfStudy,
@@ -188,7 +190,7 @@ export async function POST(request: NextRequest) {
               graduationYear: parseInt(edu.graduationYear.toString())
             })),
           },
-          experience: {
+          Experience: {
             create: sanitizedProfile.experience.map((exp) => ({
               title: exp.title,
               company: exp.company,
@@ -200,9 +202,10 @@ export async function POST(request: NextRequest) {
         },
         include: {
           skills: true,
-          preferences: true,
-          education: true,
-          experience: true,
+          CareerPreference: true,
+          Education: true,
+          Experience: true,
+          payments: true,
         },
       });
 
@@ -272,10 +275,11 @@ export async function GET(request: Request) {
       where: { email },
       include: {
         skills: true,
-        preferences: true,
-        education: true,
-        experience: true
-      }
+        CareerPreference: true,
+        Education: true,
+        Experience: true,
+        payments: true,
+      },
     });
 
     if (!user) {
@@ -286,11 +290,11 @@ export async function GET(request: Request) {
     const formattedUser = {
       ...user,
       fullName: `${user.firstName} ${user.lastName}`,
-      education: user.education.map(edu => ({
+      education: user.Education.map(edu => ({
         ...edu,
         graduationYear: edu.graduationYear.toString()
       })),
-      experience: user.experience.map(exp => ({
+      experience: user.Experience.map(exp => ({
         ...exp,
         startDate: exp.startDate.toISOString(),
         endDate: exp.endDate ? exp.endDate.toISOString() : null

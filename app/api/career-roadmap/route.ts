@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import {roadmapService} from '@/app/services/roadmapService';
+import { roadmapService } from '@/app/services/roadmapService';
 
 // GET /api/career-roadmap - Get all career roadmaps or a specific one
 export async function GET(req: Request) {
@@ -15,17 +15,12 @@ export async function GET(req: Request) {
           deletedAt: null
         },
         include: {
-          user: {
-            select: {
-              id: true,
-              email: true
-            }
-          },
           topics: {
             include: {
               tasks: true
             }
-          }
+          },
+          courses: true
         }
       });
 
@@ -42,17 +37,12 @@ export async function GET(req: Request) {
         deletedAt: null
       },
       include: {
-        user: {
-          select: {
-            id: true,
-            email: true
-          }
-        },
         topics: {
           include: {
             tasks: true
           }
-        }
+        },
+        courses: true
       }
     });
 
@@ -81,91 +71,39 @@ export async function POST(req: Request) {
     // Check if user exists
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      include: {
+        CareerPreference: true,
+        skills: true,
+        Education: true
+      }
     });
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Check if user already has a roadmap (since it's a 1:1 relation)
-    const existingRoadmap = await prisma.careerRoadmap.findUnique({
-      where: { userId },
-    });
-
-    if (existingRoadmap) {
-      return NextResponse.json({ error: 'User already has a career roadmap' }, { status: 400 });
-    }
-
-    // Create the career roadmap with minimal initial details
-    const roadmap = await prisma.careerRoadmap.create({
-      data: {
-        user: {
-          connect: { id: userId },
+    // Generate and save the roadmap using roadmapService
+    const roadmap = await roadmapService.generateAndSaveRoadmap(
+      userId,
+      roadmapRole,
+      {
+        careerPreference: {
+          industry: user.CareerPreference?.industry || 'Technology',
+          preferredSalary: user.CareerPreference?.preferredSalary || 80000,
+          workType: user.CareerPreference?.workType || 'Full-time',
+          location: user.CareerPreference?.location || 'Remote',
+          jobRole: roadmapRole
         },
-        roadmapRole,
-        roadmapDetails: {}, // Initialize with empty object, will be updated by roadmapService
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
-    });
+        skills: user.skills.map(skill => ({
+          name: skill.name,
+          level: skill.level,
+          jobRole: skill.jobRole || roadmapRole
+        })),
+        education: user.Education
+      }
+    );
 
-    // Generate and save topics (which includes tasks) and courses using roadmapService
-    try {
-      const [topicsResult, coursesResult] = await Promise.all([
-        roadmapService.generateAndSaveTopics(roadmap.id, roadmapRole), // This also generates and saves tasks
-        roadmapService.generateAndSaveCourses(roadmap.id, roadmapRole),
-      ]);
-
-      // Fetch the updated roadmap with topics, tasks, and courses
-      const updatedRoadmap = await prisma.careerRoadmap.findUnique({
-        where: { id: roadmap.id },
-        include: {
-          user: {
-            select: {
-              id: true,
-              email: true,
-            },
-          },
-          topics: {
-            include: {
-              tasks: {
-                select: {
-                  id: true,
-                  title: true,
-                  description: true,
-                  order: true,
-                  isCompleted: true,
-                },
-              },
-            },
-          },
-          courses: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              instructors: true,
-              courseLink: true,
-            },
-          },
-        },
-      });
-
-      return NextResponse.json(updatedRoadmap);
-    } catch (serviceError) {
-      // If roadmapService fails, delete the created roadmap to maintain consistency
-      await prisma.careerRoadmap.delete({
-        where: { id: roadmap.id },
-      });
-      console.error('Error generating roadmap content:', serviceError);
-      return NextResponse.json({ error: 'Failed to generate roadmap content' }, { status: 500 });
-    }
+    return NextResponse.json(roadmap);
   } catch (error) {
     console.error('Error creating career roadmap:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

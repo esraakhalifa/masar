@@ -3,8 +3,8 @@ import { sanitizeSQLInput } from './sqlInjection';
 
 // Rate limiting configuration
 export const RATE_LIMIT = {
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 60 * 1000, // 1 minute
+  max: 1000, // Limit each IP to 1000 requests per minute
 };
 
 // CSRF token validation

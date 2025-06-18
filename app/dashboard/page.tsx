@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   Box, CircularProgress, Alert, Button, Menu, MenuItem, Snackbar,
   Typography, Checkbox, List, ListItem, ListItemText
@@ -14,10 +15,12 @@ import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import StarIcon from '@mui/icons-material/Star';
 import RoadmapDiagram from '@/app/components/RoadmapDiagram';
 import RoadmapVisualization from '@/app/components/RoadmapVisualization';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import Link from 'next/link';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import Image from "next/image";
+import routeIcon from "@/public/route.svg";
 
 interface Task {
   id: string;
@@ -101,6 +104,7 @@ const StyledPaper = styled(Box)(({ theme }) => ({
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
@@ -109,7 +113,9 @@ export default function DashboardPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastSeverity, setToastSeverity] = useState<'success' | 'error' | 'info'>('info');
+  const [missingProfileInfo, setMissingProfileInfo] = useState(false);
   const { scrollYProgress } = useScroll();
+  const theme = useTheme();
 
   const jobRoles = [
     'Software Engineer', 'Frontend Developer', 'Backend Developer', 'Full Stack Developer',
@@ -119,9 +125,16 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchRoadmap = async () => {
+      if (status === 'loading') return;
+      
+      if (!session?.user?.id) {
+        setError('Please sign in to view your roadmap');
+        setLoading(false);
+        return;
+      }
+
       try {
-        const userId = 'cmc0dobf90000fpa540yc6u0a'; // TODO: Get from auth context
-        const response = await fetch(`/api/users/${userId}/roadmaps`);
+        const response = await fetch(`/api/users/${session.user.id}/roadmaps`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch roadmap');
@@ -139,8 +152,42 @@ export default function DashboardPage() {
       }
     };
 
+    const fetchProfileInfo = async () => {
+      if (status === 'loading') return;
+      if (!session?.user?.id) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const userId = session.user.id;
+        const [preferencesRes, experienceRes, educationRes, paymentsRes] = await Promise.all([
+          fetch(`/api/users/${userId}/career-preferences`),
+          fetch(`/api/users/${userId}/experience`),
+          fetch(`/api/users/${userId}/education`),
+          fetch(`/api/users/${userId}/payments`),
+        ]);
+        const [preferences, experience, education, payments] = await Promise.all([
+          preferencesRes.json(),
+          experienceRes.json(),
+          educationRes.json(),
+          paymentsRes.json(),
+        ]);
+        if (
+          !preferences || preferences.length === 0 ||
+          !experience || experience.length === 0 ||
+          !education || education.length === 0 ||
+          !payments || payments.length === 0
+        ) {
+          setMissingProfileInfo(true);
+        }
+      } catch (err) {
+        setMissingProfileInfo(true);
+      }
+    };
+
     fetchRoadmap();
-  }, []);
+    fetchProfileInfo();
+  }, [session, status]);
 
   const handleCreateRoadmapClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -151,17 +198,22 @@ export default function DashboardPage() {
   };
 
   const handleJobRoleSelect = async (jobRole: string) => {
+    if (!session?.user?.id) {
+      setToastMessage('Please sign in to create a roadmap');
+      setToastSeverity('error');
+      return;
+    }
+
     setAnchorEl(null);
     setIsGenerating(true);
     setToastMessage(`Generating roadmap for ${jobRole}...`);
     setToastSeverity('info');
 
     try {
-      const userId = 'cmbxgjycw0000fptltstn83z3';
-      const response = await fetch(`http://localhost:3000/api/career-roadmap`, {
+      const response = await fetch(`/api/career-roadmap`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, roadmapRole: jobRole }),
+        body: JSON.stringify({ userId: session.user.id, roadmapRole: jobRole }),
       });
 
       if (!response.ok) throw new Error(`Failed to create roadmap: ${response.statusText}`);
@@ -222,10 +274,73 @@ export default function DashboardPage() {
     router.push(`/dashboard/tasks/${topicId}`);
   };
 
+  if (status === 'loading') {
+    return (
+      <Box className="flex items-center justify-center min-h-[60vh]">
+        <CircularProgress className="text-teal-500" />
+      </Box>
+    );
+  }
+
+  if (!session) {
+    return (
+      <Box className="p-4">
+        <Alert severity="warning" className="rounded-lg">
+          Please sign in to access your dashboard.
+        </Alert>
+      </Box>
+    );
+  }
+
   if (loading) {
     return (
       <Box className="flex items-center justify-center min-h-[60vh]">
         <CircularProgress className="text-teal-500" />
+      </Box>
+    );
+  }
+
+  if (missingProfileInfo) {
+    return (
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="60vh" width="100%">
+        <Alert
+          severity="warning"
+          sx={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            padding: '2rem 3rem',
+            borderRadius: '1rem',
+            background: 'linear-gradient(90deg, #fffbe6 0%, #ffe0b2 100%)',
+            color: '#b26a00',
+            boxShadow: '0 4px 24px rgba(255, 193, 7, 0.15)',
+            textAlign: 'center',
+            maxWidth: '700px',
+            margin: '0 auto',
+            mb: 3,
+          }}
+        >
+          Please complete your profile and subscribe to a plan to unlock your personalized dashboard.
+        </Alert>
+        <Button
+          onClick={() => router.push('/')}
+          variant="contained"
+          sx={{
+            background: 'linear-gradient(90deg, #2434B3 0%, #FF4B36 100%)',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '1.2rem',
+            padding: '1rem 2.5rem',
+            borderRadius: '2rem',
+            marginTop: '2rem',
+            boxShadow: '0 2px 8px rgba(36, 52, 179, 0.15)',
+            transition: 'background 0.3s',
+            '&:hover': {
+              background: 'linear-gradient(90deg, #2434B3 0%, #FF6B3D 100%)',
+            },
+          }}
+        >
+          Return to Homepage
+        </Button>
       </Box>
     );
   }
@@ -240,10 +355,75 @@ export default function DashboardPage() {
 
   if (!roadmap) {
     return (
-      <Box className="p-4">
-        <Alert severity="info" className="rounded-lg">
-          No roadmap found. Please create a roadmap to get started.
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="60vh" width="100%">
+        <Alert
+          severity="info"
+          sx={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            padding: '2rem 3rem',
+            borderRadius: '1rem',
+            background: 'linear-gradient(90deg, #e3f2fd 0%, #bbdefb 100%)',
+            color: '#1565c0',
+            boxShadow: '0 4px 24px rgba(33, 150, 243, 0.15)',
+            textAlign: 'center',
+            maxWidth: '700px',
+            margin: '0 auto',
+            mb: 3,
+          }}
+        >
+          No roadmap found for your account.<br />
+          Click below to generate your personalized learning path!
         </Alert>
+        <Button
+          onClick={handleCreateRoadmapClick}
+          disabled={isGenerating}
+          variant="contained"
+          sx={{
+            background: 'linear-gradient(90deg, #2434B3 0%, #FF4B36 100%)',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '1.2rem',
+            padding: '1rem 2.5rem',
+            borderRadius: '2rem',
+            marginTop: '2rem',
+            boxShadow: '0 2px 8px rgba(36, 52, 179, 0.15)',
+            transition: 'background 0.3s',
+            opacity: isGenerating ? 0.7 : 1,
+            '&:hover': {
+              background: 'linear-gradient(90deg, #2434B3 0%, #FF6B3D 100%)',
+            },
+          }}
+        >
+          {isGenerating ? 'Generating...' : 'Start New Journey'}
+        </Button>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          MenuListProps={{ 'aria-labelledby': 'create-roadmap-button' }}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+              borderRadius: 2,
+            },
+          }}
+        >
+          {jobRoles.map((role) => (
+            <MenuItem 
+              key={role} 
+              onClick={() => handleJobRoleSelect(role)} 
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'rgba(79, 209, 197, 0.1)',
+                },
+              }}
+            >
+              {role}
+            </MenuItem>
+          ))}
+        </Menu>
       </Box>
     );
   }
@@ -261,7 +441,7 @@ export default function DashboardPage() {
         initial="initial"
         viewport={{ once: true, margin: "-100px" }}
       >
-        <Box className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+        <Box display="flex" alignItems="center" justifyContent="space-between" width="100%" sx={{ mb: 4 }}>
           <Box>
             <Typography variant="h4" className="text-3xl font-bold text-gray-800 flex items-center gap-2">
               <SchoolIcon className="text-coral-500" />
@@ -272,70 +452,77 @@ export default function DashboardPage() {
               Let's master new skills with fun and ease!
             </Typography>
           </Box>
-
-          {!roadmap || roadmap.topics.length === 0 ? (
-            <Box className="mt-4 md:mt-0">
-              <Button
-                onClick={handleCreateRoadmapClick}
-                disabled={isGenerating}
-                className="btn-primary"
-                variant="contained"
-                sx={{
-                  background: 'linear-gradient(135deg, #4FD1C5 0%, #319795 100%)',
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #319795 0%, #2C7A7B 100%)',
-                  },
-                }}
-              >
-                {isGenerating ? 'Generating...' : 'Start New Journey'}
-              </Button>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-                MenuListProps={{ 'aria-labelledby': 'create-roadmap-button' }}
-                PaperProps={{
-                  sx: {
-                    mt: 1,
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-                    borderRadius: 2,
-                  },
-                }}
-              >
-                {jobRoles.map((role) => (
-                  <MenuItem 
-                    key={role} 
-                    onClick={() => handleJobRoleSelect(role)} 
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: 'rgba(79, 209, 197, 0.1)',
-                      },
-                    }}
-                  >
-                    {role}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-          ) : null}
+          <Image
+            src={routeIcon}
+            alt="Masar Icon"
+            width={40}
+            height={40}
+            style={{ marginLeft: "auto" }}
+          />
         </Box>
 
-        {roadmap && selectedRoadmap ? (
-          <Box className="space-y-8">
-            <RoadmapVisualization
-              topics={selectedRoadmap.topics}
-              onTopicClick={handleTopicClick}
-            />
+        {!roadmap || roadmap.topics.length === 0 ? (
+          <Box className="mt-4 md:mt-0">
+            <Button
+              onClick={handleCreateRoadmapClick}
+              disabled={isGenerating}
+              className="btn-primary"
+              variant="contained"
+              sx={{
+                background: 'linear-gradient(135deg, #4FD1C5 0%, #319795 100%)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #319795 0%, #2C7A7B 100%)',
+                },
+              }}
+            >
+              {isGenerating ? 'Generating...' : 'Start New Journey'}
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              MenuListProps={{ 'aria-labelledby': 'create-roadmap-button' }}
+              PaperProps={{
+                sx: {
+                  mt: 1,
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                  borderRadius: 2,
+                },
+              }}
+            >
+              {jobRoles.map((role) => (
+                <MenuItem 
+                  key={role} 
+                  onClick={() => handleJobRoleSelect(role)} 
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(79, 209, 197, 0.1)',
+                    },
+                  }}
+                >
+                  {role}
+                </MenuItem>
+              ))}
+            </Menu>
           </Box>
-        ) : (
-          <Box className="p-4 bg-yellow-100 rounded-lg">
-            <Alert severity="info" className="rounded-lg flex items-center gap-1">
-              <RocketLaunchIcon sx={{ fontSize: 20 }} />
-              No roadmap yet. Start your learning journey above!
-            </Alert>
-          </Box>
-        )}
+        ) : null}
       </motion.div>
+
+      {roadmap && selectedRoadmap ? (
+        <Box className="space-y-8">
+          <RoadmapVisualization
+            topics={selectedRoadmap.topics}
+            onTopicClick={handleTopicClick}
+          />
+        </Box>
+      ) : (
+        <Box className="p-4 bg-yellow-100 rounded-lg">
+          <Alert severity="info" className="rounded-lg flex items-center gap-1">
+            <RocketLaunchIcon sx={{ fontSize: 20 }} />
+            No roadmap yet. Start your learning journey above!
+          </Alert>
+        </Box>
+      )}
 
       <Snackbar
         open={!!toastMessage}

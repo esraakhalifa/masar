@@ -337,7 +337,7 @@ ${JSON.stringify(jobMarketData, null, 2)}`;
               description: task.description,
               isCompleted: false,
               topicId: savedTopic.id,
-              order: task.order,
+              order: task.order || 1,
               createdAt: new Date(),
               updatedAt: new Date()
             }

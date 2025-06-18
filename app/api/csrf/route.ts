@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { generateCSRFToken } from '@/app/lib/security/csrf';
-import { CSRF_COOKIE } from '@/app/lib/security/csrf';
+import { generateCSRFToken, CSRF_COOKIE } from '@/app/lib/security/csrf';
 
 export async function GET() {
   try {
@@ -23,7 +22,7 @@ export async function GET() {
 
     return response;
   } catch (error) {
-    console.error('CSRF token generation failed:', error);
+    console.error('Error generating CSRF token:', error);
     return NextResponse.json(
       { error: 'Failed to generate CSRF token' },
       { status: 500 }

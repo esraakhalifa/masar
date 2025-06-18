@@ -22,6 +22,7 @@ import { styled } from '@mui/material/styles';
 import CertificateSubmission from '@/app/components/CertificateSubmission';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
@@ -115,7 +116,7 @@ interface Course {
   title: string;
   description: string | null;
   instructors: string | null;
-  courseLink: string;
+  course_link: string;
   certificates?: Array<{
     id: string;
     title: string;
@@ -128,26 +129,29 @@ interface Course {
 export default function CoursesPage() {
   const theme = useTheme();
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const { scrollYProgress } = useScroll();
+  const [missingInfo, setMissingInfo] = useState(false);
+  const [noRoadmap, setNoRoadmap] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
-  const fetchCourses = async () => {
+  const fetchCourses = async (userId: string) => {
     try {
-      const userId = 'cmc0dobf90000fpa540yc6u0a'; // TODO: Get from auth context
       const response = await fetch(`/api/users/${userId}/roadmaps`);
-      
       if (!response.ok) {
         throw new Error('Failed to fetch courses');
       }
-
       const roadmaps = await response.json();
       if (roadmaps.length === 0) {
-        throw new Error('No roadmap found');
+        setNoRoadmap(true);
+        setCourses([]);
+        return;
       }
-
+      setNoRoadmap(false);
       const roadmap = roadmaps[0];
       setCourses(roadmap.courses);
     } catch (err) {
@@ -158,11 +162,59 @@ export default function CoursesPage() {
   };
 
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    if (status === 'loading') return; // Wait for session to load
+    if (!session?.user?.id) {
+      setError('Please sign in to view your courses.');
+      setLoading(false);
+      return;
+    }
+    fetchCourses(session.user.id);
+  }, [session, status]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (status === 'loading') return;
+      if (!session?.user?.id) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const userId = session.user.id;
+        // Fetch all required data in parallel
+        const [preferencesRes, experienceRes, skillsRes, paymentsRes] = await Promise.all([
+          fetch(`/api/users/${userId}/career-preferences`),
+          fetch(`/api/users/${userId}/experience`),
+          fetch(`/api/users/${userId}/skills`),
+          fetch(`/api/users/${userId}/payments`),
+        ]);
+        const [preferences, experience, skills, payments] = await Promise.all([
+          preferencesRes.json(),
+          experienceRes.json(),
+          skillsRes.json(),
+          paymentsRes.json(),
+        ]);
+        // Check if any are missing or empty
+        if (
+          !preferences || preferences.length === 0 ||
+          !experience || experience.length === 0 ||
+          !skills || skills.length === 0 ||
+          !payments || payments.length === 0
+        ) {
+          setMissingInfo(true);
+        }
+      } catch (err) {
+        setMissingInfo(true); // fallback to showing the message on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [session, status]);
 
   const handleCertificateSuccess = () => {
-    fetchCourses(); // Refresh courses after certificate submission
+    fetchCourses(session.user.id); // Refresh courses after certificate submission
   };
 
   const completedCourses = courses.filter(course => (course.certificates?.length || 0) > 0);
@@ -232,6 +284,34 @@ export default function CoursesPage() {
         </Tabs>
       </motion.div>
 
+      {missingInfo && (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          minHeight="40vh"
+          width="100%"
+        >
+          <Alert
+            severity="warning"
+            sx={{
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              padding: '2rem 3rem',
+              borderRadius: '1rem',
+              background: 'linear-gradient(90deg, #fffbe6 0%, #ffe0b2 100%)',
+              color: '#b26a00',
+              boxShadow: '0 4px 24px rgba(255, 193, 7, 0.15)',
+              textAlign: 'center',
+              maxWidth: '600px',
+              margin: '0 auto',
+            }}
+          >
+            To unlock your personalized dashboard, please complete your profile information and subscribe to a plan.
+          </Alert>
+        </Box>
+      )}
+
       <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {(selectedTab === 0 ? courses : selectedTab === 1 ? inProgressCourses : completedCourses).map((course, index) => (
           <motion.div
@@ -248,95 +328,44 @@ export default function CoursesPage() {
                   variant="h6" 
                   component="h2" 
                   gutterBottom
-                  sx={{ 
-                    fontWeight: 600,
-                    color: theme.palette.primary.main,
-                    transition: 'color 0.3s ease-in-out',
-                    '&:hover': {
-                      color: '#FF6B3D',
-                    },
-                  }}
+                  className="font-semibold"
                 >
                   {course.title}
                 </Typography>
                 {course.description && (
                   <Typography 
-                    color="text.secondary" 
-                    paragraph
-                    sx={{ 
-                      minHeight: '48px',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                    }}
+                    variant="body2" 
+                    color="text.secondary"
+                    className="mb-4"
                   >
                     {course.description}
                   </Typography>
                 )}
                 {course.instructors && (
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    paragraph
-                    sx={{ 
-                      fontStyle: 'italic',
-                      color: 'text.secondary',
-                    }}
-                  >
-                    Instructors: {course.instructors}
-                  </Typography>
+                  <Box className="mb-4">
+                    <Typography variant="body2" color="text.secondary">
+                      Instructors: {course.instructors}
+                    </Typography>
+                  </Box>
                 )}
-                <Box className="mt-4">
-                  <CourseLink
-                    href={course.courseLink}
+                <Box className="flex justify-between items-center mt-4">
+                  <CourseLink 
+                    href={course.course_link} 
+                    className="course-link"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="course-link"
                   >
-                    View Course
-                    <ArrowForwardIcon className="arrow-icon" sx={{ fontSize: 16 }} />
+                    Start Course
+                    <ArrowForwardIcon className="arrow-icon" />
                   </CourseLink>
+                  {course.certificates && course.certificates.length > 0 && (
+                    <StyledChip
+                      icon={<CheckCircleIcon />}
+                      label="Completed"
+                      size="small"
+                    />
+                  )}
                 </Box>
-                {(course.certificates?.length || 0) > 0 ? (
-                  <Box className="mt-4">
-                    <Typography 
-                      variant="subtitle2" 
-                      sx={{ 
-                        color: '#FF6B3D',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        fontWeight: 600,
-                      }}
-                    >
-                      <CheckCircleIcon sx={{ fontSize: 16 }} />
-                      Completed
-                    </Typography>
-                    {course.certificates?.map((cert) => (
-                      <Box key={cert.id} className="mt-2">
-                        <StyledChip
-                          label={`${cert.provider} Certificate`}
-                          size="small"
-                          className="mr-2"
-                        />
-                        <CourseLink
-                          href={cert.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          View Certificate
-                        </CourseLink>
-                      </Box>
-                    ))}
-                  </Box>
-                ) : (
-                  <CertificateSubmission
-                    courseId={course.id}
-                    courseTitle={course.title}
-                    onSuccess={handleCertificateSuccess}
-                  />
-                )}
               </CardContent>
             </StyledCard>
           </motion.div>

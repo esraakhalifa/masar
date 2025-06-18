@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { PrismaClient } from '@/app/generated/prisma';
+
+const prisma = new PrismaClient();
 
 export async function GET(
   request: Request,
@@ -10,14 +12,9 @@ export async function GET(
   console.log('User ID from params:', params.userId);
 
   try {
-    // First, check if we can connect to the database
-    try {
-      await prisma.$connect();
-      console.log('Successfully connected to database');
-    } catch (dbError) {
-      console.error('Database connection error:', dbError);
-      throw new Error('Failed to connect to database');
-    }
+    // Connect to the database
+    await prisma.$connect();
+    console.log('Successfully connected to database');
 
     // Get user's roadmap
     const roadmap = await prisma.careerRoadmap.findFirst({
@@ -66,9 +63,9 @@ export async function GET(
 
     // Get recent completed courses (this month)
     // A course is considered completed if it has a certificate issued this month
-    const recentCourses = await prisma.course.findMany({
+    const recentCourses = await prisma.courses.findMany({
       where: {
-        roadmapId: roadmap.id,
+        roadmap_id: roadmap.id,
         certificates: {
           some: {
             userId: params.userId,
