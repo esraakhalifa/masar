@@ -23,6 +23,9 @@ model User {
   additionalInfo   String?           @map("additional_info")
   stripeCustomerId String?           @map("stripe_customer_id")
   image            String?
+  isEmailVerified  Boolean           @default(false) @map("is_email_verified")
+  otpCode          String?           @map("otp_code")
+  otpExpiresAt     DateTime?         @map("otp_expires_at")
   Account          Account[]
   careerPreference CareerPreference?
   education        Education[]

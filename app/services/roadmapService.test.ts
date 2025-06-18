@@ -59,13 +59,13 @@ interface UserContext {
   }>;
 }
 
-async function testRoadmapGeneration() {
+async function createTestUser() {
   try {
     // Create a test user with all required fields
-    const timestamp = new Date().getTime();
     const testUser = await prisma.user.create({
       data: {
-        email: `test${timestamp}@example.com`,
+        id: 'test-user-id', // Set a fixed ID for testing
+        email: 'test@example.com',
         firstName: 'Test',
         lastName: 'User',
         updatedAt: new Date(),
@@ -107,9 +107,33 @@ async function testRoadmapGeneration() {
         skills: true,
         Education: true
       }
-    }) as UserWithRelations;
+    });
 
     console.log('Test user created:', testUser);
+    return testUser;
+  } catch (error) {
+    console.error('Error creating test user:', error);
+    throw error;
+  }
+}
+
+async function testRoadmapGeneration() {
+  try {
+    // Get the test user
+    const testUser = await prisma.user.findUnique({
+      where: { id: 'test-user-id' },
+      include: {
+        CareerPreference: true,
+        skills: true,
+        Education: true
+      }
+    });
+
+    if (!testUser) {
+      throw new Error('Test user not found');
+    }
+
+    console.log('Found test user:', testUser);
 
     // Generate roadmap
     const roadmap = await roadmapService.generateAndSaveRoadmap(
@@ -133,12 +157,6 @@ async function testRoadmapGeneration() {
     );
 
     console.log('Generated roadmap:', roadmap);
-
-    // Clean up
-    await prisma.user.delete({
-      where: { id: testUser.id }
-    });
-
   } catch (error) {
     console.error('Error in test:', error);
   } finally {
@@ -146,4 +164,11 @@ async function testRoadmapGeneration() {
   }
 }
 
-testRoadmapGeneration(); 
+// Run the test
+testRoadmapGeneration().then(() => {
+  console.log('Test completed');
+  process.exit(0);
+}).catch((error) => {
+  console.error('Test failed:', error);
+  process.exit(1);
+}); 

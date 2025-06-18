@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCoreSkills, getSkillQuestions } from "@/app/services/gemini";
+import Image from "next/image";
+import routeIcon from "@/public/route.svg"; // Adjust the path if needed
 
 export async function POST(request: Request) {
   try {

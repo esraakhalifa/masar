@@ -78,31 +78,19 @@ export async function POST(request: Request) {
       });
     }
 
-    // Create assessment record
-    const assessment = await prisma.assessment.create({
-      data: {
-        userId: user.id,
-        skillId: skill.id,
-        title: `${skillName} Assessment`,
-        score: score,
-        maxScore: maxScore,
-        createdAt: new Date(),
-      },
-    });
-
-    console.log("Assessment saved:", {
+    console.log("Skill updated:", {
       userId: user.id,
       skillName,
       score,
       maxScore,
-      assessmentId: assessment.id,
+      skillId: skill.id,
     });
 
-    return NextResponse.json({ success: true, assessment });
+    return NextResponse.json({ success: true, skill });
   } catch (error) {
-    console.error("Error saving assessment:", error);
+    console.error("Error saving skill:", error);
     return NextResponse.json(
-      { error: "Failed to save assessment" },
+      { error: "Failed to save skill" },
       { status: 500 }
     );
   }

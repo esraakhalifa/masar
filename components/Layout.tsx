@@ -144,6 +144,15 @@ const Layout = ({ children }: LayoutProps) => {
                       </li>
                       <li>
                         <Link
+                          href="/dashboard"
+                          className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
+                        >
+                          <ClipboardList className="w-4 h-4" />
+                          <span>Dashboard</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
                           href="/upload"
                           className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
                         >

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
 import { Upload, FileText, CheckCircle, AlertCircle, ArrowRight, XCircle } from 'lucide-react';
 import { fetchWithCsrf } from '../lib/fetchWithCsrf';
+import { useRouter } from 'next/navigation';
 
 interface FormData {
   jobRole: string;
@@ -47,6 +48,7 @@ interface ParsedData {
 const MAX_WORDS = 100; // Maximum number of words allowed
 
 export default function CVUploadPage() {
+  const router = useRouter();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadStatus, setUploadStatus] = useState<UploadStatus | null>(null);
@@ -56,6 +58,7 @@ export default function CVUploadPage() {
   const [validatedSkills, setValidatedSkills] = useState<string[]>([]);
   const [showParsedData, setShowParsedData] = useState<boolean>(false);
   const [wordCount, setWordCount] = useState<number>(0);
+  const [showProfileMessage, setShowProfileMessage] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { register, handleSubmit, formState: { errors }, watch } = useForm<FormData>();
@@ -211,6 +214,42 @@ export default function CVUploadPage() {
     setWordCount(words.length);
   }, [additionalInfo]);
 
+  // Add profile check
+  useEffect(() => {
+    const checkProfileCompletion = async () => {
+      try {
+        const response = await fetchWithCsrf('/api/profile/check', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to check profile status');
+        }
+
+        const data = await response.json();
+        
+        if (!data.hasProfile) {
+          setShowProfileMessage(true);
+          // Redirect to build-profile page after a short delay
+          setTimeout(() => {
+            router.push('/build-profile');
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Error checking profile status:', error);
+        setUploadStatus({ 
+          type: 'error', 
+          message: 'Failed to verify profile status. Please try again.' 
+        });
+      }
+    };
+
+    checkProfileCompletion();
+  }, [router]);
+
   const removeFile = () => {
     setUploadedFile(null);
     setParsedData(null);
@@ -354,7 +393,7 @@ export default function CVUploadPage() {
 
           setParsedData(parsedData);
           setUploadedFile(file);
-          setUploadStatus({ type: 'success', message: 'CV parsed successfully! Validating skills...' });
+          setUploadStatus({ type: 'success', message: 'CV parsed successfully!' });
           
           // Validate skills with Gemini
           setIsValidatingSkills(true);
@@ -379,8 +418,17 @@ export default function CVUploadPage() {
   };
 
   return (
-<Layout>
+    <Layout>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {showProfileMessage && (
+          <div className="mb-8 p-4 rounded-lg border border-red-200 bg-red-50 flex items-center justify-between">
+            <div className="flex items-center">
+              <AlertCircle className="w-5 h-5 mr-2" style={{color: '#FF4B36'}} />
+              <span className="text-gray-900">Please complete your profile first before uploading your CV.</span>
+            </div>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#FF4B36]"></div>
+          </div>
+        )}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4" style={{background: 'linear-gradient(to right, #2434B3, #1e29a3)'}}>
@@ -575,7 +623,9 @@ export default function CVUploadPage() {
                 <textarea
                   {...register('additionalInfo', {
                     validate: (value) => {
-                      const words = value?.trim().split(/\s+/).filter(word => word.length > 0) || [];
+                      // Sanitize input by removing potentially harmful characters
+                      const sanitizedValue = value?.replace(/[<>]/g, '') || '';
+                      const words = sanitizedValue.trim().split(/\s+/).filter(word => word.length > 0) || [];
                       return words.length <= MAX_WORDS || `Maximum ${MAX_WORDS} words allowed`;
                     }
                   })}
@@ -597,6 +647,8 @@ export default function CVUploadPage() {
                       e.target.style.boxShadow = 'none';
                     }
                   }}
+                  // Add maxLength to prevent extremely long inputs
+                  maxLength={5000}
                 />
                 <div className="absolute bottom-2 right-2 text-sm text-gray-500">
                   {wordCount}/{MAX_WORDS} words
@@ -605,7 +657,8 @@ export default function CVUploadPage() {
               {errors.additionalInfo && (
                 <p className="mt-2 text-sm flex items-center" style={{color: '#FF4B36'}}>
                   <AlertCircle className="w-4 h-4 mr-1" />
-                  {errors.additionalInfo.message}
+                  {/* Sanitize error message display */}
+                  {typeof errors.additionalInfo.message === 'string' ? errors.additionalInfo.message : 'Invalid input'}
                 </p>
               )}
             </div>

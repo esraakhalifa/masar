@@ -21,9 +21,18 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null;
         const user = await prisma.user.findUnique({ where: { email: credentials.email } });
         if (!user || !user.password) return null;
+        if (!user.isEmailVerified) {
+          throw new Error("Please verify your email before logging in.");
+        }
         const isValid = await compare(credentials.password, user.password);
         if (!isValid) return null;
-        return { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName };
+        return { 
+          id: user.id, 
+          email: user.email, 
+          firstName: user.firstName, 
+          lastName: user.lastName,
+          image: user.image
+        };
       },
     }),
     GoogleProvider({
@@ -41,18 +50,25 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  session: { strategy: "jwt" },
+  session: { 
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.firstName = user.firstName;
         token.lastName = user.lastName;
+        token.picture = user.image;
+      }
+      if (account) {
+        token.accessToken = account.access_token;
       }
       return token;
     },
@@ -62,10 +78,12 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string;
         session.user.firstName = token.firstName as string;
         session.user.lastName = token.lastName as string;
+        session.user.image = token.picture as string;
       }
       return session;
     },
   },
+  debug: process.env.NODE_ENV === 'development',
 };
 
 const handler = NextAuth(authOptions);

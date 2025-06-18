@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MCQQuestion } from "../services/gemini";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { fetchWithCsrf } from "../lib/fetchWithCsrf";
+import { useRouter } from "next/navigation";
 
 type AssessmentProps = {
   role: string;
@@ -14,6 +15,7 @@ interface AnswerState {
 }
 
 export default function Assessment({ role }: AssessmentProps) {
+  const router = useRouter();
   const [skills, setSkills] = useState<string[]>([]);
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
   const [questions, setQuestions] = useState<MCQQuestion[]>([]);
@@ -23,9 +25,13 @@ export default function Assessment({ role }: AssessmentProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [showFinalPopup, setShowFinalPopup] = useState(false);
   const [completedSkills, setCompletedSkills] = useState<Set<number>>(
     new Set()
   );
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<
+    boolean | null
+  >(null);
 
   // Fetch skills first
   useEffect(() => {
@@ -119,6 +125,30 @@ export default function Assessment({ role }: AssessmentProps) {
     fetchQuestions();
   }, [currentSkillIndex, skills, role]);
 
+  const checkSubscriptionStatus = async () => {
+    try {
+      console.log("Checking subscription status...");
+      const response = await fetchWithCsrf("/api/check-subscription", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to check subscription status");
+      }
+
+      const data = await response.json();
+      console.log("Subscription check response:", data);
+      setHasActiveSubscription(data.hasActiveSubscription);
+      console.log("Set hasActiveSubscription to:", data.hasActiveSubscription);
+    } catch (error) {
+      console.error("Error checking subscription:", error);
+      setHasActiveSubscription(false);
+    }
+  };
+
   const handleAnswerSelect = (
     questionIndex: number,
     selectedOption: number
@@ -144,6 +174,11 @@ export default function Assessment({ role }: AssessmentProps) {
       if (allAnswered) {
         // Add this skill to completed skills
         setCompletedSkills((prev) => new Set([...prev, currentSkillIndex]));
+
+        // If this is the last skill, check subscription status
+        if (currentSkillIndex === skills.length - 1) {
+          checkSubscriptionStatus();
+        }
 
         // Show results for all skills, including the last one
         setTimeout(() => setShowResults(true), 0);
@@ -214,8 +249,30 @@ export default function Assessment({ role }: AssessmentProps) {
       }
 
       console.log("Assessment results saved successfully");
+
+      // If this is the last skill, show final popup
+      if (currentSkillIndex === skills.length - 1) {
+        setShowFinalPopup(true);
+      } else {
+        setShowResults(false);
+        moveToSkill(currentSkillIndex + 1);
+      }
     } catch (error) {
       console.error("Error saving assessment results:", error);
+    }
+  };
+
+  const handleFinalNavigation = () => {
+    console.log(
+      "Final navigation - hasActiveSubscription:",
+      hasActiveSubscription
+    );
+    if (hasActiveSubscription) {
+      console.log("Navigating to dashboard...");
+      router.push("/dashboard");
+    } else {
+      console.log("Navigating to payment...");
+      router.push("/payment");
     }
   };
 
@@ -242,7 +299,7 @@ export default function Assessment({ role }: AssessmentProps) {
   const currentSkill = skills[currentSkillIndex];
 
   return (
-    <div className="min-h-screen p-6 ">
+    <div className="min-h-screen p-6">
       <div className="w-full max-w-4xl mx-auto bg-gradient-to-br from-[#2434B3] via-[#1e29a3] to-[#FF4B36] rounded-xl shadow-lg p-8 text-white border border-white/10">
         <div className="mb-8">
           <div className="relative flex items-center mb-8">
@@ -408,13 +465,7 @@ export default function Assessment({ role }: AssessmentProps) {
               </div>
               <div className="flex justify-center">
                 <button
-                  onClick={() => {
-                    saveAssessmentResults();
-                    setShowResults(false);
-                    if (currentSkillIndex < skills.length - 1) {
-                      moveToSkill(currentSkillIndex + 1);
-                    }
-                  }}
+                  onClick={saveAssessmentResults}
                   className={`px-8 py-4 rounded-lg hover:translate-y-[-2px] transition-all duration-200 flex items-center gap-2 font-medium text-white shadow-lg
                     ${
                       calculateScore() >= 70 ? "bg-emerald-500" : "bg-[#FF4B36]"
@@ -427,6 +478,32 @@ export default function Assessment({ role }: AssessmentProps) {
                   ) : (
                     "Finish Assessment"
                   )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Final Popup */}
+        {showFinalPopup && (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-gradient-to-br from-white to-[#F8F9FF] p-8 rounded-xl max-w-md w-full mx-4 shadow-2xl">
+              <h3 className="text-2xl font-bold mb-6 text-center text-[#1A1A3D]">
+                Assessment Complete!
+              </h3>
+              <p className="text-center text-[#1A1A3D]/70 text-lg mb-8">
+                {hasActiveSubscription
+                  ? "You have an active subscription. You will be redirected to your dashboard."
+                  : "To access your personalized career roadmap, you'll need to subscribe. You will be redirected to the payment page."}
+              </p>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleFinalNavigation}
+                  className="px-8 py-4 rounded-lg hover:translate-y-[-2px] transition-all duration-200 font-medium text-white shadow-lg bg-[#2434B3]"
+                >
+                  {hasActiveSubscription
+                    ? "Go to Dashboard"
+                    : "Proceed to Payment"}
                 </button>
               </div>
             </div>

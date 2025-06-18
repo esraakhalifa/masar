@@ -43,6 +43,11 @@ const Layout = ({ children }: LayoutProps) => {
     // { name: 'Payment', href: '/payment', icon: CreditCard },
   ];
 
+  // Add dashboard to navigation if user is logged in
+  if (session) {
+    navigation.push({ name: 'Dashboard', href: '/dashboard', icon: ClipboardList });
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -141,6 +146,16 @@ const Layout = ({ children }: LayoutProps) => {
                         >
                           <Home className="w-4 h-4" />
                           <span>Home</span>
+                        </Link>
+                      </li>
+                      <div style={{color: 'red'}}>DEBUG DASHBOARD</div>
+                      <li>
+                        <Link
+                          href="/dashboard"
+                          className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
+                        >
+                          <ClipboardList className="w-4 h-4" />
+                          <span>Dashboard</span>
                         </Link>
                       </li>
                       <li>
@@ -244,6 +259,14 @@ const Layout = ({ children }: LayoutProps) => {
                   <div className="px-3 py-2 text-sm text-gray-600 border-b border-gray-100">
                     {session.user?.email}
                   </div>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <ClipboardList className="w-4 h-4" />
+                    <span>Dashboard</span>
+                  </Link>
                   <Link
                     href="/my-posts"
                     className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
