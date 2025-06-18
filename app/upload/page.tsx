@@ -215,40 +215,40 @@ export default function CVUploadPage() {
   }, [additionalInfo]);
 
   // Add profile check
-  useEffect(() => {
-    const checkProfileCompletion = async () => {
-      try {
-        const response = await fetchWithCsrf('/api/profile/check', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+  // useEffect(() => {
+  //   const checkProfileCompletion = async () => {
+  //     try {
+  //       const response = await fetchWithCsrf('/api/profile/check', {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
 
-        if (!response.ok) {
-          throw new Error('Failed to check profile status');
-        }
+  //       if (!response.ok) {
+  //         throw new Error('Failed to check profile status');
+  //       }
 
-        const data = await response.json();
+  //       const data = await response.json();
         
-        if (!data.hasProfile) {
-          setShowProfileMessage(true);
-          // Redirect to build-profile page after a short delay
-          setTimeout(() => {
-            router.push('/build-profile');
-          }, 2000);
-        }
-      } catch (error) {
-        console.error('Error checking profile status:', error);
-        setUploadStatus({ 
-          type: 'error', 
-          message: 'Failed to verify profile status. Please try again.' 
-        });
-      }
-    };
+  //       if (!data.hasProfile) {
+  //         setShowProfileMessage(true);
+  //         // Redirect to build-profile page after a short delay
+  //         setTimeout(() => {
+  //           router.push('/build-profile');
+  //         }, 2000);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error checking profile status:', error);
+  //       setUploadStatus({ 
+  //         type: 'error', 
+  //         message: 'Failed to verify profile status. Please try again.' 
+  //       });
+  //     }
+  //   };
 
-    checkProfileCompletion();
-  }, [router]);
+  //   checkProfileCompletion();
+  // }, [router]);
 
   const removeFile = () => {
     setUploadedFile(null);

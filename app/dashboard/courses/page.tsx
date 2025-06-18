@@ -210,11 +210,13 @@ export default function CoursesPage() {
       }
     };
 
-    fetchUserData();
+    // fetchUserData(); // DEACTIVATED: Profile completion and subscription check
   }, [session, status]);
 
   const handleCertificateSuccess = () => {
-    fetchCourses(session.user.id); // Refresh courses after certificate submission
+    if (session?.user?.id) {
+      fetchCourses(session.user.id); // Refresh courses after certificate submission
+    }
   };
 
   const completedCourses = courses.filter(course => (course.certificates?.length || 0) > 0);
@@ -284,7 +286,8 @@ export default function CoursesPage() {
         </Tabs>
       </motion.div>
 
-      {missingInfo && (
+      {/* DEACTIVATED: Profile completion and subscription requirement */}
+      {/* {missingInfo && (
         <Box
           display="flex"
           alignItems="center"
@@ -310,7 +313,7 @@ export default function CoursesPage() {
             To unlock your personalized dashboard, please complete your profile information and subscribe to a plan.
           </Alert>
         </Box>
-      )}
+      )} */}
 
       <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {(selectedTab === 0 ? courses : selectedTab === 1 ? inProgressCourses : completedCourses).map((course, index) => (

@@ -186,7 +186,7 @@ export default function DashboardPage() {
     };
 
     fetchRoadmap();
-    fetchProfileInfo();
+    // fetchProfileInfo(); // DEACTIVATED: Profile completion and subscription check
   }, [session, status]);
 
   const handleCreateRoadmapClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -300,50 +300,51 @@ export default function DashboardPage() {
     );
   }
 
-  if (missingProfileInfo) {
-    return (
-      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="60vh" width="100%">
-        <Alert
-          severity="warning"
-          sx={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            padding: '2rem 3rem',
-            borderRadius: '1rem',
-            background: 'linear-gradient(90deg, #fffbe6 0%, #ffe0b2 100%)',
-            color: '#b26a00',
-            boxShadow: '0 4px 24px rgba(255, 193, 7, 0.15)',
-            textAlign: 'center',
-            maxWidth: '700px',
-            margin: '0 auto',
-            mb: 3,
-          }}
-        >
-          Please complete your profile and subscribe to a plan to unlock your personalized dashboard.
-        </Alert>
-        <Button
-          onClick={() => router.push('/')}
-          variant="contained"
-          sx={{
-            background: 'linear-gradient(90deg, #2434B3 0%, #FF4B36 100%)',
-            color: 'white',
-            fontWeight: 'bold',
-            fontSize: '1.2rem',
-            padding: '1rem 2.5rem',
-            borderRadius: '2rem',
-            marginTop: '2rem',
-            boxShadow: '0 2px 8px rgba(36, 52, 179, 0.15)',
-            transition: 'background 0.3s',
-            '&:hover': {
-              background: 'linear-gradient(90deg, #2434B3 0%, #FF6B3D 100%)',
-            },
-          }}
-        >
-          Return to Homepage
-        </Button>
-      </Box>
-    );
-  }
+  // DEACTIVATED: Profile completion and subscription requirement
+  // if (missingProfileInfo) {
+  //   return (
+  //     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="60vh" width="100%">
+  //       <Alert
+  //         severity="warning"
+  //         sx={{
+  //           fontSize: '1.5rem',
+  //           fontWeight: 'bold',
+  //           padding: '2rem 3rem',
+  //           borderRadius: '1rem',
+  //           background: 'linear-gradient(90deg, #fffbe6 0%, #ffe0b2 100%)',
+  //           color: '#b26a00',
+  //           boxShadow: '0 4px 24px rgba(255, 193, 7, 0.15)',
+  //           textAlign: 'center',
+  //           maxWidth: '700px',
+  //           margin: '0 auto',
+  //           mb: 3,
+  //         }}
+  //       >
+  //         Please complete your profile and subscribe to a plan to unlock your personalized dashboard.
+  //       </Alert>
+  //       <Button
+  //         onClick={() => router.push('/')}
+  //         variant="contained"
+  //         sx={{
+  //           background: 'linear-gradient(90deg, #2434B3 0%, #FF4B36 100%)',
+  //           color: 'white',
+  //           fontWeight: 'bold',
+  //           fontSize: '1.2rem',
+  //           padding: '1rem 2.5rem',
+  //           borderRadius: '2rem',
+  //           marginTop: '2rem',
+  //           boxShadow: '0 2px 8px rgba(36, 52, 179, 0.15)',
+  //           transition: 'background 0.3s',
+  //           '&:hover': {
+  //             background: 'linear-gradient(90deg, #2434B3 0%, #FF6B3D 100%)',
+  //           },
+  //         }}
+  //       >
+  //         Return to Homepage
+  //       </Button>
+  //     </Box>
+  //   );
+  // }
 
   if (error) {
     return (

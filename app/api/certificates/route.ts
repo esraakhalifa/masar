@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
+import { prisma } from '@/app/lib/prisma';
+
 
 // const prisma = new PrismaClient();
 
@@ -61,7 +63,7 @@ export async function POST(request: Request) {
     }
 
     // Get the course to verify it exists and get the userId
-    const course = await prisma.course.findUnique({
+    const course = await prisma.courses.findUnique({
       where: { id: courseId },
       include: {
         roadmap: true,

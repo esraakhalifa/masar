@@ -2,6 +2,8 @@ import axios from 'axios';
 import * as dotenv from 'dotenv';
 import process from 'process';
 import { Prisma, RoadmapTopic } from '@prisma/client';
+import { prisma } from '@/app/lib/prisma';
+
 // import { RoadmapTopic } from '../generated/prisma';
 import crypto from 'crypto';
 
