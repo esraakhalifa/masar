@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { roadmapService } from '@/app/services/roadmapService';
 
 // GET /api/career-roadmap - Get all career roadmaps or a specific one

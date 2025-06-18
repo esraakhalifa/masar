@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import prisma from '@/app/lib/database/db';
+import { prisma } from '@/app/lib/prisma';
 import { profileSchema } from '@/app/lib/security/security';
 import { logError, logInfo, logWarning } from '@/app/lib/services/logger';
 import { createServerError } from '@/app/lib/errors/serverError';
@@ -91,16 +91,58 @@ export async function POST(request: NextRequest) {
     let profile;
 
     if (existingUser && existingUser.id) {
-      // Defensive: Only use deleteMany if there are existing relations
-      const skillsDelete = existingUser.skills && existingUser.skills.length > 0 ? { deleteMany: {} } : undefined;
-      const educationDelete = existingUser.education && existingUser.education.length > 0 ? { deleteMany: {} } : undefined;
-      const experienceDelete = existingUser.experience && existingUser.experience.length > 0 ? { deleteMany: {} } : undefined;
-
-      profile = await prisma.user.update({
+      // Update basic info
+      await prisma.user.update({
         where: { id: existingUser.id },
         data: {
           firstName: sanitizedProfile.firstName,
           lastName: sanitizedProfile.lastName,
+        },
+      });
+
+      // Remove old relations
+      await prisma.skill.deleteMany({ where: { userId: existingUser.id } });
+      await prisma.education.deleteMany({ where: { userId: existingUser.id } });
+      await prisma.experience.deleteMany({ where: { userId: existingUser.id } });
+
+      // Add new relations
+      await prisma.skill.createMany({
+        data: sanitizedProfile.skills.map((skill) => ({
+          userId: existingUser.id,
+          name: skill.name,
+          level: skill.level || 1,
+          category: skill.category || 'General',
+        })),
+      });
+
+      await prisma.education.createMany({
+        data: sanitizedProfile.education.map((edu) => ({
+          userId: existingUser.id,
+          degree: edu.degree,
+          fieldOfStudy: edu.fieldOfStudy,
+          institution: edu.institution,
+          graduationYear: parseInt(edu.graduationYear.toString()),
+        })),
+      });
+
+      await prisma.experience.createMany({
+        data: sanitizedProfile.experience.map((exp) => ({
+          userId: existingUser.id,
+          title: exp.title,
+          company: exp.company,
+          startDate: new Date(exp.startDate),
+          endDate: exp.endDate ? new Date(exp.endDate) : null,
+          description: exp.description || '',
+        })),
+      });
+
+      // Fetch the updated profile with relations
+      profile = await prisma.user.findUnique({
+        where: { id: existingUser.id },
+        include: {
+          skills: true,
+          education: true,
+          experience: true,
         },
       });
 

@@ -53,7 +53,7 @@ export default function SuccessPage() {
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
               <p className="text-gray-600 mb-6">Thank you for your purchase</p>
               <a
-                href="/upload"
+                href="/dashboard"
                 className="inline-block text-white px-6 py-3 rounded-lg font-medium transition-colors"
                 style={{
                   background: 'linear-gradient(to right, #2434B3, #FF4B36)'
@@ -65,7 +65,7 @@ export default function SuccessPage() {
                   (e.target as HTMLElement).style.background = 'linear-gradient(to right, #2434B3, #FF4B36)';
                 }}
               >
-                Upload Your Resume
+                Show Your Roadmap
               </a>
             </>
           )}

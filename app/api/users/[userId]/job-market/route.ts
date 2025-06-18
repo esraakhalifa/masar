@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import axios from 'axios';
 
 const COHERE_API_KEY = process.env.COHERE_API_KEY;

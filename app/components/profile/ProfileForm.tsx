@@ -288,6 +288,9 @@ export default function ProfileForm() {
         createServerError('Failed to save profile. Please try again.');
       }
     }
+    setTimeout(()=>{
+
+    })
   };
 
   const handleExportPDF = async () => {
@@ -540,9 +543,10 @@ export default function ProfileForm() {
         <p className="mt-2 text-gray-600">Let&apos;s create your professional profile to help us generate your career roadmap.</p>
       </div>
 
-      <form id="profile-form" onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit(onSubmit)(e);
+      <form id="profile-form" 
+      onSubmit={(e) => {
+        // e.preventDefault();
+        // handleSubmit(onSubmit)(e);
       }} className="space-y-8">
         <div className="flex justify-between mb-8">
           {[1, 2, 3, 4].map((stepNumber) => {
@@ -633,29 +637,15 @@ export default function ProfileForm() {
                 Next
               </motion.button>
             ) : (
-              <motion.button
-                type="submit"
-                disabled={!isFormComplete() || isSaving}
-                className={`px-6 py-3 text-sm font-medium text-white rounded-md flex items-center space-x-2 ${
-                  isFormComplete() && !isSaving
-                    ? 'bg-[#FF4B36] hover:bg-[#FF4B36]/90'
-                    : 'bg-gray-400 cursor-not-allowed'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {isSaving ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Saving Profile...</span>
-                  </>
-                ) : (
-                  <span>{!isFormComplete() ? 'Complete All Fields' : 'Save Profile'}</span>
-                )}
-              </motion.button>
+              <Link href="/upload" passHref legacyBehavior>
+                <motion.a
+                  className="px-6 py-3 text-sm font-medium text-white rounded-md flex items-center space-x-2 bg-[#FF4B36] hover:bg-[#FF4B36]/90"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Save profile
+                </motion.a>
+              </Link>
             )}
           </div>
         </div>
