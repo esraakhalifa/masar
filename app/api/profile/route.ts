@@ -305,4 +305,160 @@ export async function GET(request: Request) {
 
     return await createServerError('Failed to fetch profile', 500);
   }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    // Log request details
+    await logInfo('Profile update request received', {
+      method: request.method,
+      url: request.url,
+      ip: request.headers.get('x-forwarded-for') ?? 'unknown',
+    });
+
+    // Validate CSRF token
+    const csrfToken = request.headers.get('x-csrf-token');
+    if (!csrfToken) {
+      await logWarning('CSRF token missing', {
+        ip: request.headers.get('x-forwarded-for') ?? 'unknown',
+      });
+      return NextResponse.json({ error: 'CSRF token missing' }, { status: 403 });
+    }
+
+    // Parse and validate request body
+    const body = await request.json();
+    const { email, skills, education, experience, firstName, lastName } = body;
+
+    if (!email) {
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    }
+
+    await logInfo('Profile update request body received', {
+      email,
+      hasSkills: !!skills,
+      hasEducation: !!education,
+      hasExperience: !!experience,
+      ip: request.headers.get('x-forwarded-for') ?? 'unknown',
+    });
+
+    // Find the existing user
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        skills: true,
+        education: true,
+        experience: true,
+      },
+    });
+
+    if (!existingUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Prepare update data
+    const updateData: any = {};
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+
+    // Update basic info if provided
+    if (Object.keys(updateData).length > 0) {
+      await prisma.user.update({
+        where: { id: existingUser.id },
+        data: updateData,
+      });
+    }
+
+    // Update skills if provided
+    if (skills) {
+      // Remove existing skills
+      await prisma.skill.deleteMany({ where: { userId: existingUser.id } });
+      
+      // Add new skills
+      await prisma.skill.createMany({
+        data: skills.map((skill: any) => ({
+          userId: existingUser.id,
+          name: skill.name,
+          level: skill.level || 1,
+          category: skill.category || 'General',
+          updatedAt: new Date(),
+        })),
+      });
+    }
+
+    // Update education if provided
+    if (education) {
+      // Remove existing education
+      await prisma.education.deleteMany({ where: { userId: existingUser.id } });
+      
+      // Add new education
+      await prisma.education.createMany({
+        data: education.map((edu: any) => ({
+          userId: existingUser.id,
+          degree: edu.degree,
+          fieldOfStudy: edu.fieldOfStudy,
+          institution: edu.institution,
+          graduationYear: typeof edu.graduationYear === 'string' 
+            ? parseInt(edu.graduationYear) 
+            : edu.graduationYear,
+        })),
+      });
+    }
+
+    // Update experience if provided
+    if (experience) {
+      // Remove existing experience
+      await prisma.experience.deleteMany({ where: { userId: existingUser.id } });
+      
+      // Add new experience
+      const crypto = require('crypto');
+      await prisma.experience.createMany({
+        data: experience.map((exp: any) => ({
+          id: crypto.randomUUID(),
+          userId: existingUser.id,
+          title: exp.title,
+          company: exp.company,
+          startDate: new Date(exp.startDate),
+          endDate: exp.endDate ? new Date(exp.endDate) : null,
+          description: exp.description || '',
+        })),
+      });
+    }
+
+    // Fetch the updated profile with relations
+    const updatedProfile = await prisma.user.findUnique({
+      where: { id: existingUser.id },
+      include: {
+        skills: true,
+        education: true,
+        experience: true,
+      },
+    });
+
+    if (!updatedProfile) {
+      return NextResponse.json({ error: 'Failed to fetch updated profile' }, { status: 500 });
+    }
+
+    await logInfo('Profile updated successfully', {
+      profileId: updatedProfile.id,
+      email: updatedProfile.email,
+      firstName: updatedProfile.firstName,
+      lastName: updatedProfile.lastName,
+      ip: request.headers.get('x-forwarded-for') ?? 'unknown',
+    });
+
+    return NextResponse.json(updatedProfile);
+
+  } catch (error) {
+    console.error('DEBUG Prisma error in PUT:', error);
+    await logError(error instanceof Error ? error : new Error('Unknown error'), {
+      context: 'Profile update failed',
+      stack: error instanceof Error ? error.stack : undefined,
+      ip: request.headers.get('x-forwarded-for') ?? 'unknown',
+    });
+
+    return NextResponse.json({ 
+      error: 'Failed to update profile',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    }, { status: 500 });
+  }
 } 

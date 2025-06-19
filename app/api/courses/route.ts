@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@/app/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -12,7 +12,7 @@ export async function GET(
   try {
     if (params?.id) {
       // Get specific course by ID
-      const course = await prisma.course.findUnique({
+      const course = await prisma.courses.findUnique({
         where: {
           id: params.id,
           deleted_at: null,
@@ -39,7 +39,7 @@ export async function GET(
       return NextResponse.json(course);
     } else {
       // Get all courses
-      const courses = await prisma.course.findMany({
+      const courses = await prisma.courses.findMany({
         where: {
           deleted_at: null,
         },
@@ -86,7 +86,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
 
     // Verify course exists and is not deleted
-    const courseExists = await prisma.course.findUnique({
+    const courseExists = await prisma.courses.findUnique({
       where: {
         id: params.id,
         deleted_at: null,
@@ -113,7 +113,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     // }
 
-    const course = await prisma.course.update({
+    const course = await prisma.courses.update({
       where: {
         id: params.id,
         deleted_at: null,
@@ -158,7 +158,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     // }
 
     // Verify course exists and is not deleted
-    const courseExists = await prisma.course.findUnique({
+    const courseExists = await prisma.courses.findUnique({
       where: {
         id: params.id,
         deleted_at: null,
@@ -185,7 +185,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     // }
 
-    const course = await prisma.course.update({
+    const course = await prisma.courses.update({
       where: {
         id: params.id,
         deleted_at: null,

@@ -165,7 +165,7 @@ const Layout = ({ children }: LayoutProps) => {
                           href="/profile"
                           className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
                         >
-                          <ClipboardList className="w-4 h-4" />
+                          <User className="w-4 h-4" />
                           <span>My Profile</span>
                         </Link>
                       </li>
@@ -253,12 +253,36 @@ const Layout = ({ children }: LayoutProps) => {
                     {session.user?.email}
                   </div>
                   <Link
-                    href="/my-posts"
+                    href="/dashboard"
                     className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <ClipboardList className="w-4 h-4" />
-                    <span>My Posts</span>
+                    <span>Dashboard</span>
+                  </Link>
+                  <Link
+                    href="/upload"
+                    className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Upload CV</span>
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User className="w-4 h-4" />
+                    <span>My Profile</span>
+                  </Link>
+                  <Link
+                    href="/payment"
+                    className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors duration-200 font-bold"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    <span>Payment</span>
                   </Link>
                   <button
                     onClick={() => {
