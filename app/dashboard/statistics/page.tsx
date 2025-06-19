@@ -250,23 +250,6 @@ export default function StatisticsPage() {
                     <Typography variant="body2" color="textSecondary" className="mb-2">
                       {course.description}
                     </Typography>
-                    {course.certificate && (
-                      <Box>
-                        <Chip 
-                          label="Certified"
-                          color="success"
-                          size="small"
-                          icon={<CheckCircleIcon />}
-                          className="mb-2"
-                        />
-                        <Typography variant="caption" display="block" color="textSecondary">
-                          Provider: {course.certificate.provider}
-                        </Typography>
-                        <Typography variant="caption" display="block" color="textSecondary">
-                          Issued: {new Date(course.certificate.issueDate).toLocaleDateString()}
-                        </Typography>
-                      </Box>
-                    )}
                   </CardContent>
                 </Card>
               ))}

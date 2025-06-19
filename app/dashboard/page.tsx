@@ -154,14 +154,25 @@ export default function DashboardPage() {
           });
 
           if (!generateResponse.ok) {
-            throw new Error(`Failed to generate roadmap: ${generateResponse.statusText}`);
+            const errorData = await generateResponse.json();
+            
+            // Check if it's a career preference issue
+            if (generateResponse.status === 400 && 
+                errorData.error?.includes('career preference')) {
+              setError('Please complete your career preferences to generate a roadmap. Go to Profile → Build Profile to set up your career preferences.');
+              setToastMessage('Career preferences required. Please complete your profile first.');
+              setToastSeverity('info');
+            } else {
+              throw new Error(`Failed to generate roadmap: ${errorData.error || generateResponse.statusText}`);
+            }
+          } else {
+            const newRoadmap: Roadmap = await generateResponse.json();
+            setRoadmap(newRoadmap);
+            setSelectedRoadmap(newRoadmap);
+            setToastMessage('Roadmap generated successfully!');
+            setToastSeverity('success');
           }
-
-          const newRoadmap: Roadmap = await generateResponse.json();
-          setRoadmap(newRoadmap);
-          setSelectedRoadmap(newRoadmap);
-          setToastMessage('Roadmap generated successfully!');
-          setToastSeverity('success');
+          
           setIsGenerating(false);
           setLoading(false);
         }
@@ -307,13 +318,7 @@ export default function DashboardPage() {
               Let's master new skills with fun and ease!
             </Typography>
           </Box>
-          <Image
-            src={routeIcon}
-            alt="Masar Icon"
-            width={40}
-            height={40}
-            style={{ marginLeft: "auto" }}
-          />
+
         </Box>
       </motion.div>
 

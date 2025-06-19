@@ -416,7 +416,7 @@ export default function CoursesPage() {
         </Box>
       )} */}
 
-      <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <Box className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {(selectedTab === 0 ? courses : completedCourses).map((course, index) => (
           <motion.div
             key={course.id}
@@ -495,8 +495,8 @@ export default function CoursesPage() {
                   
                   {course.certificates && course.certificates.length > 0 ? (
                     <Box className="text-center">
-                      <Typography variant="caption" color="text.secondary">
-                        Certificate issued: {new Date(course.certificates[0].issueDate).toLocaleDateString()}
+                      <Typography variant="caption" color="success.main" fontWeight="600">
+                        ✓ Course Completed
                       </Typography>
                     </Box>
                   ) : (
