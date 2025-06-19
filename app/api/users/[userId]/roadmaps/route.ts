@@ -32,7 +32,16 @@ export async function GET(
     const roadmaps = await prisma.careerRoadmap.findMany({
       where: { userId: params.userId },
       include: {
-        courses: true,
+        courses: {
+          include: {
+            certificates: {
+              where: {
+                userId: params.userId,
+                deletedAt: null
+              }
+            }
+          }
+        },
         topics: {
           include: {
             tasks: true

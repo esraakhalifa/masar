@@ -179,7 +179,7 @@ export default function DashboardPage() {
 
   const handleToggleTaskCompletion = async (taskId: string, currentStatus: boolean) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/tasks/${taskId}`, {
+      const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isCompleted: !currentStatus }),

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/app/lib/prisma';
+import { validateCSRFToken, CSRF_HEADER, CSRF_COOKIE } from '@/app/lib/security/csrf';
 
 
 // const prisma = new PrismaClient();
@@ -48,6 +49,24 @@ export async function POST(request: Request) {
   console.log('API Route: Certificate creation endpoint hit');
   
   try {
+    // CSRF Protection
+    const csrfToken = request.headers.get(CSRF_HEADER) || null;
+    const cookieHeader = request.headers.get('cookie');
+    const csrfCookie = cookieHeader
+      ?.split(';')
+      .find(c => c.trim().startsWith(`${CSRF_COOKIE}=`))
+      ?.split('=')[1] || null;
+
+    console.log('CSRF validation:', { csrfToken, csrfCookie });
+
+    if (!validateCSRFToken(csrfToken, csrfCookie)) {
+      console.error('CSRF token validation failed');
+      return NextResponse.json(
+        { error: 'Invalid CSRF token' },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     console.log('Received certificate data:', body);
     
@@ -62,12 +81,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get the course to verify it exists and get the userId
+    // Get the course to verify it exists
     const course = await prisma.courses.findUnique({
       where: { id: courseId },
-      include: {
-        roadmap: true,
-      },
     });
 
     if (!course) {
@@ -78,11 +94,24 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('Found course:', {
-      id: course.id,
-      title: course.title,
-      roadmapId: course.roadmapId,
-      userId: course.roadmap.userId
+    // Get the roadmap to find the userId
+    const roadmap = await prisma.careerRoadmap.findUnique({
+      where: { id: course.roadmap_id },
+    });
+
+    if (!roadmap) {
+      console.error('Roadmap not found for course:', course.roadmap_id);
+      return NextResponse.json(
+        { error: 'Roadmap not found' },
+        { status: 404 }
+      );
+    }
+
+    console.log('Found course and roadmap:', {
+      courseId: course.id,
+      courseTitle: course.title,
+      roadmapId: course.roadmap_id,
+      userId: roadmap.userId
     });
 
     // Create the certificate
@@ -93,7 +122,7 @@ export async function POST(request: Request) {
         issueDate: new Date(issueDate),
         fileUrl,
         courseId,
-        userId: course.roadmap.userId,
+        userId: roadmap.userId,
       },
     });
 
@@ -118,6 +147,22 @@ export async function POST(request: Request) {
 // PUT /api/certificates/[id] - Update certificate
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
+    // CSRF Protection
+    const csrfToken = req.headers.get(CSRF_HEADER) || null;
+    const cookieHeader = req.headers.get('cookie');
+    const csrfCookie = cookieHeader
+      ?.split(';')
+      .find(c => c.trim().startsWith(`${CSRF_COOKIE}=`))
+      ?.split('=')[1] || null;
+
+    if (!validateCSRFToken(csrfToken, csrfCookie)) {
+      console.error('CSRF token validation failed for PUT request');
+      return NextResponse.json(
+        { error: 'Invalid CSRF token' },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { title, provider, issueDate, fileUrl } = body;
 
@@ -141,6 +186,22 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 // DELETE /api/certificates/[id] - Soft delete certificate
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
+    // CSRF Protection
+    const csrfToken = req.headers.get(CSRF_HEADER) || null;
+    const cookieHeader = req.headers.get('cookie');
+    const csrfCookie = cookieHeader
+      ?.split(';')
+      .find(c => c.trim().startsWith(`${CSRF_COOKIE}=`))
+      ?.split('=')[1] || null;
+
+    if (!validateCSRFToken(csrfToken, csrfCookie)) {
+      console.error('CSRF token validation failed for DELETE request');
+      return NextResponse.json(
+        { error: 'Invalid CSRF token' },
+        { status: 403 }
+      );
+    }
+
     await prisma.certificate.update({
       where: { id: params.id },
       data: { deletedAt: new Date() }

@@ -13,16 +13,20 @@ import {
   Tabs,
   Tab,
   useTheme,
+  Button,
+  Snackbar,
 } from '@mui/material';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { styled } from '@mui/material/styles';
 import CertificateSubmission from '@/app/components/CertificateSubmission';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { fetchWithCsrf } from '@/app/lib/fetchWithCsrf';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
@@ -138,6 +142,9 @@ export default function CoursesPage() {
   const [missingInfo, setMissingInfo] = useState(false);
   const [noRoadmap, setNoRoadmap] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [completingCourse, setCompletingCourse] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastSeverity, setToastSeverity] = useState<'success' | 'error' | 'info'>('info');
 
   const fetchCourses = async (userId: string) => {
     try {
@@ -159,6 +166,101 @@ export default function CoursesPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCompleteCourse = async (course: Course) => {
+    if (!session?.user?.id) {
+      setToastMessage('Please sign in to complete courses');
+      setToastSeverity('error');
+      return;
+    }
+
+    setCompletingCourse(course.id);
+    
+    try {
+      // Create dummy certificate data
+      const dummyCertificateData = {
+        title: `${course.title} Completion Certificate`,
+        provider: course.instructors || 'Masar Learning Platform',
+        issueDate: new Date().toISOString(),
+        fileUrl: `https://certificates.masar.com/${course.id}/${session.user.id}`,
+        courseId: course.id,
+      };
+
+      console.log('Attempting to create certificate with data:', dummyCertificateData);
+
+      const response = await fetchWithCsrf('/api/certificates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dummyCertificateData),
+      });
+
+      if (!response.ok) {
+        let errorMessage = 'Failed to create certificate';
+        
+        try {
+          const errorData = await response.json();
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (parseError) {
+          // If we can't parse the error response, use status-based messages
+          if (response.status === 403) {
+            errorMessage = 'Access denied. Please refresh the page and try again.';
+          } else if (response.status === 401) {
+            errorMessage = 'Authentication required. Please sign in again.';
+          } else if (response.status === 429) {
+            errorMessage = 'Too many requests. Please wait a moment and try again.';
+          } else if (response.status >= 500) {
+            errorMessage = 'Server error. Please try again later.';
+          }
+        }
+        
+        console.error('Certificate creation failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          message: errorMessage
+        });
+        
+        throw new Error(errorMessage);
+      }
+
+      const certificate = await response.json();
+      console.log('Certificate created successfully:', certificate);
+      
+      // Refetch courses to get updated data with the new certificate
+      await fetchCourses(session.user.id);
+
+      setToastMessage('Course completed successfully! Certificate generated.');
+      setToastSeverity('success');
+    } catch (err) {
+      console.error('Error completing course:', err);
+      
+      let errorMessage = 'Failed to complete course';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      
+      // Check for specific error types
+      if (errorMessage.includes('CSRF') || errorMessage.includes('csrf')) {
+        errorMessage = 'Security error. Please refresh the page and try again.';
+      } else if (errorMessage.includes('fetch')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      }
+      
+      setToastMessage(errorMessage);
+      setToastSeverity('error');
+    } finally {
+      setCompletingCourse(null);
+    }
+  };
+
+  const handleCloseToast = () => {
+    setToastMessage(null);
   };
 
   useEffect(() => {
@@ -281,7 +383,6 @@ export default function CoursesPage() {
           }}
         >
           <Tab label="All Courses" />
-          <Tab label="In Progress" />
           <Tab label="Completed" />
         </Tabs>
       </motion.div>
@@ -316,7 +417,7 @@ export default function CoursesPage() {
       )} */}
 
       <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {(selectedTab === 0 ? courses : selectedTab === 1 ? inProgressCourses : completedCourses).map((course, index) => (
+        {(selectedTab === 0 ? courses : completedCourses).map((course, index) => (
           <motion.div
             key={course.id}
             variants={scaleIn}
@@ -327,14 +428,29 @@ export default function CoursesPage() {
           >
             <StyledCard>
               <CardContent className="card-content">
-                <Typography 
-                  variant="h6" 
-                  component="h2" 
-                  gutterBottom
-                  className="font-semibold"
-                >
-                  {course.title}
-                </Typography>
+                <Box className="flex justify-between items-start mb-3">
+                  <Typography 
+                    variant="h6" 
+                    component="h2" 
+                    className="font-semibold flex-1"
+                  >
+                    {course.title}
+                  </Typography>
+                  {course.certificates && course.certificates.length > 0 && (
+                    <Chip
+                      icon={<CheckCircleIcon />}
+                      label="Completed"
+                      size="small"
+                      color="success"
+                      sx={{
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        color: '#4caf50',
+                        fontWeight: 600,
+                      }}
+                    />
+                  )}
+                </Box>
+                
                 {course.description && (
                   <Typography 
                     variant="body2" 
@@ -344,6 +460,7 @@ export default function CoursesPage() {
                     {course.description}
                   </Typography>
                 )}
+                
                 {course.instructors && (
                   <Box className="mb-4">
                     <Typography variant="body2" color="text.secondary">
@@ -351,22 +468,53 @@ export default function CoursesPage() {
                     </Typography>
                   </Box>
                 )}
-                <Box className="flex justify-between items-center mt-4">
+
+                <Box className="flex flex-col gap-3 mt-4">
                   <CourseLink 
                     href={course.course_link} 
                     className="course-link"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Start Course
-                    <ArrowForwardIcon className="arrow-icon" />
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      endIcon={<ArrowForwardIcon className="arrow-icon" />}
+                      sx={{
+                        borderColor: '#FF6B3D',
+                        color: '#FF6B3D',
+                        '&:hover': {
+                          borderColor: '#FF6B3D',
+                          backgroundColor: 'rgba(255, 107, 61, 0.05)',
+                        },
+                      }}
+                    >
+                      Start Course
+                    </Button>
                   </CourseLink>
-                  {course.certificates && course.certificates.length > 0 && (
-                    <StyledChip
-                      icon={<CheckCircleIcon />}
-                      label="Completed"
-                      size="small"
-                    />
+                  
+                  {course.certificates && course.certificates.length > 0 ? (
+                    <Box className="text-center">
+                      <Typography variant="caption" color="text.secondary">
+                        Certificate issued: {new Date(course.certificates[0].issueDate).toLocaleDateString()}
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      startIcon={<TaskAltIcon />}
+                      onClick={() => handleCompleteCourse(course)}
+                      disabled={completingCourse === course.id}
+                      sx={{
+                        backgroundColor: '#4caf50',
+                        '&:hover': {
+                          backgroundColor: '#45a049',
+                        },
+                      }}
+                    >
+                      {completingCourse === course.id ? 'Completing...' : 'Mark Complete'}
+                    </Button>
                   )}
                 </Box>
               </CardContent>
@@ -374,6 +522,24 @@ export default function CoursesPage() {
           </motion.div>
         ))}
       </Box>
+
+      <Snackbar
+        open={!!toastMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseToast}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={handleCloseToast} 
+          severity={toastSeverity} 
+          className="rounded-lg"
+          sx={{
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          {toastMessage}
+        </Alert>
+      </Snackbar>
     </motion.div>
   );
 }

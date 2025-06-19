@@ -5,26 +5,65 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
   Box, CircularProgress, Alert, Paper, Typography,
-  LinearProgress
+  Card, CardContent, Chip, List, ListItem,
+  ListItemText, ListItemIcon
 } from '@mui/material';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, PieChart, Pie, Cell
-} from 'recharts';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import BookIcon from '@mui/icons-material/Book';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 
-interface Statistics {
-  totalTasks: number;
-  completedTasks: number;
-  completionRate: number;
-  tasksByTopic: {
-    topicName: string;
-    total: number;
-    completed: number;
+// Import chart components
+import TaskCompletionChart from '@/app/components/charts/TaskCompletionChart';
+import ProgressChart from '@/app/components/charts/ProgressChart';
+import JobMarketChart from '@/app/components/charts/JobMarketChart';
+
+interface JobMarketData {
+  currentOpenings: number;
+  projectedOpenings: number;
+  growthRate: number;
+  averageSalary: {
+    amount: number;
+    currency: string;
+  };
+  demandTrend: string;
+  requiredSkills: string[];
+  marketInsights: {
+    title: string;
+    description: string;
   }[];
-  tasksByStatus: {
-    status: string;
+}
+
+interface ProgressData {
+  recentCourses: {
+    id: string;
+    title: string;
+    description: string | null;
+    updatedAt: string;
+    certificate: {
+      provider: string;
+      issueDate: string;
+    } | null;
+  }[];
+  recentTasks: {
+    id: string;
+    title: string;
+    description: string | null;
+    updatedAt: string;
+    topic: {
+      title: string;
+    };
+  }[];
+  taskCompletionOverTime: {
+    date: string;
     count: number;
   }[];
+  overallProgress: {
+    completed: number;
+    total: number;
+    percentage: number;
+  };
 }
 
 export default function StatisticsPage() {
@@ -32,33 +71,52 @@ export default function StatisticsPage() {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [statistics, setStatistics] = useState<Statistics | null>(null);
+  const [progressData, setProgressData] = useState<ProgressData | null>(null);
+  const [jobMarketData, setJobMarketData] = useState<JobMarketData | null>(null);
+  const [jobMarketLoading, setJobMarketLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStatistics = async () => {
+    const fetchData = async () => {
       if (status === 'loading') return;
       
       if (!session?.user?.id) {
         setError('Please sign in to view statistics');
         setLoading(false);
+        setJobMarketLoading(false);
         return;
       }
 
       try {
-        const response = await fetch(`/api/users/${session.user.id}/statistics`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch statistics');
+        // Fetch progress data and job market data in parallel
+        const [progressResponse, jobMarketResponse] = await Promise.all([
+          fetch(`/api/users/${session.user.id}/progress`),
+          fetch(`/api/users/${session.user.id}/job-market`)
+        ]);
+
+        // Handle progress data
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json();
+          setProgressData(progressData);
+        } else {
+          console.error('Failed to fetch progress data');
         }
-        const data = await response.json();
-        setStatistics(data);
+
+        // Handle job market data
+        if (jobMarketResponse.ok) {
+          const jobMarketData = await jobMarketResponse.json();
+          setJobMarketData(jobMarketData);
+        } else {
+          console.error('Failed to fetch job market data');
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
+        setJobMarketLoading(false);
       }
     };
 
-    fetchStatistics();
+    fetchData();
   }, [session, status]);
 
   if (status === 'loading') {
@@ -95,97 +153,127 @@ export default function StatisticsPage() {
     );
   }
 
-  if (!statistics) {
-    return (
-      <Box className="p-4">
-        <Alert severity="info" className="rounded-lg">
-          No statistics available.
-        </Alert>
-      </Box>
-    );
-  }
-
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
   return (
-    <Box className="p-4">
-      <Typography variant="h4" className="mb-6">
-        Learning Progress Statistics
+    <Box className="p-6 space-y-6">
+      <Typography variant="h4" className="mb-6 font-bold text-gray-800">
+        Learning Progress Dashboard
       </Typography>
 
-      <Box className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Overall Progress */}
-        <Paper className="p-4">
-          <Typography variant="h6" className="mb-4">
-            Overall Progress
-          </Typography>
-          <Box className="mb-2">
-            <Typography variant="body2" color="textSecondary">
-              Completion Rate
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={statistics.completionRate}
-              className="h-2 rounded"
+      {/* Job Market Analysis Section */}
+      <Paper className="p-6">
+        <Typography variant="h6" className="mb-4 flex items-center gap-2">
+          <AnalyticsIcon className="text-orange-500" />
+          Job Market Analysis
+        </Typography>
+        <JobMarketChart data={jobMarketData} isLoading={jobMarketLoading} />
+      </Paper>
+
+      <Box className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Overall Progress Chart */}
+        <Paper className="p-6">
+          {progressData ? (
+            <ProgressChart 
+              completed={progressData.overallProgress.completed}
+              total={progressData.overallProgress.total}
+              percentage={progressData.overallProgress.percentage}
             />
-            <Typography variant="body2" className="mt-1">
-              {statistics.completionRate}% ({statistics.completedTasks} / {statistics.totalTasks} tasks)
-            </Typography>
-          </Box>
+          ) : (
+            <Alert severity="info">No progress data available</Alert>
+          )}
         </Paper>
 
-        {/* Tasks by Status */}
-        <Paper className="p-4">
-          <Typography variant="h6" className="mb-4">
-            Tasks by Status
+        {/* Task Completion Over Time Chart */}
+        <Paper className="p-6">
+          {progressData && progressData.taskCompletionOverTime.length > 0 ? (
+            <TaskCompletionChart data={progressData.taskCompletionOverTime} />
+          ) : (
+            <Box>
+              <Typography variant="h6" className="mb-4 flex items-center gap-2">
+                <AssignmentTurnedInIcon className="text-green-500" />
+                Task Completion Over Time
+              </Typography>
+              <Alert severity="info">No task completions in the last 30 days</Alert>
+            </Box>
+          )}
+        </Paper>
+      </Box>
+
+      <Box className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Tasks */}
+        <Paper className="p-6">
+          <Typography variant="h6" className="mb-4 flex items-center gap-2">
+            <CheckCircleIcon className="text-blue-500" />
+            Recent Completed Tasks
           </Typography>
-          <Box className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={statistics.tasksByStatus}
-                  dataKey="count"
-                  nameKey="status"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label
-                >
-                  {statistics.tasksByStatus.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </Box>
+          {progressData && progressData.recentTasks.length > 0 ? (
+            <List>
+              {progressData.recentTasks.map((task) => (
+                <ListItem key={task.id} className="px-0">
+                  <ListItemIcon>
+                    <CheckCircleIcon className="text-green-500" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={task.title}
+                    secondary={
+                      <Box>
+                        <Typography variant="body2" color="textSecondary">
+                          {task.topic.title}
+                        </Typography>
+                        <Typography variant="caption" color="textSecondary">
+                          Completed: {new Date(task.updatedAt).toLocaleDateString()}
+                        </Typography>
+                      </Box>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Alert severity="info">No recently completed tasks</Alert>
+          )}
         </Paper>
 
-        {/* Tasks by Topic */}
-        <Paper className="p-4 md:col-span-2">
-          <Typography variant="h6" className="mb-4">
-            Tasks by Topic
+        {/* Recent Courses */}
+        <Paper className="p-6">
+          <Typography variant="h6" className="mb-4 flex items-center gap-2">
+            <BookIcon className="text-purple-500" />
+            Recently Completed Courses
           </Typography>
-          <Box className="h-[400px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={statistics.tasksByTopic}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="topicName" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="completed" name="Completed" fill="#00C49F" />
-                <Bar dataKey="total" name="Total" fill="#0088FE" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Box>
+          {progressData && progressData.recentCourses.length > 0 ? (
+            <Box className="space-y-3">
+              {progressData.recentCourses.map((course) => (
+                <Card key={course.id} className="border border-gray-200">
+                  <CardContent className="p-4">
+                    <Typography variant="subtitle1" className="mb-1 font-medium">
+                      {course.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" className="mb-2">
+                      {course.description}
+                    </Typography>
+                    {course.certificate && (
+                      <Box>
+                        <Chip 
+                          label="Certified"
+                          color="success"
+                          size="small"
+                          icon={<CheckCircleIcon />}
+                          className="mb-2"
+                        />
+                        <Typography variant="caption" display="block" color="textSecondary">
+                          Provider: {course.certificate.provider}
+                        </Typography>
+                        <Typography variant="caption" display="block" color="textSecondary">
+                          Issued: {new Date(course.certificate.issueDate).toLocaleDateString()}
+                        </Typography>
+                      </Box>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          ) : (
+            <Alert severity="info">No recently completed courses</Alert>
+          )}
         </Paper>
       </Box>
     </Box>
