@@ -27,6 +27,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { fetchWithCsrf } from '@/app/lib/fetchWithCsrf';
+import RequirementGate from '@/app/components/RequirementGate';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   position: 'relative',
@@ -346,6 +347,7 @@ export default function CoursesPage() {
   }
 
   return (
+    <RequirementGate>
     <motion.div
       variants={staggerContainer}
       initial="initial"
@@ -541,5 +543,6 @@ export default function CoursesPage() {
         </Alert>
       </Snackbar>
     </motion.div>
+    </RequirementGate>
   );
 }

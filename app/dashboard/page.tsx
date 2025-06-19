@@ -22,6 +22,8 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import Image from "next/image";
 import routeIcon from "@/public/route.svg";
 import { fetchWithCsrf } from '@/app/lib/fetchWithCsrf';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import CreditCardOffIcon from '@mui/icons-material/CreditCardOff';
 
 interface Task {
   id: string;
@@ -133,11 +135,13 @@ export default function DashboardPage() {
       try {
         const prefRes = await fetch(`/api/users/${session.user.id}/career-preferences`);
         if (!prefRes.ok) {
+          console.log("========Career Preference Check Failed 1  =========");
           setRequirementsIncomplete(true);
           return;
         }
         const pref = await prefRes.json();
         if (!pref || !pref.industry) {
+          console.log("========Career Preference Check Failed 2  =========");
           setRequirementsIncomplete(true);
           return;
         }
@@ -152,19 +156,29 @@ export default function DashboardPage() {
       try {
         const paymentsRes = await fetch(`/api/users/${session.user.id}/payments`);
         if (!paymentsRes.ok) {
+          console.log("========Payment Check Failed 1  =========");
           // treat as invalid
           setRequirementsIncomplete(true);
           return;
         }
         const paymentsData = await paymentsRes.json();
+        console.log("========Payments Data=========");
+        console.log(paymentsData);
         const now = new Date();
         const hasValidPayment = Array.isArray(paymentsData) && paymentsData.some((p: any) => {
           const end = new Date(p.periodEnd || p.period_end);
-          return end < now; // valid if end BEFORE now, per spec
-        });
+          console.log("========End Date=========");
+          console.log(end);
+          console.log("========Now=========");
+          console.log(now);
+          return  now <= end ; 
 
+        });
+        console.log("========Has Valid Payment=========");
+        console.log(hasValidPayment);
         if (!hasValidPayment) {
           setRequirementsIncomplete(true);
+          console.log("========Payment Check Failed 3  =========");
           return;
         }
       } catch (e) {
@@ -278,25 +292,68 @@ export default function DashboardPage() {
     router.push(`/dashboard/tasks/${topicId}`);
   };
 
-  // Incomplete information or invalid payment / career preference
-  useEffect(() => {
-    if (requirementsIncomplete) {
-      const timer = setTimeout(() => {
-        router.push('/');
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [requirementsIncomplete, router]);
-
   if (requirementsIncomplete) {
     return (
-      <Box className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 p-4">
-        <Alert severity="warning" className="rounded-lg text-center max-w-xl">
-          You need to complete your career information and payment before accessing the dashboard.
-        </Alert>
-        <Typography variant="body2" color="textSecondary">
-          Redirecting you to the home page...
-        </Typography>
+      <Box className="flex items-center justify-center min-h-[60vh] p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <Alert
+            icon={<WarningAmberIcon sx={{ fontSize: 40 }} />}
+            severity="warning"
+            sx={{
+              background: 'linear-gradient(135deg, #fff7e6 0%, #ffedd5 100%)',
+              borderRadius: '20px',
+              padding: '3rem 4rem',
+              boxShadow: '0 10px 30px rgba(252, 146, 0, 0.25)',
+              textAlign: 'center',
+              maxWidth: { xs: '100%', md: 600 },
+            }}
+          >
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#c05621', mb: 1 }}>
+              Action Required
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#92400e' }}>
+              Please complete your career information and payment to unlock your personalized dashboard.
+            </Typography>
+
+            <Box mt={4} display="flex" justifyContent="center" gap={2}>
+              <Button
+                variant="contained"
+                color="warning"
+                startIcon={<CreditCardOffIcon />}
+                href="/payment"
+                sx={{
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  px: 4,
+                  boxShadow: '0 4px 12px rgba(252, 146, 0, 0.3)',
+                  '&:hover': {
+                    boxShadow: '0 6px 20px rgba(252, 146, 0, 0.4)',
+                  },
+                }}
+              >
+                Go to Payment
+              </Button>
+              <Button
+                variant="outlined"
+                color="warning"
+                href="/"
+                sx={{
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  px: 4,
+                  borderWidth: 2,
+                  '&:hover': { borderWidth: 2 },
+                }}
+              >
+                Home
+              </Button>
+            </Box>
+          </Alert>
+        </motion.div>
       </Box>
     );
   }

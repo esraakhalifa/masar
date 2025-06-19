@@ -12,6 +12,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { fetchWithCsrf } from '@/app/lib/fetchWithCsrf';
+import RequirementGate from '@/app/components/RequirementGate';
+import { motion } from 'framer-motion';
 
 interface Task {
   id: string;
@@ -149,7 +151,12 @@ export default function TasksPage({ params }: { params: { topicId: string } }) {
   }
 
   return (
-    <Box className="p-4">
+    <RequirementGate>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="p-4"
+    >
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => router.back()}
@@ -216,6 +223,7 @@ export default function TasksPage({ params }: { params: { topicId: string } }) {
           </ListItem>
         ))}
       </List>
-    </Box>
+    </motion.div>
+    </RequirementGate>
   );
 } 

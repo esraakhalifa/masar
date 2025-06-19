@@ -13,6 +13,7 @@ import BookIcon from '@mui/icons-material/Book';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+import RequirementGate from '@/app/components/RequirementGate';
 
 // Import chart components
 import TaskCompletionChart from '@/app/components/charts/TaskCompletionChart';
@@ -154,6 +155,7 @@ export default function StatisticsPage() {
   }
 
   return (
+    <RequirementGate>
     <Box className="p-6 space-y-6">
       <Typography variant="h4" className="mb-6 font-bold text-gray-800">
         Learning Progress Dashboard
@@ -260,5 +262,6 @@ export default function StatisticsPage() {
         </Paper>
       </Box>
     </Box>
+    </RequirementGate>
   );
 }
