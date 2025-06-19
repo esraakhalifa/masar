@@ -22,6 +22,8 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import Link from 'next/link';
 import { styled } from '@mui/material/styles';
 import '../globals.css';
+import routeIcon from "@/public/route.svg";
+import Image from 'next/image';
 
 const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
   py: 2,
@@ -87,15 +89,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <List>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <StyledListItemButton
-              component={Link}
-              href={item.href}
-            >
-              <StyledListItemIcon>
-                {item.icon}
-              </StyledListItemIcon>
-              <StyledListItemText primary={item.text} />
-            </StyledListItemButton>
+            <Link href={item.href} style={{ textDecoration: 'none', flexGrow: 1 }}>
+              <StyledListItemButton>
+                <StyledListItemIcon>
+                  {item.icon}
+                </StyledListItemIcon>
+                <StyledListItemText primary={item.text} />
+              </StyledListItemButton>
+            </Link>
           </ListItem>
         ))}
       </List>
@@ -103,68 +104,84 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   );
 
   return (
-    <html lang="en">
-      <body>
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-          {/* App Bar */}
-          <AppBar 
-            position="fixed" 
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      {/* App Bar */}
+      <AppBar 
+        position="fixed" 
+        sx={{ 
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: 'white',
+          boxShadow: 'none',
+          borderBottom: `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            onClick={handleToggleSidebar}
             sx={{ 
-              zIndex: (theme) => theme.zIndex.drawer + 1,
-              backgroundColor: 'white',
-              boxShadow: 'none',
-              borderBottom: `1px solid ${theme.palette.divider}`,
-            }}
-          >
-            <Toolbar>
-              <IconButton
-                onClick={handleToggleSidebar}
-                sx={{ 
-                  color: theme.palette.primary.main,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 127, 80, 0.1)',
-                    color: '#E65C2E',
-                  },
-                }}
-              >
-                <MenuIcon />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
-
-          {/* Sidebar */}
-          <Drawer
-            variant="temporary"
-            open={sidebarOpen}
-            onClose={handleToggleSidebar}
-            ModalProps={{
-              keepMounted: true,
-            }}
-            sx={{
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box',
-                border: 'none',
+              color: theme.palette.primary.main,
+              '&:hover': {
+                backgroundColor: 'rgba(255, 127, 80, 0.1)',
+                color: '#E65C2E',
               },
             }}
           >
-            <SidebarContent />
-          </Drawer>
+            <MenuIcon />
+          </IconButton>
 
-          {/* Main Content */}
-          <Box
-            component="main"
-            sx={{
-              flexGrow: 1,
-              p: 3,
-              width: '100%',
-              backgroundColor: theme.palette.background.default,
-            }}
-          >
-            <Toolbar />
-            {children}
-          </Box>
-        </Box>
-      </body>
-    </html>
+          {/* Push brand to the right */}
+          <Box sx={{ flexGrow: 1 }} />
+
+          {/* Brand */}
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Image src={routeIcon} alt="Masar Logo" width={24} height={24} />
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                background: 'linear-gradient(to right, #2434B3, #FF4B36)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textTransform: 'none',
+              }}
+            >
+              Masar
+            </Typography>
+          </Link>
+        </Toolbar>
+      </AppBar>
+
+      {/* Sidebar */}
+      <Drawer
+        variant="temporary"
+        open={sidebarOpen}
+        onClose={handleToggleSidebar}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        sx={{
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            border: 'none',
+          },
+        }}
+      >
+        <SidebarContent />
+      </Drawer>
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: '100%',
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
+        <Toolbar />
+        {children}
+      </Box>
+    </Box>
   );
 }
