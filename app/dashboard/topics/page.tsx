@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Box, Typography, CircularProgress, Alert, Card, CardContent, LinearProgress } from '@mui/material';
 import { motion } from 'framer-motion';
 
@@ -14,15 +15,23 @@ interface Topic {
 }
 
 export default function TopicsPage() {
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     const fetchTopics = async () => {
+      if (status === 'loading') return;
+      
+      if (!session?.user?.id) {
+        setError('Please sign in to view your topics');
+        setLoading(false);
+        return;
+      }
+
       try {
-        const userId = 'cmby26o8v0000fp5nbmuzfc4f'; // TODO: Get from auth context
-        const response = await fetch(`/api/users/${userId}/roadmaps`);
+        const response = await fetch(`/api/users/${session.user.id}/roadmaps`);
         if (!response.ok) {
           throw new Error('Failed to fetch topics');
         }
@@ -40,7 +49,25 @@ export default function TopicsPage() {
     };
 
     fetchTopics();
-  }, []);
+  }, [session, status]);
+
+  if (status === 'loading') {
+    return (
+      <Box className="flex items-center justify-center min-h-[60vh]">
+        <CircularProgress className="text-teal-500" />
+      </Box>
+    );
+  }
+
+  if (!session) {
+    return (
+      <Box className="p-4">
+        <Alert severity="warning" className="rounded-lg">
+          Please sign in to access your topics.
+        </Alert>
+      </Box>
+    );
+  }
 
   if (loading) {
     return (
