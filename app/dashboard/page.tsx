@@ -115,6 +115,7 @@ export default function DashboardPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const { scrollYProgress } = useScroll();
   const theme = useTheme();
+  const [requirementsIncomplete, setRequirementsIncomplete] = useState(false);
 
   useEffect(() => {
     const fetchOrGenerateRoadmap = async () => {
@@ -123,6 +124,52 @@ export default function DashboardPage() {
       if (!session?.user?.id) {
         setError('Please sign in to view your roadmap');
         setLoading(false);
+        return;
+      }
+
+      /* ------------------------------------------------------------------
+       * CAREER PREFERENCE CHECK (industry must be set)
+       * ----------------------------------------------------------------*/
+      try {
+        const prefRes = await fetch(`/api/users/${session.user.id}/career-preferences`);
+        if (!prefRes.ok) {
+          setRequirementsIncomplete(true);
+          return;
+        }
+        const pref = await prefRes.json();
+        if (!pref || !pref.industry) {
+          setRequirementsIncomplete(true);
+          return;
+        }
+      } catch (e) {
+        setRequirementsIncomplete(true);
+        return;
+      }
+
+      /* ------------------------------------------------------------------
+       * PAYMENT VALIDITY CHECK
+       * ----------------------------------------------------------------*/
+      try {
+        const paymentsRes = await fetch(`/api/users/${session.user.id}/payments`);
+        if (!paymentsRes.ok) {
+          // treat as invalid
+          setRequirementsIncomplete(true);
+          return;
+        }
+        const paymentsData = await paymentsRes.json();
+        const now = new Date();
+        const hasValidPayment = Array.isArray(paymentsData) && paymentsData.some((p: any) => {
+          const end = new Date(p.periodEnd || p.period_end);
+          return end < now; // valid if end BEFORE now, per spec
+        });
+
+        if (!hasValidPayment) {
+          setRequirementsIncomplete(true);
+          return;
+        }
+      } catch (e) {
+        // network or parsing error => treat as incomplete
+        setRequirementsIncomplete(true);
         return;
       }
 
@@ -230,6 +277,29 @@ export default function DashboardPage() {
   const handleTopicClick = (topicId: string) => {
     router.push(`/dashboard/tasks/${topicId}`);
   };
+
+  // Incomplete information or invalid payment / career preference
+  useEffect(() => {
+    if (requirementsIncomplete) {
+      const timer = setTimeout(() => {
+        router.push('/');
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [requirementsIncomplete, router]);
+
+  if (requirementsIncomplete) {
+    return (
+      <Box className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 p-4">
+        <Alert severity="warning" className="rounded-lg text-center max-w-xl">
+          You need to complete your career information and payment before accessing the dashboard.
+        </Alert>
+        <Typography variant="body2" color="textSecondary">
+          Redirecting you to the home page...
+        </Typography>
+      </Box>
+    );
+  }
 
   if (status === 'loading') {
     return (
