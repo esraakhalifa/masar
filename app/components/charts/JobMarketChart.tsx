@@ -145,8 +145,8 @@ export default function JobMarketChart({ data: propData, isLoading: propLoading 
           </Typography>
           <Typography variant="h6" className="text-[#4ECDC4]">
             {data.currentOpenings.toLocaleString()}
-          </Typography>
-        </Box>
+      </Typography>
+      </Box>
         <Box className="bg-white p-4 rounded-lg shadow-sm">
           <Typography variant="subtitle2" className="text-gray-600">
             Projected Openings
@@ -178,8 +178,8 @@ export default function JobMarketChart({ data: propData, isLoading: propLoading 
           <Box className="flex items-center space-x-2 mb-4">
             <TrendingUpIcon className="text-[#4ECDC4]" />
             <Typography variant="h6">Job Market Trends</Typography>
-          </Box>
-          
+        </Box>
+
           <Box className="h-[250px] mb-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
@@ -225,17 +225,17 @@ export default function JobMarketChart({ data: propData, isLoading: propLoading 
 
             <Box className="bg-gray-50 p-4 rounded-lg">
               <Typography variant="subtitle2" className="text-[#4ECDC4] mb-1">
-                Demand Trend
-              </Typography>
+            Demand Trend
+          </Typography>
               <Typography variant="h6" className="text-gray-700">
-                {data.demandTrend}
-              </Typography>
-            </Box>
+            {data.demandTrend}
+          </Typography>
+        </Box>
 
             <Box className="bg-gray-50 p-4 rounded-lg">
               <Typography variant="subtitle2" className="text-[#4ECDC4] mb-1">
                 Required Skills
-              </Typography>
+          </Typography>
               <Box className="flex flex-wrap gap-1">
                 {data.requiredSkills.slice(0, 3).map((skill, index) => (
                   <motion.div
@@ -250,42 +250,42 @@ export default function JobMarketChart({ data: propData, isLoading: propLoading 
                         backgroundColor: 'rgba(78, 205, 196, 0.1)',
                         color: '#4ECDC4'
                       }}
-                    >
-                      {skill}
-                    </Box>
-                  </motion.div>
-                ))}
+              >
+                {skill}
               </Box>
-            </Box>
+                  </motion.div>
+            ))}
+              </Box>
           </Box>
+        </Box>
 
           <Box className="bg-gray-50 p-4 rounded-lg">
             <Typography variant="subtitle2" className="text-[#4ECDC4] mb-2">
-              Market Insights
-            </Typography>
+            Market Insights
+          </Typography>
             <Box className="grid grid-cols-2 gap-4">
-              <Box>
+            <Box>
                 <Typography variant="caption" className="text-gray-500 block mb-1">
-                  Trends
-                </Typography>
-                <ul className="list-disc list-inside text-sm text-gray-700">
+                Trends
+              </Typography>
+              <ul className="list-disc list-inside text-sm text-gray-700">
                   {data.marketInsights.slice(0, 2).map((insight, index) => (
                     <li key={index}>{insight.title}</li>
-                  ))}
-                </ul>
-              </Box>
-              <Box>
+                ))}
+              </ul>
+            </Box>
+            <Box>
                 <Typography variant="caption" className="text-gray-500 block mb-1">
-                  Opportunities
-                </Typography>
-                <ul className="list-disc list-inside text-sm text-gray-700">
+                Opportunities
+              </Typography>
+              <ul className="list-disc list-inside text-sm text-gray-700">
                   {data.marketInsights.slice(0, 2).map((insight, index) => (
                     <li key={index}>{insight.description}</li>
-                  ))}
-                </ul>
-              </Box>
+                ))}
+              </ul>
             </Box>
           </Box>
+        </Box>
         </motion.div>
       </motion.div>
     </Box>

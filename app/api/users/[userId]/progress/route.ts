@@ -13,8 +13,8 @@ export async function GET(
 
   try {
     // Connect to the database
-    await prisma.$connect();
-    console.log('Successfully connected to database');
+      await prisma.$connect();
+      console.log('Successfully connected to database');
 
     // Get user's roadmap
     const roadmap = await prisma.careerRoadmap.findFirst({

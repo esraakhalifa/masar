@@ -58,24 +58,20 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { userId, roadmapRole } = body;
+    const { userId } = body;
 
     // Validate input
     if (!userId) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 });
     }
 
-    if (!roadmapRole) {
-      return NextResponse.json({ error: 'roadmapRole is required' }, { status: 400 });
-    }
-
     // Check if user exists
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
-        CareerPreference: true,
+        careerPreference: true,
         skills: true,
-        Education: true
+        education: true
       }
     });
 
@@ -83,24 +79,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Check if user has career preference with industry
+    if (!user.careerPreference?.industry) {
+      return NextResponse.json({ 
+        error: 'User must have career preference with industry set to generate roadmap' 
+      }, { status: 400 });
+    }
+
+    // Use industry as roadmap role
+    const roadmapRole = user.careerPreference.industry;
+
     // Generate and save the roadmap using roadmapService
     const roadmap = await roadmapService.generateAndSaveRoadmap(
       userId,
       roadmapRole,
       {
-        careerPreference: {
-          industry: user.CareerPreference?.industry || 'Technology',
-          preferredSalary: user.CareerPreference?.preferredSalary || 80000,
-          workType: user.CareerPreference?.workType || 'Full-time',
-          location: user.CareerPreference?.location || 'Remote',
-          jobRole: roadmapRole
-        },
         skills: user.skills.map(skill => ({
           name: skill.name,
           level: skill.level,
           jobRole: skill.jobRole || roadmapRole
-        })),
-        education: user.Education
+        }))
       }
     );
 

@@ -20,23 +20,10 @@ interface JobSearchOptions {
 }
 
 interface UserContext {
-  careerPreference: {
-    industry: string;
-    preferredSalary: number;
-    workType: string;
-    location: string;
-    jobRole: string;
-  };
   skills: Array<{
     name: string;
     level: number | null;
     jobRole: string;
-  }>;
-  education: Array<{
-    degree: string;
-    fieldOfStudy: string;
-    institution: string;
-    graduationYear: number;
   }>;
 }
 
@@ -124,18 +111,6 @@ class RoadmapService {
       return acc;
     }, {} as Record<string, number | null>) || {};
 
-    const educationInfo = userContext?.education.map(edu => 
-      `${edu.degree} in ${edu.fieldOfStudy} from ${edu.institution} (${edu.graduationYear})`
-    ).join(', ') || 'Not specified';
-
-    const careerPreferences = userContext?.careerPreference ? `
-Career Preferences:
-- Industry: ${userContext.careerPreference.industry}
-- Preferred Salary: $${userContext.careerPreference.preferredSalary}
-- Work Type: ${userContext.careerPreference.workType}
-- Location: ${userContext.careerPreference.location}
-` : '';
-
     const skillsInfo = userContext?.skills ? `
 Current Skills and Levels:
 ${userContext.skills.map(skill => `- ${skill.name}: ${skill.level || 'Not assessed'}`).join('\n')}
@@ -186,10 +161,9 @@ You are to return structured JSON for a software engineering roadmap that matche
 4. Use real, existing courses from major platforms
 5. Do not include null, empty, or placeholder values
 
-🔍 User Context:
-${careerPreferences}
+🔍 Job Role: ${jobTitle}
+
 ${skillsInfo}
-Education: ${educationInfo}
 
 📊 Skill Level Requirements:
 ${Object.entries(skillLevels).map(([skill, level]) => {
